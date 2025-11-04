@@ -1,0 +1,6 @@
+# Hasura configuration
+version: 3
+endpoint: http://127.0.0.1:8080
+# admin_secret: npx hasura console --admin-secret=.env...
+metadata_directory: graphql/hasura/metadata
+migrations_directory: graphql/hasura/migrations  

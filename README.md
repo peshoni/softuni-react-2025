@@ -1,5 +1,10 @@
-# SoftUni-react-2025
-repository for React course at SoftUni
+# Car service application
+
+Repo for the exam task for the React course, Softuni October 2025
+
+## Note! The application was built for educational purposes - a demonstration of what was learned from the REACT-Softuni 2025 course, and has absolutely basic functionality to demonstrate working with roles, tables, and CRUD operations, covering the exam assignment.
+
+
 
 # React + TypeScript + Vite
 
@@ -74,3 +79,29 @@ export default defineConfig([
   },
 ])
 ```
+<!-- 
+# docker compose down
+# docker compose up --build -d
+docker compose --env-file ../.env up --build -d 
+
+cd .\graphql\
+npx hasura migrate apply --database-name "default"
+
+npx hasura console --envfile .env
+
+npx hasura migrate squash --skip-update-check --database-name="default" --delete-source --name "vehicles_and_repair_requests_tables" --from 1762179464569 
+npx hasura migrate apply --database-name "default"
+npx hasura metadata export
+
+https://the-guild.dev/graphql/codegen/plugins/typescript/typescript-react-apollo
+
+	npm i -D @graphql-codegen/cli
+	npm i -D @graphql-codegen/introspection
+	npm i -D @graphql-codegen/time
+	npm i -D @graphql-codegen/typescript
+	npm i -D @graphql-codegen/typescript-operations
+	npm i -D @graphql-codegen/typescript-react-apollo
+
+  npm install @apollo/client graphql
+
+-->
