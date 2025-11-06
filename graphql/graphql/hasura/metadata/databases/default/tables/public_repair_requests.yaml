@@ -1,0 +1,10 @@
+table:
+  name: repair_requests
+  schema: public
+object_relationships:
+  - name: user
+    using:
+      foreign_key_constraint_on: mechanic_id
+  - name: vehicle
+    using:
+      foreign_key_constraint_on: vehcile_id

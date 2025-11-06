@@ -1,0 +1,15 @@
+table:
+  name: vehicles
+  schema: public
+object_relationships:
+  - name: vehicle_status
+    using:
+      foreign_key_constraint_on: status_id
+array_relationships:
+  - name: repair_requests
+    using:
+      foreign_key_constraint_on:
+        column: vehcile_id
+        table:
+          name: repair_requests
+          schema: public
