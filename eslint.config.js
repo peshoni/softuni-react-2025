@@ -15,6 +15,10 @@ export default defineConfig([
       reactHooks.configs['recommended-latest'],
       reactRefresh.configs.vite,
     ],
+    exceptions: [ 
+      { files: ['/graphql/generated.ts' ] 
+      },
+    ],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,

@@ -1,4 +1,4 @@
-import type { CodegenConfig } from '@graphql-codegen/cli';
+import type { CodegenConfig } from '@graphql-codegen/cli'; 
 const config: CodegenConfig = {
     overwrite: true,
     schema: [{
@@ -31,17 +31,18 @@ const config: CodegenConfig = {
         apolloReactCommonImportFrom: "@apollo/client",
         apolloReactHooksImportFrom: "@apollo/client",
         withHooks: true
-
     },
     generates: {
         './graphql/generated.ts': {
             // preset: 'client',
             plugins: [
                 {
-                    typescript: {},
+                    typescript: {
+                    },
                 },
                 {
-                    "typescript-operations": {},
+                    "typescript-operations": {
+                    },
                 },
                 {
                     "typescript-react-apollo": {

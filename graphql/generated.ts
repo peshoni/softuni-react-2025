@@ -3179,6 +3179,16 @@ export type LoginQueryVariables = Exact<{
 
 export type LoginQuery = { users: Array<{ id: any, created_at: any, updated_at: any, email: string, name: string, surname: string, family: string, gender_enum: { value: string, content: string }, role_enum: { value: string, content: string } }> };
 
+export type GetUsersQueryVariables = Exact<{
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  condition?: Users_Bool_Exp;
+  orderBy?: InputMaybe<Array<Users_Order_By> | Users_Order_By>;
+}>;
+
+
+export type GetUsersQuery = { users: Array<{ id: any, created_at: any, updated_at: any, email: string, name: string, surname: string, family: string, gender_enum: { value: string, content: string }, role_enum: { value: string, content: string } }>, users_aggregate: { aggregate?: { count: number } | null } };
+
 export type UserFragment = { id: any, created_at: any, updated_at: any, email: string, name: string, surname: string, family: string, gender_enum: { value: string, content: string }, role_enum: { value: string, content: string } };
 
 export const UserFragmentDoc = gql`
@@ -3274,3 +3284,51 @@ export type LoginQueryHookResult = ReturnType<typeof useLoginQuery>;
 export type LoginLazyQueryHookResult = ReturnType<typeof useLoginLazyQuery>;
 export type LoginSuspenseQueryHookResult = ReturnType<typeof useLoginSuspenseQuery>;
 export type LoginQueryResult = ApolloReactCommon.QueryResult<LoginQuery, LoginQueryVariables>;
+export const GetUsersDocument = gql`
+    query GetUsers($limit: Int, $offset: Int, $condition: users_bool_exp! = {}, $orderBy: [users_order_by!] = {created_at: desc}) {
+  users(where: $condition, limit: $limit, offset: $offset, order_by: $orderBy) {
+    ...user
+  }
+  users_aggregate(where: $condition) {
+    aggregate {
+      count
+    }
+  }
+}
+    ${UserFragmentDoc}`;
+
+/**
+ * __useGetUsersQuery__
+ *
+ * To run a query within a React component, call `useGetUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUsersQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
+ *      condition: // value for 'condition'
+ *      orderBy: // value for 'orderBy'
+ *   },
+ * });
+ */
+export function useGetUsersQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, options);
+      }
+export function useGetUsersLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, options);
+        }
+export function useGetUsersSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
+          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useSuspenseQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, options);
+        }
+export type GetUsersQueryHookResult = ReturnType<typeof useGetUsersQuery>;
+export type GetUsersLazyQueryHookResult = ReturnType<typeof useGetUsersLazyQuery>;
+export type GetUsersSuspenseQueryHookResult = ReturnType<typeof useGetUsersSuspenseQuery>;
+export type GetUsersQueryResult = ApolloReactCommon.QueryResult<GetUsersQuery, GetUsersQueryVariables>;
