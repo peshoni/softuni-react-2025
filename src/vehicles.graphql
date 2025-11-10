@@ -1,0 +1,28 @@
+query GetVehicles($limit: Int, $offset: Int, $condition: vehicles_bool_exp! = {}, $orderBy: [vehicles_order_by!] = {created_at: asc}) {
+  vehicles(where: $condition, limit: $limit, offset: $offset, order_by: $orderBy) {
+    ...vehicle
+  }
+  vehicles_aggregate(where: $condition) {
+    aggregate {
+      count
+    }
+  }
+}
+
+fragment vehicle on vehicles {
+  id
+  created_at
+  updated_at
+  vin
+  plate
+  model
+  year
+  make
+  mileage
+  fuel
+  color
+  vehicle_status {
+    value
+    content
+  }
+}

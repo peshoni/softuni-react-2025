@@ -19,7 +19,6 @@ import ListItemText from '@mui/material/ListItemText';
 import GroupIcon from '@mui/icons-material/Group';
 import CommuteIcon from '@mui/icons-material/Commute';
 import CarRepairIcon from '@mui/icons-material/CarRepair';
-
 import UserContextMenu from './UserContextMenu';
 
 const drawerWidth = 240;

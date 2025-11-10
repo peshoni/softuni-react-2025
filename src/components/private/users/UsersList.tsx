@@ -9,97 +9,64 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { Box, LinearProgress } from '@mui/material';
 import TableNavbar from '../common/TableNavbar';
-import { useGetUsersQuery } from '../../../../graphql/generated';
+import { useGetUsersQuery, type UserFragment } from '../../../../graphql/generated';
+import RowContextMenu from '../common/RowContextMenu';
 
-interface Column {
-  id: 'name' | 'family' | 'actions';
+
+type AllowedColumns = (keyof (UserFragment & { actions: ''; }));
+
+interface ColumnSettings {
+  property: AllowedColumns;
   label: string;
   minWidth?: number;
-  align?: 'right';
+  align?: 'left' | 'right' | 'center';
   format?: (value: number) => string;
 }
 
-const columns: readonly Column[] = [
-  { id: 'name', label: 'Name', minWidth: 100 },
-  { id: 'family', label: 'family', minWidth: 100 },
-  // { id: 'code', label: 'ISO\u00a0Code', minWidth: 100 },
+const columns: readonly ColumnSettings[] = [
+  { property: 'name', label: 'Name', minWidth: 100 },
+  { property: 'surname', label: 'Surname', minWidth: 100 },
+  { property: 'family', label: 'Family', minWidth: 100 },
   // {
   //   id: 'population',
   //   label: 'Population',
   //   minWidth: 170,
   //   align: 'right',
   //   format: (value: number) => value.toLocaleString('en-US'),
-  // },
-  // {
-  //   id: 'size',
-  //   label: 'Size\u00a0(km\u00b2)',
-  //   minWidth: 170,
-  //   align: 'right',
-  //   format: (value: number) => value.toLocaleString('en-US'),
-  // },
-  // {
-  //   id: 'density',
-  //   label: 'Density',
-  //   minWidth: 170,
-  //   align: 'right',
-  //   format: (value: number) => value.toFixed(2),
-  // },
+  // }, 
   {
-    id: 'actions',
+    property: 'actions',
     label: 'actions',
     minWidth: 60,
-    align: 'right',
-    // format: (value: number) => value.toFixed(2),
-  },
-
+    align: 'right'
+  }
 ];
 
-// interface Data {
-//   name: string;
-//   family: string;
-//   // population: number;
-//   // size: number;
-//   // density: number;
-//   actions?: any;
-// } 
-
-// const Item = styled(Paper)(({ theme }) => ({
-//   backgroundColor: '#fff',
-//   ...theme.typography.body2,
-//   padding: theme.spacing(1),
-//   textAlign: 'center',
-//   color: (theme.vars ?? theme).palette.text.secondary,
-//   ...theme.applyStyles('dark', {
-//     backgroundColor: '#1A2027',
-//   }),
-// }));
 
 export default function UsersList() {
   const rowsPerPageOptions = [5, 10, 15];
-
-
   //const offset: number = this.paginator.pageIndex * this.paginator.pageSize;
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
+  const { data, loading, error } = useGetUsersQuery({ variables: { limit: rowsPerPage, offset: page * rowsPerPage, condition: {}, orderBy: { name: 'asc' } } });
   let aggregatedCount: number = 0;
 
-  const { data, loading, error } = useGetUsersQuery({ variables: { limit: rowsPerPage, offset: page * rowsPerPage, condition: {}, orderBy: { name: 'asc' } } });
   console.log(data, loading, error);
 
-  useEffect(() => {
+  useEffect(() => { // Listens for the data changes
     console.log('data changed', data);
     aggregatedCount = data?.users_aggregate.aggregate?.count ?? 0;
-
   }, [data]);
+
   //TODo: error handling
 
   const handleChangePage = (event: unknown, newPage: number) => {
-    console.log(event, newPage);
+    // console.log(event, newPage);
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(+event.target.value);
+    //  console.log(+event.target.value);
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
@@ -109,12 +76,14 @@ export default function UsersList() {
   };
   const addClickedHandler = () => {
     console.log('child -> parent: add click');
+    console.log('Open add user details');
     //setChildEvent(event);
   };
 
   // setTimeout(() => {
   //   setIsLoading(false);
   // }, 2000);
+
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -128,7 +97,6 @@ export default function UsersList() {
         filterSelectedHandler={filterSelectedHandler}
       ></TableNavbar>
 
-
       <TableContainer sx={{ height: '100%' }}>
         <Box sx={{ width: '100%' }}>
           {loading && <LinearProgress />}
@@ -138,7 +106,7 @@ export default function UsersList() {
             <TableRow>
               {columns.map((column) => (
                 <TableCell
-                  key={column.id}
+                  key={column.property}
                   align={column.align}
                   style={{ minWidth: column.minWidth }}
                 >
@@ -149,26 +117,13 @@ export default function UsersList() {
           </TableHead>
 
           <TableBody>
-            {/*  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) */}
             {data?.users.map((user) => {
               return (
                 <TableRow hover tabIndex={-1} key={user.id}>
                   {columns.map((column) => {
-                    // console.log(row);
-                    const value = (user as any)[column.id];//as keyof UserFragment
-                    // console.log(value);
-                    return column.id === 'actions'
-                      ? (<TableCell key={column.id} align={column.align}> icons </TableCell>)
-                      : (
-                        <TableCell key={column.id} align={column.align}>
-                          {column.format && typeof value === 'number'
-                            ? column.format(value)
-                            : value}
-                        </TableCell>
-                      );
+                    return processColumn(column, user);
                   })}
                 </TableRow>
-
               );
             })}
           </TableBody>
@@ -186,4 +141,24 @@ export default function UsersList() {
       />
     </Paper>
   );
+
 }
+function processColumn(column: ColumnSettings, user: UserFragment) {
+  const value = user[column.property as keyof UserFragment];
+  const cellValue = () => {
+    switch (column.property) {
+      case 'name':
+      case 'surname':
+      case 'family':
+        return value; // same string value
+      case 'actions':
+        return <RowContextMenu />;
+      default: return '';
+    }
+  };
+
+  return <TableCell key={column.property} align={column.align}>
+    {cellValue()}
+  </TableCell>;
+}
+

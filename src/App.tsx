@@ -6,6 +6,7 @@ import ApplicationBar from './components/private/ApplicationBar';
 // import CarServiceLanding from './components/public/LandingPage';
 // import UsersListExample from './components/private/users/UsersListExample';
 import UsersList from './components/private/users/UsersList';
+import VehiclesList from './components/private/vehicles/VehiclesList';
 // import UsersList from './components/private/users/UsersList';
 
 function App() {
@@ -51,6 +52,7 @@ function App() {
       <ApplicationBar />
       {/* <CarServiceLanding/> */}
       <UsersList/>
+      {/* <VehiclesList/> */}
 
       {/* <h1>hello world</h1>
       <button onClick={() => setIsParentVisible((curr) => !curr)}>toggle</button>

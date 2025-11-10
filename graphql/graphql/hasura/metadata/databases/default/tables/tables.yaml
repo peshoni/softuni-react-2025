@@ -1,8 +1,0 @@
-- "!include public_fuel_types.yaml"
-- "!include public_genders.yaml"
-- "!include public_repair_requests.yaml"
-- "!include public_requests_logs.yaml"
-- "!include public_user_roles.yaml"
-- "!include public_users.yaml"
-- "!include public_vehicle_statuses.yaml"
-- "!include public_vehicles.yaml"

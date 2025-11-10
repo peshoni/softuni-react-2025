@@ -90,6 +90,30 @@ export type Cursor_Ordering =
 export type Fuel_Types = {
   content: Scalars['String']['output'];
   value: Scalars['String']['output'];
+  /** An array relationship */
+  vehicles: Array<Vehicles>;
+  /** An aggregate relationship */
+  vehicles_aggregate: Vehicles_Aggregate;
+};
+
+
+/** columns and relationships of "fuel_types" */
+export type Fuel_TypesVehiclesArgs = {
+  distinct_on?: InputMaybe<Array<Vehicles_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Vehicles_Order_By>>;
+  where?: InputMaybe<Vehicles_Bool_Exp>;
+};
+
+
+/** columns and relationships of "fuel_types" */
+export type Fuel_TypesVehicles_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Vehicles_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Vehicles_Order_By>>;
+  where?: InputMaybe<Vehicles_Bool_Exp>;
 };
 
 /** aggregated selection of "fuel_types" */
@@ -119,6 +143,8 @@ export type Fuel_Types_Bool_Exp = {
   _or?: InputMaybe<Array<Fuel_Types_Bool_Exp>>;
   content?: InputMaybe<String_Comparison_Exp>;
   value?: InputMaybe<String_Comparison_Exp>;
+  vehicles?: InputMaybe<Vehicles_Bool_Exp>;
+  vehicles_aggregate?: InputMaybe<Vehicles_Aggregate_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "fuel_types" */
@@ -128,33 +154,11 @@ export type Fuel_Types_Constraint =
   /** unique or primary key constraint on columns "value" */
   | 'fuel_types_pkey';
 
-export type Fuel_Types_Enum =
-  /** fuel-biodiesel */
-  | 'biodiesel'
-  /** fuel-diesel */
-  | 'diesel'
-  /** fuel-electricity */
-  | 'electricity'
-  /** fuel-ethanol */
-  | 'ethanol'
-  /** fuel-petrol */
-  | 'petrol'
-  /** fuel-propane */
-  | 'propane';
-
-/** Boolean expression to compare columns of type "fuel_types_enum". All fields are combined with logical 'AND'. */
-export type Fuel_Types_Enum_Comparison_Exp = {
-  _eq?: InputMaybe<Fuel_Types_Enum>;
-  _in?: InputMaybe<Array<Fuel_Types_Enum>>;
-  _is_null?: InputMaybe<Scalars['Boolean']['input']>;
-  _neq?: InputMaybe<Fuel_Types_Enum>;
-  _nin?: InputMaybe<Array<Fuel_Types_Enum>>;
-};
-
 /** input type for inserting data into table "fuel_types" */
 export type Fuel_Types_Insert_Input = {
   content?: InputMaybe<Scalars['String']['input']>;
   value?: InputMaybe<Scalars['String']['input']>;
+  vehicles?: InputMaybe<Vehicles_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -177,6 +181,13 @@ export type Fuel_Types_Mutation_Response = {
   returning: Array<Fuel_Types>;
 };
 
+/** input type for inserting object relation for remote table "fuel_types" */
+export type Fuel_Types_Obj_Rel_Insert_Input = {
+  data: Fuel_Types_Insert_Input;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Fuel_Types_On_Conflict>;
+};
+
 /** on_conflict condition type for table "fuel_types" */
 export type Fuel_Types_On_Conflict = {
   constraint: Fuel_Types_Constraint;
@@ -188,6 +199,7 @@ export type Fuel_Types_On_Conflict = {
 export type Fuel_Types_Order_By = {
   content?: InputMaybe<Order_By>;
   value?: InputMaybe<Order_By>;
+  vehicles_aggregate?: InputMaybe<Vehicles_Aggregate_Order_By>;
 };
 
 /** primary key columns input for table: fuel_types */
@@ -303,23 +315,6 @@ export type Genders_Constraint =
   | 'genders_content_key'
   /** unique or primary key constraint on columns "value" */
   | 'genders_pkey';
-
-export type Genders_Enum =
-  /** gender-female */
-  | 'female'
-  /** gender-male */
-  | 'male'
-  /** gender-other */
-  | 'other';
-
-/** Boolean expression to compare columns of type "genders_enum". All fields are combined with logical 'AND'. */
-export type Genders_Enum_Comparison_Exp = {
-  _eq?: InputMaybe<Genders_Enum>;
-  _in?: InputMaybe<Array<Genders_Enum>>;
-  _is_null?: InputMaybe<Scalars['Boolean']['input']>;
-  _neq?: InputMaybe<Genders_Enum>;
-  _nin?: InputMaybe<Array<Genders_Enum>>;
-};
 
 /** input type for inserting data into table "genders" */
 export type Genders_Insert_Input = {
@@ -2014,23 +2009,6 @@ export type User_Roles_Constraint =
   /** unique or primary key constraint on columns "value" */
   | 'user_roles_pkey';
 
-export type User_Roles_Enum =
-  /** user-role-auto-mechanic */
-  | 'autoMechanic'
-  /** user-role-customer */
-  | 'customer'
-  /** user-role-service-specialist */
-  | 'serviceSpecialist';
-
-/** Boolean expression to compare columns of type "user_roles_enum". All fields are combined with logical 'AND'. */
-export type User_Roles_Enum_Comparison_Exp = {
-  _eq?: InputMaybe<User_Roles_Enum>;
-  _in?: InputMaybe<Array<User_Roles_Enum>>;
-  _is_null?: InputMaybe<Scalars['Boolean']['input']>;
-  _neq?: InputMaybe<User_Roles_Enum>;
-  _nin?: InputMaybe<Array<User_Roles_Enum>>;
-};
-
 /** input type for inserting data into table "user_roles" */
 export type User_Roles_Insert_Input = {
   content?: InputMaybe<Scalars['String']['input']>;
@@ -2130,7 +2108,7 @@ export type Users = {
   created_at: Scalars['timestamptz']['output'];
   email: Scalars['String']['output'];
   family: Scalars['String']['output'];
-  gender: Genders_Enum;
+  gender: Scalars['String']['output'];
   /** An object relationship */
   gender_enum: Genders;
   id: Scalars['uuid']['output'];
@@ -2144,7 +2122,7 @@ export type Users = {
   requests_logs: Array<Requests_Logs>;
   /** An aggregate relationship */
   requests_logs_aggregate: Requests_Logs_Aggregate;
-  role: User_Roles_Enum;
+  role: Scalars['String']['output'];
   /** An object relationship */
   role_enum: User_Roles;
   surname: Scalars['String']['output'];
@@ -2244,7 +2222,7 @@ export type Users_Bool_Exp = {
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   email?: InputMaybe<String_Comparison_Exp>;
   family?: InputMaybe<String_Comparison_Exp>;
-  gender?: InputMaybe<Genders_Enum_Comparison_Exp>;
+  gender?: InputMaybe<String_Comparison_Exp>;
   gender_enum?: InputMaybe<Genders_Bool_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
@@ -2253,7 +2231,7 @@ export type Users_Bool_Exp = {
   repair_requests_aggregate?: InputMaybe<Repair_Requests_Aggregate_Bool_Exp>;
   requests_logs?: InputMaybe<Requests_Logs_Bool_Exp>;
   requests_logs_aggregate?: InputMaybe<Requests_Logs_Aggregate_Bool_Exp>;
-  role?: InputMaybe<User_Roles_Enum_Comparison_Exp>;
+  role?: InputMaybe<String_Comparison_Exp>;
   role_enum?: InputMaybe<User_Roles_Bool_Exp>;
   surname?: InputMaybe<String_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -2271,14 +2249,14 @@ export type Users_Insert_Input = {
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
   family?: InputMaybe<Scalars['String']['input']>;
-  gender?: InputMaybe<Genders_Enum>;
+  gender?: InputMaybe<Scalars['String']['input']>;
   gender_enum?: InputMaybe<Genders_Obj_Rel_Insert_Input>;
   id?: InputMaybe<Scalars['uuid']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   password?: InputMaybe<Scalars['String']['input']>;
   repair_requests?: InputMaybe<Repair_Requests_Arr_Rel_Insert_Input>;
   requests_logs?: InputMaybe<Requests_Logs_Arr_Rel_Insert_Input>;
-  role?: InputMaybe<User_Roles_Enum>;
+  role?: InputMaybe<Scalars['String']['input']>;
   role_enum?: InputMaybe<User_Roles_Obj_Rel_Insert_Input>;
   surname?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
@@ -2289,9 +2267,11 @@ export type Users_Max_Fields = {
   created_at?: Maybe<Scalars['timestamptz']['output']>;
   email?: Maybe<Scalars['String']['output']>;
   family?: Maybe<Scalars['String']['output']>;
+  gender?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   password?: Maybe<Scalars['String']['output']>;
+  role?: Maybe<Scalars['String']['output']>;
   surname?: Maybe<Scalars['String']['output']>;
   updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
@@ -2301,9 +2281,11 @@ export type Users_Max_Order_By = {
   created_at?: InputMaybe<Order_By>;
   email?: InputMaybe<Order_By>;
   family?: InputMaybe<Order_By>;
+  gender?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
   password?: InputMaybe<Order_By>;
+  role?: InputMaybe<Order_By>;
   surname?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
 };
@@ -2313,9 +2295,11 @@ export type Users_Min_Fields = {
   created_at?: Maybe<Scalars['timestamptz']['output']>;
   email?: Maybe<Scalars['String']['output']>;
   family?: Maybe<Scalars['String']['output']>;
+  gender?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   password?: Maybe<Scalars['String']['output']>;
+  role?: Maybe<Scalars['String']['output']>;
   surname?: Maybe<Scalars['String']['output']>;
   updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
@@ -2325,9 +2309,11 @@ export type Users_Min_Order_By = {
   created_at?: InputMaybe<Order_By>;
   email?: InputMaybe<Order_By>;
   family?: InputMaybe<Order_By>;
+  gender?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
   password?: InputMaybe<Order_By>;
+  role?: InputMaybe<Order_By>;
   surname?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
 };
@@ -2405,11 +2391,11 @@ export type Users_Set_Input = {
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
   family?: InputMaybe<Scalars['String']['input']>;
-  gender?: InputMaybe<Genders_Enum>;
+  gender?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   password?: InputMaybe<Scalars['String']['input']>;
-  role?: InputMaybe<User_Roles_Enum>;
+  role?: InputMaybe<Scalars['String']['input']>;
   surname?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
 };
@@ -2427,11 +2413,11 @@ export type Users_Stream_Cursor_Value_Input = {
   created_at?: InputMaybe<Scalars['timestamptz']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
   family?: InputMaybe<Scalars['String']['input']>;
-  gender?: InputMaybe<Genders_Enum>;
+  gender?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   password?: InputMaybe<Scalars['String']['input']>;
-  role?: InputMaybe<User_Roles_Enum>;
+  role?: InputMaybe<Scalars['String']['input']>;
   surname?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
 };
@@ -2735,7 +2721,10 @@ export type Vehicle_Statuses_Variance_Fields = {
 /** columns and relationships of "vehicles" */
 export type Vehicles = {
   color: Scalars['String']['output'];
-  fuel: Fuel_Types_Enum;
+  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  fuel: Scalars['String']['output'];
+  /** An object relationship */
+  fuel_type: Fuel_Types;
   id: Scalars['uuid']['output'];
   make: Scalars['String']['output'];
   mileage: Scalars['Int']['output'];
@@ -2746,6 +2735,7 @@ export type Vehicles = {
   /** An aggregate relationship */
   repair_requests_aggregate: Repair_Requests_Aggregate;
   status_id: Scalars['uuid']['output'];
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
   /** An object relationship */
   vehicle_status: Vehicle_Statuses;
   vin: Scalars['String']['output'];
@@ -2851,7 +2841,9 @@ export type Vehicles_Bool_Exp = {
   _not?: InputMaybe<Vehicles_Bool_Exp>;
   _or?: InputMaybe<Array<Vehicles_Bool_Exp>>;
   color?: InputMaybe<String_Comparison_Exp>;
-  fuel?: InputMaybe<Fuel_Types_Enum_Comparison_Exp>;
+  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  fuel?: InputMaybe<String_Comparison_Exp>;
+  fuel_type?: InputMaybe<Fuel_Types_Bool_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
   make?: InputMaybe<String_Comparison_Exp>;
   mileage?: InputMaybe<Int_Comparison_Exp>;
@@ -2860,6 +2852,7 @@ export type Vehicles_Bool_Exp = {
   repair_requests?: InputMaybe<Repair_Requests_Bool_Exp>;
   repair_requests_aggregate?: InputMaybe<Repair_Requests_Aggregate_Bool_Exp>;
   status_id?: InputMaybe<Uuid_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   vehicle_status?: InputMaybe<Vehicle_Statuses_Bool_Exp>;
   vin?: InputMaybe<String_Comparison_Exp>;
   year?: InputMaybe<Int_Comparison_Exp>;
@@ -2881,7 +2874,9 @@ export type Vehicles_Inc_Input = {
 /** input type for inserting data into table "vehicles" */
 export type Vehicles_Insert_Input = {
   color?: InputMaybe<Scalars['String']['input']>;
-  fuel?: InputMaybe<Fuel_Types_Enum>;
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  fuel?: InputMaybe<Scalars['String']['input']>;
+  fuel_type?: InputMaybe<Fuel_Types_Obj_Rel_Insert_Input>;
   id?: InputMaybe<Scalars['uuid']['input']>;
   make?: InputMaybe<Scalars['String']['input']>;
   mileage?: InputMaybe<Scalars['Int']['input']>;
@@ -2889,6 +2884,7 @@ export type Vehicles_Insert_Input = {
   plate?: InputMaybe<Scalars['String']['input']>;
   repair_requests?: InputMaybe<Repair_Requests_Arr_Rel_Insert_Input>;
   status_id?: InputMaybe<Scalars['uuid']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
   vehicle_status?: InputMaybe<Vehicle_Statuses_Obj_Rel_Insert_Input>;
   vin?: InputMaybe<Scalars['String']['input']>;
   year?: InputMaybe<Scalars['Int']['input']>;
@@ -2897,12 +2893,15 @@ export type Vehicles_Insert_Input = {
 /** aggregate max on columns */
 export type Vehicles_Max_Fields = {
   color?: Maybe<Scalars['String']['output']>;
+  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  fuel?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
   make?: Maybe<Scalars['String']['output']>;
   mileage?: Maybe<Scalars['Int']['output']>;
   model?: Maybe<Scalars['String']['output']>;
   plate?: Maybe<Scalars['String']['output']>;
   status_id?: Maybe<Scalars['uuid']['output']>;
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
   vin?: Maybe<Scalars['String']['output']>;
   year?: Maybe<Scalars['Int']['output']>;
 };
@@ -2910,12 +2909,15 @@ export type Vehicles_Max_Fields = {
 /** order by max() on columns of table "vehicles" */
 export type Vehicles_Max_Order_By = {
   color?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  fuel?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   make?: InputMaybe<Order_By>;
   mileage?: InputMaybe<Order_By>;
   model?: InputMaybe<Order_By>;
   plate?: InputMaybe<Order_By>;
   status_id?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
   vin?: InputMaybe<Order_By>;
   year?: InputMaybe<Order_By>;
 };
@@ -2923,12 +2925,15 @@ export type Vehicles_Max_Order_By = {
 /** aggregate min on columns */
 export type Vehicles_Min_Fields = {
   color?: Maybe<Scalars['String']['output']>;
+  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  fuel?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
   make?: Maybe<Scalars['String']['output']>;
   mileage?: Maybe<Scalars['Int']['output']>;
   model?: Maybe<Scalars['String']['output']>;
   plate?: Maybe<Scalars['String']['output']>;
   status_id?: Maybe<Scalars['uuid']['output']>;
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
   vin?: Maybe<Scalars['String']['output']>;
   year?: Maybe<Scalars['Int']['output']>;
 };
@@ -2936,12 +2941,15 @@ export type Vehicles_Min_Fields = {
 /** order by min() on columns of table "vehicles" */
 export type Vehicles_Min_Order_By = {
   color?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  fuel?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   make?: InputMaybe<Order_By>;
   mileage?: InputMaybe<Order_By>;
   model?: InputMaybe<Order_By>;
   plate?: InputMaybe<Order_By>;
   status_id?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
   vin?: InputMaybe<Order_By>;
   year?: InputMaybe<Order_By>;
 };
@@ -2971,7 +2979,9 @@ export type Vehicles_On_Conflict = {
 /** Ordering options when selecting data from "vehicles". */
 export type Vehicles_Order_By = {
   color?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
   fuel?: InputMaybe<Order_By>;
+  fuel_type?: InputMaybe<Fuel_Types_Order_By>;
   id?: InputMaybe<Order_By>;
   make?: InputMaybe<Order_By>;
   mileage?: InputMaybe<Order_By>;
@@ -2979,6 +2989,7 @@ export type Vehicles_Order_By = {
   plate?: InputMaybe<Order_By>;
   repair_requests_aggregate?: InputMaybe<Repair_Requests_Aggregate_Order_By>;
   status_id?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
   vehicle_status?: InputMaybe<Vehicle_Statuses_Order_By>;
   vin?: InputMaybe<Order_By>;
   year?: InputMaybe<Order_By>;
@@ -2994,6 +3005,8 @@ export type Vehicles_Select_Column =
   /** column name */
   | 'color'
   /** column name */
+  | 'created_at'
+  /** column name */
   | 'fuel'
   /** column name */
   | 'id'
@@ -3008,6 +3021,8 @@ export type Vehicles_Select_Column =
   /** column name */
   | 'status_id'
   /** column name */
+  | 'updated_at'
+  /** column name */
   | 'vin'
   /** column name */
   | 'year';
@@ -3015,13 +3030,15 @@ export type Vehicles_Select_Column =
 /** input type for updating data in table "vehicles" */
 export type Vehicles_Set_Input = {
   color?: InputMaybe<Scalars['String']['input']>;
-  fuel?: InputMaybe<Fuel_Types_Enum>;
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  fuel?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
   make?: InputMaybe<Scalars['String']['input']>;
   mileage?: InputMaybe<Scalars['Int']['input']>;
   model?: InputMaybe<Scalars['String']['input']>;
   plate?: InputMaybe<Scalars['String']['input']>;
   status_id?: InputMaybe<Scalars['uuid']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
   vin?: InputMaybe<Scalars['String']['input']>;
   year?: InputMaybe<Scalars['Int']['input']>;
 };
@@ -3073,13 +3090,15 @@ export type Vehicles_Stream_Cursor_Input = {
 /** Initial value of the column from where the streaming should start */
 export type Vehicles_Stream_Cursor_Value_Input = {
   color?: InputMaybe<Scalars['String']['input']>;
-  fuel?: InputMaybe<Fuel_Types_Enum>;
+  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  fuel?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
   make?: InputMaybe<Scalars['String']['input']>;
   mileage?: InputMaybe<Scalars['Int']['input']>;
   model?: InputMaybe<Scalars['String']['input']>;
   plate?: InputMaybe<Scalars['String']['input']>;
   status_id?: InputMaybe<Scalars['uuid']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
   vin?: InputMaybe<Scalars['String']['input']>;
   year?: InputMaybe<Scalars['Int']['input']>;
 };
@@ -3101,6 +3120,8 @@ export type Vehicles_Update_Column =
   /** column name */
   | 'color'
   /** column name */
+  | 'created_at'
+  /** column name */
   | 'fuel'
   /** column name */
   | 'id'
@@ -3114,6 +3135,8 @@ export type Vehicles_Update_Column =
   | 'plate'
   /** column name */
   | 'status_id'
+  /** column name */
+  | 'updated_at'
   /** column name */
   | 'vin'
   /** column name */
@@ -3191,6 +3214,18 @@ export type GetUsersQuery = { users: Array<{ id: any, created_at: any, updated_a
 
 export type UserFragment = { id: any, created_at: any, updated_at: any, email: string, name: string, surname: string, family: string, gender_enum: { value: string, content: string }, role_enum: { value: string, content: string } };
 
+export type GetVehiclesQueryVariables = Exact<{
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  condition?: Vehicles_Bool_Exp;
+  orderBy?: InputMaybe<Array<Vehicles_Order_By> | Vehicles_Order_By>;
+}>;
+
+
+export type GetVehiclesQuery = { vehicles: Array<{ id: any, created_at?: any | null, updated_at?: any | null, vin: string, plate: string, model: string, year: number, make: string, mileage: number, fuel: string, color: string, vehicle_status: { value: string, content: string } }>, vehicles_aggregate: { aggregate?: { count: number } | null } };
+
+export type VehicleFragment = { id: any, created_at?: any | null, updated_at?: any | null, vin: string, plate: string, model: string, year: number, make: string, mileage: number, fuel: string, color: string, vehicle_status: { value: string, content: string } };
+
 export const UserFragmentDoc = gql`
     fragment user on users {
   id
@@ -3205,6 +3240,25 @@ export const UserFragmentDoc = gql`
     content
   }
   role_enum {
+    value
+    content
+  }
+}
+    `;
+export const VehicleFragmentDoc = gql`
+    fragment vehicle on vehicles {
+  id
+  created_at
+  updated_at
+  vin
+  plate
+  model
+  year
+  make
+  mileage
+  fuel
+  color
+  vehicle_status {
     value
     content
   }
@@ -3332,3 +3386,51 @@ export type GetUsersQueryHookResult = ReturnType<typeof useGetUsersQuery>;
 export type GetUsersLazyQueryHookResult = ReturnType<typeof useGetUsersLazyQuery>;
 export type GetUsersSuspenseQueryHookResult = ReturnType<typeof useGetUsersSuspenseQuery>;
 export type GetUsersQueryResult = ApolloReactCommon.QueryResult<GetUsersQuery, GetUsersQueryVariables>;
+export const GetVehiclesDocument = gql`
+    query GetVehicles($limit: Int, $offset: Int, $condition: vehicles_bool_exp! = {}, $orderBy: [vehicles_order_by!] = {created_at: asc}) {
+  vehicles(where: $condition, limit: $limit, offset: $offset, order_by: $orderBy) {
+    ...vehicle
+  }
+  vehicles_aggregate(where: $condition) {
+    aggregate {
+      count
+    }
+  }
+}
+    ${VehicleFragmentDoc}`;
+
+/**
+ * __useGetVehiclesQuery__
+ *
+ * To run a query within a React component, call `useGetVehiclesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetVehiclesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetVehiclesQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
+ *      condition: // value for 'condition'
+ *      orderBy: // value for 'orderBy'
+ *   },
+ * });
+ */
+export function useGetVehiclesQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetVehiclesQuery, GetVehiclesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<GetVehiclesQuery, GetVehiclesQueryVariables>(GetVehiclesDocument, options);
+      }
+export function useGetVehiclesLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetVehiclesQuery, GetVehiclesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<GetVehiclesQuery, GetVehiclesQueryVariables>(GetVehiclesDocument, options);
+        }
+export function useGetVehiclesSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<GetVehiclesQuery, GetVehiclesQueryVariables>) {
+          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useSuspenseQuery<GetVehiclesQuery, GetVehiclesQueryVariables>(GetVehiclesDocument, options);
+        }
+export type GetVehiclesQueryHookResult = ReturnType<typeof useGetVehiclesQuery>;
+export type GetVehiclesLazyQueryHookResult = ReturnType<typeof useGetVehiclesLazyQuery>;
+export type GetVehiclesSuspenseQueryHookResult = ReturnType<typeof useGetVehiclesSuspenseQuery>;
+export type GetVehiclesQueryResult = ApolloReactCommon.QueryResult<GetVehiclesQuery, GetVehiclesQueryVariables>;

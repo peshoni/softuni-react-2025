@@ -2,6 +2,9 @@ table:
   name: vehicles
   schema: public
 object_relationships:
+  - name: fuel_type
+    using:
+      foreign_key_constraint_on: fuel
   - name: vehicle_status
     using:
       foreign_key_constraint_on: status_id

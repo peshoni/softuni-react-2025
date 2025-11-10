@@ -5,7 +5,7 @@ export interface TableNavbarProps {
     readonly preselectedOption?: string;
     readonly options: string[];
     readonly label: string;
-    readonly shouldShowAddButton: boolean;
+    readonly shouldShowAddButton: boolean; //TODO add object for enable disabe filtering
     readonly addClickedHandler: () => void;
     readonly filterSelectedHandler: (arg: string) => void;
 

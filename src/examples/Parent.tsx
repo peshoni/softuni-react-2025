@@ -29,7 +29,7 @@ export default function Parent() {
             console.log('UNMOUNT...');
             //globalThis.removeEventListener('keypress', keyPressHandler);
         };
-    }, []);
+    },[]);
 
  
     return (

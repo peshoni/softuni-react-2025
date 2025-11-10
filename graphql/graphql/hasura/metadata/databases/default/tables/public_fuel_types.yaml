@@ -1,4 +1,0 @@
-table:
-  name: fuel_types
-  schema: public
-is_enum: true

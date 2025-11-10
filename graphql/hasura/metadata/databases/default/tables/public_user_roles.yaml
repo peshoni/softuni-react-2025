@@ -1,7 +1,6 @@
 table:
   name: user_roles
   schema: public
-is_enum: true
 array_relationships:
   - name: users
     using:
