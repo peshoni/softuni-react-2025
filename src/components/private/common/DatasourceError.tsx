@@ -5,13 +5,13 @@ const MyPaper = styled(Paper)(({ theme }) => ({
     height: '200px',
     margin: '10px',
     fontWeight: 'bold',
-    color: theme.palette.grey[500],
+    color: theme.palette.warning.dark,
     alignContent: 'center' 
 }));
-export default function EmptyDatasource() {
+export default function DatasourceError() {
     return (
-        <MyPaper>
-            No records were found
+        <MyPaper >
+            Service is temporary unavailable
         </MyPaper>
     );
 }

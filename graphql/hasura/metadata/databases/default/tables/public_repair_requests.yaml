@@ -2,9 +2,17 @@ table:
   name: repair_requests
   schema: public
 object_relationships:
-  - name: user
+  - name: mechanic
     using:
       foreign_key_constraint_on: mechanic_id
   - name: vehicle
     using:
-      foreign_key_constraint_on: vehcile_id
+      foreign_key_constraint_on: vehicle_id
+array_relationships:
+  - name: requests_logs
+    using:
+      foreign_key_constraint_on:
+        column: repair_request_id
+        table:
+          name: requests_logs
+          schema: public

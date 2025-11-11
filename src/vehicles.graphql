@@ -1,3 +1,13 @@
+query GetVehicleStatuses {
+  vehicle_statuses(order_by: {weight: asc}) {
+    id
+    value
+    content
+    weight
+    color
+  }
+}
+
 query GetVehicles($limit: Int, $offset: Int, $condition: vehicles_bool_exp! = {}, $orderBy: [vehicles_order_by!] = {created_at: asc}) {
   vehicles(where: $condition, limit: $limit, offset: $offset, order_by: $orderBy) {
     ...vehicle

@@ -1,0 +1,40 @@
+query GetRepairRequests($limit: Int, $offset: Int, $condition: repair_requests_bool_exp! = {}, $orderBy: [repair_requests_order_by!] = {created_at: asc}) {
+  repair_requests(where: $condition, limit: $limit, offset: $offset, order_by: $orderBy) {
+    ...repair_request
+  }
+  repair_requests_aggregate(where: $condition) {
+    aggregate {
+      count
+    }
+  }
+}
+
+fragment repair_request on repair_requests {
+  id
+  created_at
+  updated_at
+  requests_logs {
+    ...request_log
+  }
+  mechanic_id
+  mechanic {
+    ...user
+  }
+  vehicle_id
+  vehicle {
+    ...vehicle
+  }
+}
+
+fragment request_log on requests_logs {
+  id
+  created_at
+  updated_at
+  editable
+  short_description
+  long_description
+  repair_request_id
+  user {
+    ...user
+  }
+}

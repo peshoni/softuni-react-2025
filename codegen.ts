@@ -13,8 +13,9 @@ const config: CodegenConfig = {
     config: {
         skipTypename: true,
         // constEnums: false,
-        enumsAsTypes: true,
-        constEnums: true,
+        enumsAsTypes: false,
+        constEnums: false,
+        // erasableSyntaxOnly:false,
         namingConvention: {
             enumValues: "keep",
         },

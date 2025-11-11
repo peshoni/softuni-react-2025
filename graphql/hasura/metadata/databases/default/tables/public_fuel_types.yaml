@@ -1,6 +1,7 @@
 table:
   name: fuel_types
   schema: public
+is_enum: true
 array_relationships:
   - name: vehicles
     using:

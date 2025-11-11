@@ -27,7 +27,7 @@ services:
     volumes: # mounted in this directory, see below
       - ./graphql/volumes/postgres/db_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: postgrespassword
   ###
   graphql-engine:
     container_name: softuni_hasura
@@ -42,7 +42,7 @@ services:
     environment:
       # HASURA_GRAPHQL_MiGRATTIONS_DIR: /metadata
       # HASURA_GRAPHQL_METADATA_DIR: /migrations
-      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/postgres
       ## enable the console served by server
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
       ## enable debugging mode. It is recommended to disable this in production

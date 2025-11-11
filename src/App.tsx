@@ -7,6 +7,8 @@ import ApplicationBar from './components/private/ApplicationBar';
 // import UsersListExample from './components/private/users/UsersListExample';
 import UsersList from './components/private/users/UsersList';
 import VehiclesList from './components/private/vehicles/VehiclesList';
+import RepairRequestsList from './components/private/repair-requests/RepairRequestsList';
+import RepairRequestDetails from './components/private/repair-requests/RepairRequestDetails';
 // import UsersList from './components/private/users/UsersList';
 
 function App() {
@@ -14,12 +16,12 @@ function App() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [userAdded, setUser] = useState({} as UserFragment);
   // const [isServerOffline, setIsServerOffline] = useState(false);
-// console.log(userAdded,isServerOffline)
+  // console.log(userAdded,isServerOffline)
   // const { data, loading, error } = useLoginQuery({ variables: { email: 'pesho', password: 'pesho' } });
   // console.log(data, loading, error);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [mutate] = useRegisterMutation({  });
+  const [mutate] = useRegisterMutation({});
 
   useEffect(() => {
     console.log('MOUNT...');
@@ -41,7 +43,7 @@ function App() {
     // }).catch(e => {
     //   if (e instanceof ApolloError) {
     //     console.log(e);
-    //     setIsServerOffline(true);
+    //     // setIsServerOffline(true);
     //   }
     // });
     // console.log(data, loading, error ); 
@@ -51,8 +53,11 @@ function App() {
     <>
       <ApplicationBar />
       {/* <CarServiceLanding/> */}
-      <UsersList/>
+      {/* <UsersList /> */}
+      <RepairRequestDetails />
       {/* <VehiclesList/> */}
+      {/* <RepairRequestsList /> */}
+
 
       {/* <h1>hello world</h1>
       <button onClick={() => setIsParentVisible((curr) => !curr)}>toggle</button>

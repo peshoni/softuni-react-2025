@@ -9,21 +9,17 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { Box, LinearProgress } from '@mui/material';
 import TableNavbar from '../common/TableNavbar';
-import { useGetUsersQuery, type UserFragment } from '../../../../graphql/generated';
+import { Order_By, User_Roles_Enum, useGetUsersQuery, type UserFragment, type Users_Bool_Exp } from '../../../../graphql/generated';
 import RowContextMenu from '../common/RowContextMenu';
+import EmptyDatasource from '../common/EmptyDataSources';
+import { fromIsoDate } from '../../../utils/dateUtils';
+import type { ColumnSettings } from '../common/table-interfaces';
+import DatasourceError from '../common/DatasourceError';
 
 
-type AllowedColumns = (keyof (UserFragment & { actions: ''; }));
-
-interface ColumnSettings {
-  property: AllowedColumns;
-  label: string;
-  minWidth?: number;
-  align?: 'left' | 'right' | 'center';
-  format?: (value: number) => string;
-}
-
-const columns: readonly ColumnSettings[] = [
+const columns: readonly ColumnSettings<UserFragment>[] = [
+  { property: 'created_at', label: 'Created', minWidth: 100, formatDate: (value) => fromIsoDate(value) },
+  { property: 'updated_at', label: 'Updated', minWidth: 100, formatDate: (value) => fromIsoDate(value) },
   { property: 'name', label: 'Name', minWidth: 100 },
   { property: 'surname', label: 'Surname', minWidth: 100 },
   { property: 'family', label: 'Family', minWidth: 100 },
@@ -44,18 +40,22 @@ const columns: readonly ColumnSettings[] = [
 
 
 export default function UsersList() {
+  const userRoles = ['all', ...Object.values(User_Roles_Enum).map(e => e.toString())];
   const rowsPerPageOptions = [5, 10, 15];
   //const offset: number = this.paginator.pageIndex * this.paginator.pageSize;
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
-  const { data, loading, error } = useGetUsersQuery({ variables: { limit: rowsPerPage, offset: page * rowsPerPage, condition: {}, orderBy: { name: 'asc' } } });
-  let aggregatedCount: number = 0;
+
+  const [condition, setCondition] = useState({});
+
+  const { data, loading, error } = useGetUsersQuery({
+    variables: { limit: rowsPerPage, offset: page * rowsPerPage, condition: condition, orderBy: { name: Order_By.asc } }
+  });
+
 
   console.log(data, loading, error);
-
   useEffect(() => { // Listens for the data changes
-    console.log('data changed', data);
-    aggregatedCount = data?.users_aggregate.aggregate?.count ?? 0;
+    console.log('data changed');
   }, [data]);
 
   //TODo: error handling
@@ -72,7 +72,8 @@ export default function UsersList() {
   };
 
   const filterSelectedHandler = (event: string) => {
-    console.log('child -> parent' + event);
+    const condition: Users_Bool_Exp = event === 'all' ? {} : { role: { _eq: event as User_Roles_Enum } };
+    setCondition(condition);
   };
   const addClickedHandler = () => {
     console.log('child -> parent: add click');
@@ -87,73 +88,80 @@ export default function UsersList() {
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-
       <TableNavbar
         label={'Users list'}
         shouldShowAddButton={true}
-        preselectedOption=''
-        options={['a', 'b']}
+        preselectedOption='all'
+        options={userRoles}
         addClickedHandler={addClickedHandler}
         filterSelectedHandler={filterSelectedHandler}
       ></TableNavbar>
-
-      <TableContainer sx={{ height: '100%' }}>
-        <Box sx={{ width: '100%' }}>
-          {loading && <LinearProgress />}
-        </Box>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.property}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-
-          <TableBody>
-            {data?.users.map((user) => {
-              return (
-                <TableRow hover tabIndex={-1} key={user.id}>
-                  {columns.map((column) => {
-                    return processColumn(column, user);
-                  })}
+      {(data?.users_aggregate.aggregate?.count || !error) ? (
+        <div>
+          <TableContainer sx={{ height: '100%' }}>
+            <Box sx={{ width: '100%' }}>
+              {loading && <LinearProgress />}
+            </Box>
+            <Table stickyHeader aria-label="sticky table">
+              <TableHead>
+                <TableRow>
+                  {columns.map((column) => (
+                    <TableCell
+                      key={column.property}
+                      align={column.align}
+                      style={{ minWidth: column.minWidth }}
+                    >
+                      {column.label}
+                    </TableCell>
+                  ))}
                 </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              </TableHead>
 
-      <TablePagination
-        rowsPerPageOptions={rowsPerPageOptions}
-        component="div"
-        count={aggregatedCount}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+              <TableBody>
+                {data?.users.map((user) => {
+                  return (
+                    <TableRow hover tabIndex={-1} key={user.id}>
+                      {columns.map((column) => {
+                        return processColumn(column, user);
+                      })}
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+          <TablePagination
+            rowsPerPageOptions={rowsPerPageOptions}
+            component="div"
+            count={data?.users_aggregate.aggregate?.count ?? 0}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </div>
+      ) : (
+        error ? <DatasourceError /> : <EmptyDatasource />
+      )}
     </Paper>
   );
 
 }
-function processColumn(column: ColumnSettings, user: UserFragment) {
+function processColumn(column: ColumnSettings<UserFragment>, user: UserFragment) {
   const value = user[column.property as keyof UserFragment];
   const cellValue = () => {
     switch (column.property) {
-      case 'name':
-      case 'surname':
-      case 'family':
-        return value; // same string value
+      case 'created_at':
+      case 'updated_at':
+        return column.formatDate?.(value) ?? '';
+      // case 'name':
+      // case 'surname':
+      // case 'family':
+      //   return value; // same string value
       case 'actions':
         return <RowContextMenu />;
-      default: return '';
+      default: return value;
     }
   };
 
