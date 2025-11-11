@@ -11,6 +11,10 @@ import RepairRequestsList from './components/private/repair-requests/RepairReque
 import RepairRequestDetails from './components/private/repair-requests/RepairRequestDetails';
 // import UsersList from './components/private/users/UsersList';
 
+import { Routes, Route } from 'react-router';
+import UserDetails from './components/private/users/UserDetails';
+import VehicleDetails from './components/private/vehicles/VehicleDetails';
+
 function App() {
   // const [isParentVisible, setIsParentVisible] = useState(true);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -52,9 +56,25 @@ function App() {
   return (
     <>
       <ApplicationBar />
+      
+      <Routes> 
+        {/* https://reactrouter.com/home */}
+        <Route path='/' element={<div>Home Page</div>} />
+        <Route path='/users' element={<UsersList />} />
+        <Route path='/users/:id' element={<UserDetails />} />
+        <Route path='/vehicles' element={<VehiclesList />} />
+        <Route path='/vehicles/:id' element={<VehicleDetails />} />
+        <Route path='/repair-requests' element={<RepairRequestsList />} />
+
+        <Route path='/repair-requests/:id' element={<RepairRequestDetails />} />
+        <Route path='*' element={<div>404 Not Found</div>} />
+
+
+      </Routes>
+      {/* <ApplicationBar /> */}
       {/* <CarServiceLanding/> */}
       {/* <UsersList /> */}
-      <RepairRequestDetails />
+      {/* <RepairRequestDetails /> */}
       {/* <VehiclesList/> */}
       {/* <RepairRequestsList /> */}
 

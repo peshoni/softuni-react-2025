@@ -17,8 +17,13 @@ import Typography from '@mui/material/Typography';
 import type { Requests_Logs, UserFragment, Users } from '../../../../graphql/generated';
 import { TextareaAutosize } from '@mui/material';
 import Log from './Log';
+import { useLocation, useParams } from 'react-router';
 
 export default function RepairRequestDetails() {
+    let { id } = useParams<{ id: string }>();
+    const loc = useLocation();
+    console.log('RepairRequestDetails id=', id);
+
     const currentUserId = 'uuuy';
     const logs: Requests_Logs[] = [
         {
