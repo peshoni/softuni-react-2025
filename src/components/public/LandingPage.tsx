@@ -57,10 +57,10 @@ export default function CarServiceLanding() {
             <Button color="inherit">Services</Button>
             <Button color="inherit">Contact</Button> */}
             <Button variant="outlined" color="primary">
-              Login
+              Вход
             </Button>
             <Button variant="contained" color="primary">
-              Register
+              Регистрация
             </Button>
           </Box>
         </Toolbar>
@@ -81,7 +81,7 @@ export default function CarServiceLanding() {
                 fontWeight="bold"
                 gutterBottom
               >
-                Professional Car Service You Can Trust
+                Професионален автомобилен сервиз, на който можете да се доверите
               </Typography>
               <Typography variant="body1" color="text.secondary" mb={4}>
                 We take pride in offering top-quality automotive care,
@@ -149,7 +149,7 @@ export default function CarServiceLanding() {
       {/* Footer */}
       <Box sx={{ bgcolor: "#0d0d0d", color: "#ccc", py: 3, textAlign: "center" }}>
         <Typography variant="body2">
-          © {new Date().getFullYear()} AutoCare Pro. All rights reserved.
+          © {new Date().getFullYear()} AutoCare Pro. Всички права запазени.
         </Typography>
       </Box>
     </Box>

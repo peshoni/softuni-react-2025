@@ -14,6 +14,10 @@ import RepairRequestDetails from './components/private/repair-requests/RepairReq
 import { Routes, Route } from 'react-router';
 import UserDetails from './components/private/users/UserDetails';
 import VehicleDetails from './components/private/vehicles/VehicleDetails';
+import { PathSegments } from './components/routes/enums';
+import CarServiceLanding from './components/public/LandingPage';
+import PublicLayout from './components/public/PublicLayout';
+import AuthForm from './components/public/AuthForm';
 
 function App() {
   // const [isParentVisible, setIsParentVisible] = useState(true);
@@ -55,22 +59,47 @@ function App() {
 
   return (
     <>
-      <ApplicationBar />
-      
-      <Routes> 
-        {/* https://reactrouter.com/home */}
+      <Routes>
+        <Route path='/' element={<ApplicationBar />}>
+
+          <Route path={PathSegments.USERS} element={<UsersList />} >
+            <Route path=':id' element={<UserDetails />} />
+          </Route>
+
+          <Route path='vehicles' element={<VehiclesList />} >
+            <Route path=':id' element={<VehicleDetails />} />
+          </Route>
+
+          <Route path='repair-requests' element={<RepairRequestsList />}>
+            <Route path=':id' element={<RepairRequestDetails />} />
+          </Route>
+        </Route>
+
+        <Route element={<PublicLayout />}>
+          <Route path='landingPage' element={<CarServiceLanding />} />
+          <Route path='register' element={<AuthForm />} />
+          <Route path='login' element={<AuthForm />} />
+        </Route>
+
+
+        <Route path='*' element={<div>404 Not Found</div>} />
+      </Routes>
+      {/* <ApplicationBar /> */}
+
+      {/* https://reactrouter.com/home */}
+      {/* <Routes>
         <Route path='/' element={<div>Home Page</div>} />
+ 
         <Route path='/users' element={<UsersList />} />
         <Route path='/users/:id' element={<UserDetails />} />
         <Route path='/vehicles' element={<VehiclesList />} />
         <Route path='/vehicles/:id' element={<VehicleDetails />} />
         <Route path='/repair-requests' element={<RepairRequestsList />} />
-
         <Route path='/repair-requests/:id' element={<RepairRequestDetails />} />
         <Route path='*' element={<div>404 Not Found</div>} />
 
 
-      </Routes>
+      </Routes> */}
       {/* <ApplicationBar /> */}
       {/* <CarServiceLanding/> */}
       {/* <UsersList /> */}

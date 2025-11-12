@@ -2,6 +2,12 @@ table:
   name: requests_logs
   schema: public
 object_relationships:
+  - name: repair_request
+    using:
+      foreign_key_constraint_on: request_id
   - name: user
     using:
-      foreign_key_constraint_on: created_by
+      foreign_key_constraint_on: author_id
+  - name: user_role
+    using:
+      foreign_key_constraint_on: author_role_id

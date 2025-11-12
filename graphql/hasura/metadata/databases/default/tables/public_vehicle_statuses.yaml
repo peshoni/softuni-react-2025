@@ -1,11 +1,3 @@
 table:
   name: vehicle_statuses
   schema: public
-array_relationships:
-  - name: vehicles
-    using:
-      foreign_key_constraint_on:
-        column: status_id
-        table:
-          name: vehicles
-          schema: public

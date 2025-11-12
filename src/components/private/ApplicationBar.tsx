@@ -3,7 +3,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import CssBaseline from '@mui/material/CssBaseline';
-import MuiAppBar,  { type AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
+import MuiAppBar, { type AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
@@ -21,8 +21,14 @@ import CommuteIcon from '@mui/icons-material/Commute';
 import CarRepairIcon from '@mui/icons-material/CarRepair';
 
 import UserContextMenu from './UserContextMenu';
-import { Route, Routes } from 'react-router';
+import { Outlet, Route, Routes, useNavigate } from 'react-router';
 import UsersList from './users/UsersList';
+import { Navigate } from 'react-router';
+import RepairRequestDetails from './repair-requests/RepairRequestDetails';
+import RepairRequestsList from './repair-requests/RepairRequestsList';
+import UserDetails from './users/UserDetails';
+import VehicleDetails from './vehicles/VehicleDetails';
+import VehiclesList from './vehicles/VehiclesList';
 
 const drawerWidth = 240;
 
@@ -92,10 +98,11 @@ interface AppBarProps extends MuiAppBarProps {
 }
 
 export default function ApplicationBar() {
+  const navigate = useNavigate();
   const [auth] = React.useState(true);
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
- 
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -104,17 +111,21 @@ export default function ApplicationBar() {
     setOpen(false);
   };
 
-  const handleMenuClick = (value: string) => { 
-    console.log(value);
+  const handleMenuClick = (value: string) => {
+    console.log("/" + value);
+    navigate('/' + value);
+    // return <Navigate to={value}/>
   };
 
   const menuItems = [
-    { label: 'Users', icon: <GroupIcon /> },
-    { label: 'Vehicles', icon: <CommuteIcon /> },
-    { label: 'Repair requests', icon: <CarRepairIcon /> },
+    { label: 'Users', icon: <GroupIcon />, path: 'users' },
+    { label: 'Vehicles', icon: <CommuteIcon />, path: 'vehicles' },
+    { label: 'Repair requests', icon: <CarRepairIcon />, path: 'repair-requests' },
   ];
 
   return (
+
+
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
@@ -132,7 +143,7 @@ export default function ApplicationBar() {
           </IconButton>
 
           <Typography variant="h6" noWrap component="div" width={'100%'} textAlign={'start'}>
-            Cars service
+            Автосервиз
           </Typography>
 
           {/* The context menu for an authorized user */}
@@ -163,12 +174,12 @@ export default function ApplicationBar() {
           </IconButton>
         </DrawerHeader>
 
-        <Divider />
+        {/* <Divider /> */}
 
         <List>
           {menuItems.map((menu) => (
             <ListItem key={menu.label} disablePadding>
-              <ListItemButton onClick={() => handleMenuClick(menu.label)}>
+              <ListItemButton onClick={() => handleMenuClick(menu.path)}>
                 <ListItemIcon >
                   {menu.icon}
                 </ListItemIcon>
@@ -180,12 +191,9 @@ export default function ApplicationBar() {
         <Divider />
       </Drawer>
       <Main open={open}>
-        {/* <Paper >
-        <h1>Welcome</h1>
-         </Paper> */}
-        {/* OUTLET... */}
 
-          
+        <Outlet />
+       
       </Main>
     </Box>
   );

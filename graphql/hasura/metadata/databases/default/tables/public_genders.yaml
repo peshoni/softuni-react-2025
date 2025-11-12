@@ -1,12 +1,3 @@
 table:
   name: genders
   schema: public
-is_enum: true
-array_relationships:
-  - name: users
-    using:
-      foreign_key_constraint_on:
-        column: gender
-        table:
-          name: users
-          schema: public

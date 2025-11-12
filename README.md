@@ -93,6 +93,7 @@ docker compose --env-file .env up --build -d
 cd .\graphql\
 npx hasura migrate apply --database-name "default"
 npx hasura migrate apply --database-name "default" --admin-secret ""
+npx hasura seed apply --database-name "default"
 
 npx hasura console --admin-secret "softuniReactAdminSecret"
 

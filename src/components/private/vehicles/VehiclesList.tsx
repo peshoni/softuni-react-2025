@@ -20,7 +20,7 @@ const columns: readonly ColumnSettings<VehicleFragment>[] = [
     { property: 'updated_at', label: 'Updated', minWidth: 100, formatDate: (value) => fromIsoDate(value) },
     { property: 'make', label: 'Make', minWidth: 100 },
     { property: 'model', label: 'Model', minWidth: 100 },
-    { property: 'mileage', label: 'Mileage', minWidth: 100 },
+ 
     // {
     //   id: 'population',
     //   label: 'Population',
@@ -40,7 +40,7 @@ const columns: readonly ColumnSettings<VehicleFragment>[] = [
 export default function VehiclesList() {
     const statuses = useGetVehicleStatusesQuery().data?.vehicle_statuses;
     const vehicleStatuses = ['all'];
-    const enumValues: string[] = statuses?.map(e => e.value) ?? [];
+    const enumValues: string[] = statuses?.map(e => e.code) ?? [];
     vehicleStatuses.push(...enumValues);
     const rowsPerPageOptions = [5, 10, 15];
     //const offset: number = this.paginator.pageIndex * this.paginator.pageSize;
@@ -69,7 +69,7 @@ export default function VehiclesList() {
     };
 
     const filterSelectedHandler = (event: string) => {
-        const criteria = statuses?.find((e) => e.value === event);
+        const criteria = statuses?.find((e) => e.code === event);
         const condition: Vehicles_Bool_Exp = criteria ? { status_id: { _eq: criteria.id } } : {};
         setCondition(condition);
     };

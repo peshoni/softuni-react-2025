@@ -1,10 +1,11 @@
+
 query GetVehicleStatuses {
   vehicle_statuses(order_by: {weight: asc}) {
     id
-    value
-    content
-    weight
+    code
+    name
     color
+    weight 
   }
 }
 
@@ -24,15 +25,18 @@ fragment vehicle on vehicles {
   created_at
   updated_at
   vin
-  plate
+  plate_number
   model
   year
   make
-  mileage
-  fuel
-  color
+  fuel_type {
+    id
+    name
+    code
+  }
   vehicle_status {
-    value
-    content
+    id
+    name
+    code
   }
 }

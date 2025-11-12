@@ -4,7 +4,10 @@ table:
 object_relationships:
   - name: fuel_type
     using:
-      foreign_key_constraint_on: fuel
+      foreign_key_constraint_on: fuel_type_id
+  - name: user
+    using:
+      foreign_key_constraint_on: owner_id
   - name: vehicle_status
     using:
       foreign_key_constraint_on: status_id

@@ -9,7 +9,7 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { Box, LinearProgress } from '@mui/material';
 import TableNavbar from '../common/TableNavbar';
-import { Order_By, User_Roles_Enum, useGetUsersQuery, type UserFragment, type Users_Bool_Exp } from '../../../../graphql/generated';
+import { Order_By, useGetUserRolesQuery, useGetUsersQuery, type RoleFragment, type UserFragment, type Users_Bool_Exp } from '../../../../graphql/generated';
 import RowContextMenu from '../common/RowContextMenu';
 import EmptyDatasource from '../common/EmptyDataSources';
 import { fromIsoDate } from '../../../utils/dateUtils';
@@ -18,11 +18,12 @@ import DatasourceError from '../common/DatasourceError';
 
 
 const columns: readonly ColumnSettings<UserFragment>[] = [
-  { property: 'created_at', label: 'Created', minWidth: 100, formatDate: (value) => fromIsoDate(value) },
-  { property: 'updated_at', label: 'Updated', minWidth: 100, formatDate: (value) => fromIsoDate(value) },
-  { property: 'name', label: 'Name', minWidth: 100 },
-  { property: 'surname', label: 'Surname', minWidth: 100 },
-  { property: 'family', label: 'Family', minWidth: 100 },
+  { property: 'created_at', label: 'Създаден', minWidth: 80, formatDate: (value) => fromIsoDate(value) },
+  { property: 'updated_at', label: 'Промемен', minWidth: 80, formatDate: (value) => fromIsoDate(value) },
+  { property: 'user_role', label: 'Роля', minWidth: 100 },
+  { property: 'first_name', label: 'Име', minWidth: 100 },
+  { property: 'last_name', label: 'Фамилия', minWidth: 100 },
+  // { property: 'family', label: 'Family', minWidth: 100 },
   // {
   //   id: 'population',
   //   label: 'Population',
@@ -40,7 +41,8 @@ const columns: readonly ColumnSettings<UserFragment>[] = [
 
 
 export default function UsersList() {
-  const userRoles = ['all', ...Object.values(User_Roles_Enum).map(e => e.toString())];
+  const roles : RoleFragment[] = useGetUserRolesQuery().data?.user_roles?? [];
+  const userRoles = ['all', ...Object.values(roles.map(e => e.code  ) ) ];
   const rowsPerPageOptions = [5, 10, 15];
   //const offset: number = this.paginator.pageIndex * this.paginator.pageSize;
   const [page, setPage] = useState(0);
@@ -49,7 +51,7 @@ export default function UsersList() {
   const [condition, setCondition] = useState({});
 
   const { data, loading, error } = useGetUsersQuery({
-    variables: { limit: rowsPerPage, offset: page * rowsPerPage, condition: condition, orderBy: { name: Order_By.asc } }
+    variables: { limit: rowsPerPage, offset: page * rowsPerPage, condition: condition, orderBy: { created_at: Order_By.asc } }
   });
 
 
@@ -72,7 +74,10 @@ export default function UsersList() {
   };
 
   const filterSelectedHandler = (event: string) => {
-    const condition: Users_Bool_Exp = event === 'all' ? {} : { role: { _eq: event as User_Roles_Enum } };
+    console.log(event);
+    console.log(roles)
+    const role = roles.find(r=>r.code === event)
+    const condition: Users_Bool_Exp = role ?{ role_id:  { _eq: role.id } } : {}  ;
     setCondition(condition);
   };
   const addClickedHandler = () => {
@@ -155,6 +160,8 @@ function processColumn(column: ColumnSettings<UserFragment>, user: UserFragment)
       case 'created_at':
       case 'updated_at':
         return column.formatDate?.(value) ?? '';
+      case 'user_role' :
+        return   (value as RoleFragment).name;
       // case 'name':
       // case 'surname':
       // case 'family':

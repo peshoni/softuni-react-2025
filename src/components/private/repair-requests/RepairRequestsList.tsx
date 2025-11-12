@@ -16,8 +16,9 @@ import { fromIsoDate } from '../../../utils/dateUtils';
 import type { ColumnSettings } from '../common/table-interfaces';
 
 const columns: readonly ColumnSettings<Repair_RequestFragment>[] = [
-    { property: 'created_at', label: 'Created', minWidth: 100, formatDate: (value) => fromIsoDate(value) },
-    { property: 'updated_at', label: 'Updated', minWidth: 100, formatDate: (value) => fromIsoDate(value) },
+    { property: 'created_at', label: 'създаден', minWidth: 100, formatDate: (value) => fromIsoDate(value) },
+    { property: 'updated_at', label: 'променен', minWidth: 100, formatDate: (value) => fromIsoDate(value) },
+    { property: 'logsCount', label: 'коментари', minWidth: 100 },
     // { property: 'make', label: 'Make', minWidth: 100 },
     // { property: 'model', label: 'Model', minWidth: 100 },
     // { property: 'mileage', label: 'Mileage', minWidth: 100 },
@@ -38,6 +39,7 @@ const columns: readonly ColumnSettings<Repair_RequestFragment>[] = [
 
 
 export default function RepairRequestsList() {
+    console.log('OOOOOOOOOOOOOO');
     //const statuses = useGetVehicleStatusesQuery().data?.vehicle_statuses;
     const vehicleStatuses: string[] = [];// ['all'];
     // const enumValues: string[] = statuses?.map(e => e.value) ?? [];
@@ -48,13 +50,11 @@ export default function RepairRequestsList() {
     const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
     const [condition, setCondition] = useState({});
     const { data, loading, error } = useGetRepairRequestsQuery({ variables: { limit: rowsPerPage, offset: page * rowsPerPage, condition: condition, orderBy: { created_at: Order_By.asc } } });
-
-
     console.log(data, loading, error);
 
-    useEffect(() => { // Listens for the data changes
-        console.log('data changed', data);
-    }, [data]);
+    // useEffect(() => { // Listens for the data changes
+    //     console.log('data changed', data);
+    // }, [data]);
 
     //TODo: error handling
 
@@ -152,6 +152,8 @@ function processColumn(column: ColumnSettings<Repair_RequestFragment>, user: Rep
             case 'created_at':
             case 'updated_at':
                 return column.formatDate?.(value) ?? '';
+            case 'logsCount':
+                return (value as { aggregate?: { count: number; }; }).aggregate?.count;
             // case 'make':
             // case 'model':
             // case 'mileage':

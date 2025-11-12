@@ -16,21 +16,8 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
-  timestamptz: { input: any; output: any; }
+  timestamp: { input: any; output: any; }
   uuid: { input: any; output: any; }
-};
-
-/** Boolean expression to compare columns of type "Boolean". All fields are combined with logical 'AND'. */
-export type Boolean_Comparison_Exp = {
-  _eq?: InputMaybe<Scalars['Boolean']['input']>;
-  _gt?: InputMaybe<Scalars['Boolean']['input']>;
-  _gte?: InputMaybe<Scalars['Boolean']['input']>;
-  _in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
-  _is_null?: InputMaybe<Scalars['Boolean']['input']>;
-  _lt?: InputMaybe<Scalars['Boolean']['input']>;
-  _lte?: InputMaybe<Scalars['Boolean']['input']>;
-  _neq?: InputMaybe<Scalars['Boolean']['input']>;
-  _nin?: InputMaybe<Array<Scalars['Boolean']['input']>>;
 };
 
 /** Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'. */
@@ -89,32 +76,11 @@ export enum Cursor_Ordering {
 
 /** columns and relationships of "fuel_types" */
 export type Fuel_Types = {
-  content: Scalars['String']['output'];
-  value: Scalars['String']['output'];
-  /** An array relationship */
-  vehicles: Array<Vehicles>;
-  /** An aggregate relationship */
-  vehicles_aggregate: Vehicles_Aggregate;
-};
-
-
-/** columns and relationships of "fuel_types" */
-export type Fuel_TypesVehiclesArgs = {
-  distinct_on?: InputMaybe<Array<Vehicles_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  order_by?: InputMaybe<Array<Vehicles_Order_By>>;
-  where?: InputMaybe<Vehicles_Bool_Exp>;
-};
-
-
-/** columns and relationships of "fuel_types" */
-export type Fuel_TypesVehicles_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Vehicles_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  order_by?: InputMaybe<Array<Vehicles_Order_By>>;
-  where?: InputMaybe<Vehicles_Bool_Exp>;
+  code: Scalars['String']['output'];
+  created_at: Scalars['timestamp']['output'];
+  id: Scalars['uuid']['output'];
+  name: Scalars['String']['output'];
+  updated_at?: Maybe<Scalars['timestamp']['output']>;
 };
 
 /** aggregated selection of "fuel_types" */
@@ -142,61 +108,46 @@ export type Fuel_Types_Bool_Exp = {
   _and?: InputMaybe<Array<Fuel_Types_Bool_Exp>>;
   _not?: InputMaybe<Fuel_Types_Bool_Exp>;
   _or?: InputMaybe<Array<Fuel_Types_Bool_Exp>>;
-  content?: InputMaybe<String_Comparison_Exp>;
-  value?: InputMaybe<String_Comparison_Exp>;
-  vehicles?: InputMaybe<Vehicles_Bool_Exp>;
-  vehicles_aggregate?: InputMaybe<Vehicles_Aggregate_Bool_Exp>;
+  code?: InputMaybe<String_Comparison_Exp>;
+  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  name?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "fuel_types" */
 export enum Fuel_Types_Constraint {
-  /** unique or primary key constraint on columns "content" */
-  fuel_types_content_key = 'fuel_types_content_key',
-  /** unique or primary key constraint on columns "value" */
+  /** unique or primary key constraint on columns "code" */
+  fuel_types_code_key = 'fuel_types_code_key',
+  /** unique or primary key constraint on columns "id" */
   fuel_types_pkey = 'fuel_types_pkey'
 }
 
-export enum Fuel_Types_Enum {
-  /** fuel-biodiesel */
-  biodiesel = 'biodiesel',
-  /** fuel-diesel */
-  diesel = 'diesel',
-  /** fuel-electricity */
-  electricity = 'electricity',
-  /** fuel-ethanol */
-  ethanol = 'ethanol',
-  /** fuel-petrol */
-  petrol = 'petrol',
-  /** fuel-propane */
-  propane = 'propane'
-}
-
-/** Boolean expression to compare columns of type "fuel_types_enum". All fields are combined with logical 'AND'. */
-export type Fuel_Types_Enum_Comparison_Exp = {
-  _eq?: InputMaybe<Fuel_Types_Enum>;
-  _in?: InputMaybe<Array<Fuel_Types_Enum>>;
-  _is_null?: InputMaybe<Scalars['Boolean']['input']>;
-  _neq?: InputMaybe<Fuel_Types_Enum>;
-  _nin?: InputMaybe<Array<Fuel_Types_Enum>>;
-};
-
 /** input type for inserting data into table "fuel_types" */
 export type Fuel_Types_Insert_Input = {
-  content?: InputMaybe<Scalars['String']['input']>;
-  value?: InputMaybe<Scalars['String']['input']>;
-  vehicles?: InputMaybe<Vehicles_Arr_Rel_Insert_Input>;
+  code?: InputMaybe<Scalars['String']['input']>;
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamp']['input']>;
 };
 
 /** aggregate max on columns */
 export type Fuel_Types_Max_Fields = {
-  content?: Maybe<Scalars['String']['output']>;
-  value?: Maybe<Scalars['String']['output']>;
+  code?: Maybe<Scalars['String']['output']>;
+  created_at?: Maybe<Scalars['timestamp']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamp']['output']>;
 };
 
 /** aggregate min on columns */
 export type Fuel_Types_Min_Fields = {
-  content?: Maybe<Scalars['String']['output']>;
-  value?: Maybe<Scalars['String']['output']>;
+  code?: Maybe<Scalars['String']['output']>;
+  created_at?: Maybe<Scalars['timestamp']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamp']['output']>;
 };
 
 /** response of any mutation on the table "fuel_types" */
@@ -223,28 +174,39 @@ export type Fuel_Types_On_Conflict = {
 
 /** Ordering options when selecting data from "fuel_types". */
 export type Fuel_Types_Order_By = {
-  content?: InputMaybe<Order_By>;
-  value?: InputMaybe<Order_By>;
-  vehicles_aggregate?: InputMaybe<Vehicles_Aggregate_Order_By>;
+  code?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  name?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
 };
 
 /** primary key columns input for table: fuel_types */
 export type Fuel_Types_Pk_Columns_Input = {
-  value: Scalars['String']['input'];
+  id: Scalars['uuid']['input'];
 };
 
 /** select columns of table "fuel_types" */
 export enum Fuel_Types_Select_Column {
   /** column name */
-  content = 'content',
+  code = 'code',
   /** column name */
-  value = 'value'
+  created_at = 'created_at',
+  /** column name */
+  id = 'id',
+  /** column name */
+  name = 'name',
+  /** column name */
+  updated_at = 'updated_at'
 }
 
 /** input type for updating data in table "fuel_types" */
 export type Fuel_Types_Set_Input = {
-  content?: InputMaybe<Scalars['String']['input']>;
-  value?: InputMaybe<Scalars['String']['input']>;
+  code?: InputMaybe<Scalars['String']['input']>;
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamp']['input']>;
 };
 
 /** Streaming cursor of the table "fuel_types" */
@@ -257,16 +219,25 @@ export type Fuel_Types_Stream_Cursor_Input = {
 
 /** Initial value of the column from where the streaming should start */
 export type Fuel_Types_Stream_Cursor_Value_Input = {
-  content?: InputMaybe<Scalars['String']['input']>;
-  value?: InputMaybe<Scalars['String']['input']>;
+  code?: InputMaybe<Scalars['String']['input']>;
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamp']['input']>;
 };
 
 /** update columns of table "fuel_types" */
 export enum Fuel_Types_Update_Column {
   /** column name */
-  content = 'content',
+  code = 'code',
   /** column name */
-  value = 'value'
+  created_at = 'created_at',
+  /** column name */
+  id = 'id',
+  /** column name */
+  name = 'name',
+  /** column name */
+  updated_at = 'updated_at'
 }
 
 export type Fuel_Types_Updates = {
@@ -278,32 +249,11 @@ export type Fuel_Types_Updates = {
 
 /** columns and relationships of "genders" */
 export type Genders = {
-  content: Scalars['String']['output'];
-  /** An array relationship */
-  users: Array<Users>;
-  /** An aggregate relationship */
-  users_aggregate: Users_Aggregate;
-  value: Scalars['String']['output'];
-};
-
-
-/** columns and relationships of "genders" */
-export type GendersUsersArgs = {
-  distinct_on?: InputMaybe<Array<Users_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  order_by?: InputMaybe<Array<Users_Order_By>>;
-  where?: InputMaybe<Users_Bool_Exp>;
-};
-
-
-/** columns and relationships of "genders" */
-export type GendersUsers_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Users_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  order_by?: InputMaybe<Array<Users_Order_By>>;
-  where?: InputMaybe<Users_Bool_Exp>;
+  code: Scalars['String']['output'];
+  created_at: Scalars['timestamp']['output'];
+  id: Scalars['uuid']['output'];
+  name: Scalars['String']['output'];
+  updated_at?: Maybe<Scalars['timestamp']['output']>;
 };
 
 /** aggregated selection of "genders" */
@@ -331,55 +281,46 @@ export type Genders_Bool_Exp = {
   _and?: InputMaybe<Array<Genders_Bool_Exp>>;
   _not?: InputMaybe<Genders_Bool_Exp>;
   _or?: InputMaybe<Array<Genders_Bool_Exp>>;
-  content?: InputMaybe<String_Comparison_Exp>;
-  users?: InputMaybe<Users_Bool_Exp>;
-  users_aggregate?: InputMaybe<Users_Aggregate_Bool_Exp>;
-  value?: InputMaybe<String_Comparison_Exp>;
+  code?: InputMaybe<String_Comparison_Exp>;
+  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  name?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "genders" */
 export enum Genders_Constraint {
-  /** unique or primary key constraint on columns "content" */
-  genders_content_key = 'genders_content_key',
-  /** unique or primary key constraint on columns "value" */
+  /** unique or primary key constraint on columns "code" */
+  genders_code_key = 'genders_code_key',
+  /** unique or primary key constraint on columns "id" */
   genders_pkey = 'genders_pkey'
 }
 
-export enum Genders_Enum {
-  /** gender-female */
-  female = 'female',
-  /** gender-male */
-  male = 'male',
-  /** gender-other */
-  other = 'other'
-}
-
-/** Boolean expression to compare columns of type "genders_enum". All fields are combined with logical 'AND'. */
-export type Genders_Enum_Comparison_Exp = {
-  _eq?: InputMaybe<Genders_Enum>;
-  _in?: InputMaybe<Array<Genders_Enum>>;
-  _is_null?: InputMaybe<Scalars['Boolean']['input']>;
-  _neq?: InputMaybe<Genders_Enum>;
-  _nin?: InputMaybe<Array<Genders_Enum>>;
-};
-
 /** input type for inserting data into table "genders" */
 export type Genders_Insert_Input = {
-  content?: InputMaybe<Scalars['String']['input']>;
-  users?: InputMaybe<Users_Arr_Rel_Insert_Input>;
-  value?: InputMaybe<Scalars['String']['input']>;
+  code?: InputMaybe<Scalars['String']['input']>;
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamp']['input']>;
 };
 
 /** aggregate max on columns */
 export type Genders_Max_Fields = {
-  content?: Maybe<Scalars['String']['output']>;
-  value?: Maybe<Scalars['String']['output']>;
+  code?: Maybe<Scalars['String']['output']>;
+  created_at?: Maybe<Scalars['timestamp']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamp']['output']>;
 };
 
 /** aggregate min on columns */
 export type Genders_Min_Fields = {
-  content?: Maybe<Scalars['String']['output']>;
-  value?: Maybe<Scalars['String']['output']>;
+  code?: Maybe<Scalars['String']['output']>;
+  created_at?: Maybe<Scalars['timestamp']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamp']['output']>;
 };
 
 /** response of any mutation on the table "genders" */
@@ -406,28 +347,39 @@ export type Genders_On_Conflict = {
 
 /** Ordering options when selecting data from "genders". */
 export type Genders_Order_By = {
-  content?: InputMaybe<Order_By>;
-  users_aggregate?: InputMaybe<Users_Aggregate_Order_By>;
-  value?: InputMaybe<Order_By>;
+  code?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  name?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
 };
 
 /** primary key columns input for table: genders */
 export type Genders_Pk_Columns_Input = {
-  value: Scalars['String']['input'];
+  id: Scalars['uuid']['input'];
 };
 
 /** select columns of table "genders" */
 export enum Genders_Select_Column {
   /** column name */
-  content = 'content',
+  code = 'code',
   /** column name */
-  value = 'value'
+  created_at = 'created_at',
+  /** column name */
+  id = 'id',
+  /** column name */
+  name = 'name',
+  /** column name */
+  updated_at = 'updated_at'
 }
 
 /** input type for updating data in table "genders" */
 export type Genders_Set_Input = {
-  content?: InputMaybe<Scalars['String']['input']>;
-  value?: InputMaybe<Scalars['String']['input']>;
+  code?: InputMaybe<Scalars['String']['input']>;
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamp']['input']>;
 };
 
 /** Streaming cursor of the table "genders" */
@@ -440,16 +392,25 @@ export type Genders_Stream_Cursor_Input = {
 
 /** Initial value of the column from where the streaming should start */
 export type Genders_Stream_Cursor_Value_Input = {
-  content?: InputMaybe<Scalars['String']['input']>;
-  value?: InputMaybe<Scalars['String']['input']>;
+  code?: InputMaybe<Scalars['String']['input']>;
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamp']['input']>;
 };
 
 /** update columns of table "genders" */
 export enum Genders_Update_Column {
   /** column name */
-  content = 'content',
+  code = 'code',
   /** column name */
-  value = 'value'
+  created_at = 'created_at',
+  /** column name */
+  id = 'id',
+  /** column name */
+  name = 'name',
+  /** column name */
+  updated_at = 'updated_at'
 }
 
 export type Genders_Updates = {
@@ -584,7 +545,7 @@ export type Mutation_RootDelete_Fuel_TypesArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Fuel_Types_By_PkArgs = {
-  value: Scalars['String']['input'];
+  id: Scalars['uuid']['input'];
 };
 
 
@@ -596,7 +557,7 @@ export type Mutation_RootDelete_GendersArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Genders_By_PkArgs = {
-  value: Scalars['String']['input'];
+  id: Scalars['uuid']['input'];
 };
 
 
@@ -632,7 +593,7 @@ export type Mutation_RootDelete_User_RolesArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_User_Roles_By_PkArgs = {
-  value: Scalars['String']['input'];
+  id: Scalars['uuid']['input'];
 };
 
 
@@ -994,9 +955,9 @@ export type Query_Root = {
   user_roles_aggregate: User_Roles_Aggregate;
   /** fetch data from the table: "user_roles" using primary key columns */
   user_roles_by_pk?: Maybe<User_Roles>;
-  /** An array relationship */
+  /** fetch data from the table: "users" */
   users: Array<Users>;
-  /** An aggregate relationship */
+  /** fetch aggregated fields from the table: "users" */
   users_aggregate: Users_Aggregate;
   /** fetch data from the table: "users" using primary key columns */
   users_by_pk?: Maybe<Users>;
@@ -1034,7 +995,7 @@ export type Query_RootFuel_Types_AggregateArgs = {
 
 
 export type Query_RootFuel_Types_By_PkArgs = {
-  value: Scalars['String']['input'];
+  id: Scalars['uuid']['input'];
 };
 
 
@@ -1057,7 +1018,7 @@ export type Query_RootGenders_AggregateArgs = {
 
 
 export type Query_RootGenders_By_PkArgs = {
-  value: Scalars['String']['input'];
+  id: Scalars['uuid']['input'];
 };
 
 
@@ -1126,7 +1087,7 @@ export type Query_RootUser_Roles_AggregateArgs = {
 
 
 export type Query_RootUser_Roles_By_PkArgs = {
-  value: Scalars['String']['input'];
+  id: Scalars['uuid']['input'];
 };
 
 
@@ -1200,19 +1161,26 @@ export type Query_RootVehicles_By_PkArgs = {
 
 /** columns and relationships of "repair_requests" */
 export type Repair_Requests = {
-  created_at: Scalars['timestamptz']['output'];
+  created_at: Scalars['timestamp']['output'];
+  customer_id: Scalars['uuid']['output'];
+  description?: Maybe<Scalars['String']['output']>;
   id: Scalars['uuid']['output'];
-  /** An object relationship */
-  mechanic?: Maybe<Users>;
-  mechanic_id?: Maybe<Scalars['uuid']['output']>;
+  requested_at: Scalars['timestamp']['output'];
   /** An array relationship */
   requests_logs: Array<Requests_Logs>;
   /** An aggregate relationship */
   requests_logs_aggregate: Requests_Logs_Aggregate;
-  updated_at: Scalars['timestamptz']['output'];
+  scheduled_for?: Maybe<Scalars['timestamp']['output']>;
+  status_id: Scalars['uuid']['output'];
+  title: Scalars['String']['output'];
+  updated_at?: Maybe<Scalars['timestamp']['output']>;
+  /** An object relationship */
+  user: Users;
   /** An object relationship */
   vehicle: Vehicles;
   vehicle_id: Scalars['uuid']['output'];
+  /** An object relationship */
+  vehicle_status: Vehicle_Statuses;
 };
 
 
@@ -1285,15 +1253,21 @@ export type Repair_Requests_Bool_Exp = {
   _and?: InputMaybe<Array<Repair_Requests_Bool_Exp>>;
   _not?: InputMaybe<Repair_Requests_Bool_Exp>;
   _or?: InputMaybe<Array<Repair_Requests_Bool_Exp>>;
-  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  customer_id?: InputMaybe<Uuid_Comparison_Exp>;
+  description?: InputMaybe<String_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
-  mechanic?: InputMaybe<Users_Bool_Exp>;
-  mechanic_id?: InputMaybe<Uuid_Comparison_Exp>;
+  requested_at?: InputMaybe<Timestamp_Comparison_Exp>;
   requests_logs?: InputMaybe<Requests_Logs_Bool_Exp>;
   requests_logs_aggregate?: InputMaybe<Requests_Logs_Aggregate_Bool_Exp>;
-  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  scheduled_for?: InputMaybe<Timestamp_Comparison_Exp>;
+  status_id?: InputMaybe<Uuid_Comparison_Exp>;
+  title?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  user?: InputMaybe<Users_Bool_Exp>;
   vehicle?: InputMaybe<Vehicles_Bool_Exp>;
   vehicle_id?: InputMaybe<Uuid_Comparison_Exp>;
+  vehicle_status?: InputMaybe<Vehicle_Statuses_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "repair_requests" */
@@ -1304,48 +1278,74 @@ export enum Repair_Requests_Constraint {
 
 /** input type for inserting data into table "repair_requests" */
 export type Repair_Requests_Insert_Input = {
-  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
+  customer_id?: InputMaybe<Scalars['uuid']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
-  mechanic?: InputMaybe<Users_Obj_Rel_Insert_Input>;
-  mechanic_id?: InputMaybe<Scalars['uuid']['input']>;
+  requested_at?: InputMaybe<Scalars['timestamp']['input']>;
   requests_logs?: InputMaybe<Requests_Logs_Arr_Rel_Insert_Input>;
-  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  scheduled_for?: InputMaybe<Scalars['timestamp']['input']>;
+  status_id?: InputMaybe<Scalars['uuid']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamp']['input']>;
+  user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
   vehicle?: InputMaybe<Vehicles_Obj_Rel_Insert_Input>;
   vehicle_id?: InputMaybe<Scalars['uuid']['input']>;
+  vehicle_status?: InputMaybe<Vehicle_Statuses_Obj_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
 export type Repair_Requests_Max_Fields = {
-  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  created_at?: Maybe<Scalars['timestamp']['output']>;
+  customer_id?: Maybe<Scalars['uuid']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
-  mechanic_id?: Maybe<Scalars['uuid']['output']>;
-  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  requested_at?: Maybe<Scalars['timestamp']['output']>;
+  scheduled_for?: Maybe<Scalars['timestamp']['output']>;
+  status_id?: Maybe<Scalars['uuid']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamp']['output']>;
   vehicle_id?: Maybe<Scalars['uuid']['output']>;
 };
 
 /** order by max() on columns of table "repair_requests" */
 export type Repair_Requests_Max_Order_By = {
   created_at?: InputMaybe<Order_By>;
+  customer_id?: InputMaybe<Order_By>;
+  description?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
-  mechanic_id?: InputMaybe<Order_By>;
+  requested_at?: InputMaybe<Order_By>;
+  scheduled_for?: InputMaybe<Order_By>;
+  status_id?: InputMaybe<Order_By>;
+  title?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
   vehicle_id?: InputMaybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type Repair_Requests_Min_Fields = {
-  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  created_at?: Maybe<Scalars['timestamp']['output']>;
+  customer_id?: Maybe<Scalars['uuid']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
-  mechanic_id?: Maybe<Scalars['uuid']['output']>;
-  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  requested_at?: Maybe<Scalars['timestamp']['output']>;
+  scheduled_for?: Maybe<Scalars['timestamp']['output']>;
+  status_id?: Maybe<Scalars['uuid']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamp']['output']>;
   vehicle_id?: Maybe<Scalars['uuid']['output']>;
 };
 
 /** order by min() on columns of table "repair_requests" */
 export type Repair_Requests_Min_Order_By = {
   created_at?: InputMaybe<Order_By>;
+  customer_id?: InputMaybe<Order_By>;
+  description?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
-  mechanic_id?: InputMaybe<Order_By>;
+  requested_at?: InputMaybe<Order_By>;
+  scheduled_for?: InputMaybe<Order_By>;
+  status_id?: InputMaybe<Order_By>;
+  title?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
   vehicle_id?: InputMaybe<Order_By>;
 };
@@ -1358,6 +1358,13 @@ export type Repair_Requests_Mutation_Response = {
   returning: Array<Repair_Requests>;
 };
 
+/** input type for inserting object relation for remote table "repair_requests" */
+export type Repair_Requests_Obj_Rel_Insert_Input = {
+  data: Repair_Requests_Insert_Input;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Repair_Requests_On_Conflict>;
+};
+
 /** on_conflict condition type for table "repair_requests" */
 export type Repair_Requests_On_Conflict = {
   constraint: Repair_Requests_Constraint;
@@ -1368,13 +1375,19 @@ export type Repair_Requests_On_Conflict = {
 /** Ordering options when selecting data from "repair_requests". */
 export type Repair_Requests_Order_By = {
   created_at?: InputMaybe<Order_By>;
+  customer_id?: InputMaybe<Order_By>;
+  description?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
-  mechanic?: InputMaybe<Users_Order_By>;
-  mechanic_id?: InputMaybe<Order_By>;
+  requested_at?: InputMaybe<Order_By>;
   requests_logs_aggregate?: InputMaybe<Requests_Logs_Aggregate_Order_By>;
+  scheduled_for?: InputMaybe<Order_By>;
+  status_id?: InputMaybe<Order_By>;
+  title?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
+  user?: InputMaybe<Users_Order_By>;
   vehicle?: InputMaybe<Vehicles_Order_By>;
   vehicle_id?: InputMaybe<Order_By>;
+  vehicle_status?: InputMaybe<Vehicle_Statuses_Order_By>;
 };
 
 /** primary key columns input for table: repair_requests */
@@ -1387,9 +1400,19 @@ export enum Repair_Requests_Select_Column {
   /** column name */
   created_at = 'created_at',
   /** column name */
+  customer_id = 'customer_id',
+  /** column name */
+  description = 'description',
+  /** column name */
   id = 'id',
   /** column name */
-  mechanic_id = 'mechanic_id',
+  requested_at = 'requested_at',
+  /** column name */
+  scheduled_for = 'scheduled_for',
+  /** column name */
+  status_id = 'status_id',
+  /** column name */
+  title = 'title',
   /** column name */
   updated_at = 'updated_at',
   /** column name */
@@ -1398,10 +1421,15 @@ export enum Repair_Requests_Select_Column {
 
 /** input type for updating data in table "repair_requests" */
 export type Repair_Requests_Set_Input = {
-  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
+  customer_id?: InputMaybe<Scalars['uuid']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
-  mechanic_id?: InputMaybe<Scalars['uuid']['input']>;
-  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  requested_at?: InputMaybe<Scalars['timestamp']['input']>;
+  scheduled_for?: InputMaybe<Scalars['timestamp']['input']>;
+  status_id?: InputMaybe<Scalars['uuid']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamp']['input']>;
   vehicle_id?: InputMaybe<Scalars['uuid']['input']>;
 };
 
@@ -1415,10 +1443,15 @@ export type Repair_Requests_Stream_Cursor_Input = {
 
 /** Initial value of the column from where the streaming should start */
 export type Repair_Requests_Stream_Cursor_Value_Input = {
-  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
+  customer_id?: InputMaybe<Scalars['uuid']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
-  mechanic_id?: InputMaybe<Scalars['uuid']['input']>;
-  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  requested_at?: InputMaybe<Scalars['timestamp']['input']>;
+  scheduled_for?: InputMaybe<Scalars['timestamp']['input']>;
+  status_id?: InputMaybe<Scalars['uuid']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamp']['input']>;
   vehicle_id?: InputMaybe<Scalars['uuid']['input']>;
 };
 
@@ -1427,9 +1460,19 @@ export enum Repair_Requests_Update_Column {
   /** column name */
   created_at = 'created_at',
   /** column name */
+  customer_id = 'customer_id',
+  /** column name */
+  description = 'description',
+  /** column name */
   id = 'id',
   /** column name */
-  mechanic_id = 'mechanic_id',
+  requested_at = 'requested_at',
+  /** column name */
+  scheduled_for = 'scheduled_for',
+  /** column name */
+  status_id = 'status_id',
+  /** column name */
+  title = 'title',
   /** column name */
   updated_at = 'updated_at',
   /** column name */
@@ -1445,16 +1488,19 @@ export type Repair_Requests_Updates = {
 
 /** columns and relationships of "requests_logs" */
 export type Requests_Logs = {
-  created_at: Scalars['timestamptz']['output'];
-  created_by: Scalars['uuid']['output'];
-  editable: Scalars['Boolean']['output'];
+  author_id: Scalars['uuid']['output'];
+  author_role_id: Scalars['uuid']['output'];
+  created_at: Scalars['timestamp']['output'];
   id: Scalars['uuid']['output'];
-  long_description: Scalars['String']['output'];
-  repair_request_id: Scalars['uuid']['output'];
-  short_description: Scalars['String']['output'];
-  updated_at: Scalars['timestamptz']['output'];
+  message: Scalars['String']['output'];
+  /** An object relationship */
+  repair_request: Repair_Requests;
+  request_id: Scalars['uuid']['output'];
+  updated_at?: Maybe<Scalars['timestamp']['output']>;
   /** An object relationship */
   user: Users;
+  /** An object relationship */
+  user_role: User_Roles;
 };
 
 /** aggregated selection of "requests_logs" */
@@ -1464,23 +1510,7 @@ export type Requests_Logs_Aggregate = {
 };
 
 export type Requests_Logs_Aggregate_Bool_Exp = {
-  bool_and?: InputMaybe<Requests_Logs_Aggregate_Bool_Exp_Bool_And>;
-  bool_or?: InputMaybe<Requests_Logs_Aggregate_Bool_Exp_Bool_Or>;
   count?: InputMaybe<Requests_Logs_Aggregate_Bool_Exp_Count>;
-};
-
-export type Requests_Logs_Aggregate_Bool_Exp_Bool_And = {
-  arguments: Requests_Logs_Select_Column_Requests_Logs_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
-  distinct?: InputMaybe<Scalars['Boolean']['input']>;
-  filter?: InputMaybe<Requests_Logs_Bool_Exp>;
-  predicate: Boolean_Comparison_Exp;
-};
-
-export type Requests_Logs_Aggregate_Bool_Exp_Bool_Or = {
-  arguments: Requests_Logs_Select_Column_Requests_Logs_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
-  distinct?: InputMaybe<Scalars['Boolean']['input']>;
-  filter?: InputMaybe<Requests_Logs_Bool_Exp>;
-  predicate: Boolean_Comparison_Exp;
 };
 
 export type Requests_Logs_Aggregate_Bool_Exp_Count = {
@@ -1523,15 +1553,16 @@ export type Requests_Logs_Bool_Exp = {
   _and?: InputMaybe<Array<Requests_Logs_Bool_Exp>>;
   _not?: InputMaybe<Requests_Logs_Bool_Exp>;
   _or?: InputMaybe<Array<Requests_Logs_Bool_Exp>>;
-  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-  created_by?: InputMaybe<Uuid_Comparison_Exp>;
-  editable?: InputMaybe<Boolean_Comparison_Exp>;
+  author_id?: InputMaybe<Uuid_Comparison_Exp>;
+  author_role_id?: InputMaybe<Uuid_Comparison_Exp>;
+  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
-  long_description?: InputMaybe<String_Comparison_Exp>;
-  repair_request_id?: InputMaybe<Uuid_Comparison_Exp>;
-  short_description?: InputMaybe<String_Comparison_Exp>;
-  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  message?: InputMaybe<String_Comparison_Exp>;
+  repair_request?: InputMaybe<Repair_Requests_Bool_Exp>;
+  request_id?: InputMaybe<Uuid_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
   user?: InputMaybe<Users_Bool_Exp>;
+  user_role?: InputMaybe<User_Roles_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "requests_logs" */
@@ -1542,58 +1573,59 @@ export enum Requests_Logs_Constraint {
 
 /** input type for inserting data into table "requests_logs" */
 export type Requests_Logs_Insert_Input = {
-  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
-  created_by?: InputMaybe<Scalars['uuid']['input']>;
-  editable?: InputMaybe<Scalars['Boolean']['input']>;
+  author_id?: InputMaybe<Scalars['uuid']['input']>;
+  author_role_id?: InputMaybe<Scalars['uuid']['input']>;
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
-  long_description?: InputMaybe<Scalars['String']['input']>;
-  repair_request_id?: InputMaybe<Scalars['uuid']['input']>;
-  short_description?: InputMaybe<Scalars['String']['input']>;
-  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  message?: InputMaybe<Scalars['String']['input']>;
+  repair_request?: InputMaybe<Repair_Requests_Obj_Rel_Insert_Input>;
+  request_id?: InputMaybe<Scalars['uuid']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamp']['input']>;
   user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
+  user_role?: InputMaybe<User_Roles_Obj_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
 export type Requests_Logs_Max_Fields = {
-  created_at?: Maybe<Scalars['timestamptz']['output']>;
-  created_by?: Maybe<Scalars['uuid']['output']>;
+  author_id?: Maybe<Scalars['uuid']['output']>;
+  author_role_id?: Maybe<Scalars['uuid']['output']>;
+  created_at?: Maybe<Scalars['timestamp']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
-  long_description?: Maybe<Scalars['String']['output']>;
-  repair_request_id?: Maybe<Scalars['uuid']['output']>;
-  short_description?: Maybe<Scalars['String']['output']>;
-  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  message?: Maybe<Scalars['String']['output']>;
+  request_id?: Maybe<Scalars['uuid']['output']>;
+  updated_at?: Maybe<Scalars['timestamp']['output']>;
 };
 
 /** order by max() on columns of table "requests_logs" */
 export type Requests_Logs_Max_Order_By = {
+  author_id?: InputMaybe<Order_By>;
+  author_role_id?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
-  created_by?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
-  long_description?: InputMaybe<Order_By>;
-  repair_request_id?: InputMaybe<Order_By>;
-  short_description?: InputMaybe<Order_By>;
+  message?: InputMaybe<Order_By>;
+  request_id?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
 };
 
 /** aggregate min on columns */
 export type Requests_Logs_Min_Fields = {
-  created_at?: Maybe<Scalars['timestamptz']['output']>;
-  created_by?: Maybe<Scalars['uuid']['output']>;
+  author_id?: Maybe<Scalars['uuid']['output']>;
+  author_role_id?: Maybe<Scalars['uuid']['output']>;
+  created_at?: Maybe<Scalars['timestamp']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
-  long_description?: Maybe<Scalars['String']['output']>;
-  repair_request_id?: Maybe<Scalars['uuid']['output']>;
-  short_description?: Maybe<Scalars['String']['output']>;
-  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  message?: Maybe<Scalars['String']['output']>;
+  request_id?: Maybe<Scalars['uuid']['output']>;
+  updated_at?: Maybe<Scalars['timestamp']['output']>;
 };
 
 /** order by min() on columns of table "requests_logs" */
 export type Requests_Logs_Min_Order_By = {
+  author_id?: InputMaybe<Order_By>;
+  author_role_id?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
-  created_by?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
-  long_description?: InputMaybe<Order_By>;
-  repair_request_id?: InputMaybe<Order_By>;
-  short_description?: InputMaybe<Order_By>;
+  message?: InputMaybe<Order_By>;
+  request_id?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
 };
 
@@ -1614,15 +1646,16 @@ export type Requests_Logs_On_Conflict = {
 
 /** Ordering options when selecting data from "requests_logs". */
 export type Requests_Logs_Order_By = {
+  author_id?: InputMaybe<Order_By>;
+  author_role_id?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
-  created_by?: InputMaybe<Order_By>;
-  editable?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
-  long_description?: InputMaybe<Order_By>;
-  repair_request_id?: InputMaybe<Order_By>;
-  short_description?: InputMaybe<Order_By>;
+  message?: InputMaybe<Order_By>;
+  repair_request?: InputMaybe<Repair_Requests_Order_By>;
+  request_id?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
   user?: InputMaybe<Users_Order_By>;
+  user_role?: InputMaybe<User_Roles_Order_By>;
 };
 
 /** primary key columns input for table: requests_logs */
@@ -1633,45 +1666,30 @@ export type Requests_Logs_Pk_Columns_Input = {
 /** select columns of table "requests_logs" */
 export enum Requests_Logs_Select_Column {
   /** column name */
+  author_id = 'author_id',
+  /** column name */
+  author_role_id = 'author_role_id',
+  /** column name */
   created_at = 'created_at',
-  /** column name */
-  created_by = 'created_by',
-  /** column name */
-  editable = 'editable',
   /** column name */
   id = 'id',
   /** column name */
-  long_description = 'long_description',
+  message = 'message',
   /** column name */
-  repair_request_id = 'repair_request_id',
-  /** column name */
-  short_description = 'short_description',
+  request_id = 'request_id',
   /** column name */
   updated_at = 'updated_at'
 }
 
-/** select "requests_logs_aggregate_bool_exp_bool_and_arguments_columns" columns of table "requests_logs" */
-export enum Requests_Logs_Select_Column_Requests_Logs_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
-  /** column name */
-  editable = 'editable'
-}
-
-/** select "requests_logs_aggregate_bool_exp_bool_or_arguments_columns" columns of table "requests_logs" */
-export enum Requests_Logs_Select_Column_Requests_Logs_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
-  /** column name */
-  editable = 'editable'
-}
-
 /** input type for updating data in table "requests_logs" */
 export type Requests_Logs_Set_Input = {
-  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
-  created_by?: InputMaybe<Scalars['uuid']['input']>;
-  editable?: InputMaybe<Scalars['Boolean']['input']>;
+  author_id?: InputMaybe<Scalars['uuid']['input']>;
+  author_role_id?: InputMaybe<Scalars['uuid']['input']>;
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
-  long_description?: InputMaybe<Scalars['String']['input']>;
-  repair_request_id?: InputMaybe<Scalars['uuid']['input']>;
-  short_description?: InputMaybe<Scalars['String']['input']>;
-  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  message?: InputMaybe<Scalars['String']['input']>;
+  request_id?: InputMaybe<Scalars['uuid']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamp']['input']>;
 };
 
 /** Streaming cursor of the table "requests_logs" */
@@ -1684,32 +1702,29 @@ export type Requests_Logs_Stream_Cursor_Input = {
 
 /** Initial value of the column from where the streaming should start */
 export type Requests_Logs_Stream_Cursor_Value_Input = {
-  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
-  created_by?: InputMaybe<Scalars['uuid']['input']>;
-  editable?: InputMaybe<Scalars['Boolean']['input']>;
+  author_id?: InputMaybe<Scalars['uuid']['input']>;
+  author_role_id?: InputMaybe<Scalars['uuid']['input']>;
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
-  long_description?: InputMaybe<Scalars['String']['input']>;
-  repair_request_id?: InputMaybe<Scalars['uuid']['input']>;
-  short_description?: InputMaybe<Scalars['String']['input']>;
-  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  message?: InputMaybe<Scalars['String']['input']>;
+  request_id?: InputMaybe<Scalars['uuid']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamp']['input']>;
 };
 
 /** update columns of table "requests_logs" */
 export enum Requests_Logs_Update_Column {
   /** column name */
+  author_id = 'author_id',
+  /** column name */
+  author_role_id = 'author_role_id',
+  /** column name */
   created_at = 'created_at',
-  /** column name */
-  created_by = 'created_by',
-  /** column name */
-  editable = 'editable',
   /** column name */
   id = 'id',
   /** column name */
-  long_description = 'long_description',
+  message = 'message',
   /** column name */
-  repair_request_id = 'repair_request_id',
-  /** column name */
-  short_description = 'short_description',
+  request_id = 'request_id',
   /** column name */
   updated_at = 'updated_at'
 }
@@ -1762,9 +1777,9 @@ export type Subscription_Root = {
   user_roles_by_pk?: Maybe<User_Roles>;
   /** fetch data from the table in a streaming manner: "user_roles" */
   user_roles_stream: Array<User_Roles>;
-  /** An array relationship */
+  /** fetch data from the table: "users" */
   users: Array<Users>;
-  /** An aggregate relationship */
+  /** fetch aggregated fields from the table: "users" */
   users_aggregate: Users_Aggregate;
   /** fetch data from the table: "users" using primary key columns */
   users_by_pk?: Maybe<Users>;
@@ -1808,7 +1823,7 @@ export type Subscription_RootFuel_Types_AggregateArgs = {
 
 
 export type Subscription_RootFuel_Types_By_PkArgs = {
-  value: Scalars['String']['input'];
+  id: Scalars['uuid']['input'];
 };
 
 
@@ -1838,7 +1853,7 @@ export type Subscription_RootGenders_AggregateArgs = {
 
 
 export type Subscription_RootGenders_By_PkArgs = {
-  value: Scalars['String']['input'];
+  id: Scalars['uuid']['input'];
 };
 
 
@@ -1928,7 +1943,7 @@ export type Subscription_RootUser_Roles_AggregateArgs = {
 
 
 export type Subscription_RootUser_Roles_By_PkArgs = {
-  value: Scalars['String']['input'];
+  id: Scalars['uuid']['input'];
 };
 
 
@@ -2028,47 +2043,26 @@ export type Subscription_RootVehicles_StreamArgs = {
   where?: InputMaybe<Vehicles_Bool_Exp>;
 };
 
-/** Boolean expression to compare columns of type "timestamptz". All fields are combined with logical 'AND'. */
-export type Timestamptz_Comparison_Exp = {
-  _eq?: InputMaybe<Scalars['timestamptz']['input']>;
-  _gt?: InputMaybe<Scalars['timestamptz']['input']>;
-  _gte?: InputMaybe<Scalars['timestamptz']['input']>;
-  _in?: InputMaybe<Array<Scalars['timestamptz']['input']>>;
+/** Boolean expression to compare columns of type "timestamp". All fields are combined with logical 'AND'. */
+export type Timestamp_Comparison_Exp = {
+  _eq?: InputMaybe<Scalars['timestamp']['input']>;
+  _gt?: InputMaybe<Scalars['timestamp']['input']>;
+  _gte?: InputMaybe<Scalars['timestamp']['input']>;
+  _in?: InputMaybe<Array<Scalars['timestamp']['input']>>;
   _is_null?: InputMaybe<Scalars['Boolean']['input']>;
-  _lt?: InputMaybe<Scalars['timestamptz']['input']>;
-  _lte?: InputMaybe<Scalars['timestamptz']['input']>;
-  _neq?: InputMaybe<Scalars['timestamptz']['input']>;
-  _nin?: InputMaybe<Array<Scalars['timestamptz']['input']>>;
+  _lt?: InputMaybe<Scalars['timestamp']['input']>;
+  _lte?: InputMaybe<Scalars['timestamp']['input']>;
+  _neq?: InputMaybe<Scalars['timestamp']['input']>;
+  _nin?: InputMaybe<Array<Scalars['timestamp']['input']>>;
 };
 
 /** columns and relationships of "user_roles" */
 export type User_Roles = {
-  content: Scalars['String']['output'];
-  /** An array relationship */
-  users: Array<Users>;
-  /** An aggregate relationship */
-  users_aggregate: Users_Aggregate;
-  value: Scalars['String']['output'];
-};
-
-
-/** columns and relationships of "user_roles" */
-export type User_RolesUsersArgs = {
-  distinct_on?: InputMaybe<Array<Users_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  order_by?: InputMaybe<Array<Users_Order_By>>;
-  where?: InputMaybe<Users_Bool_Exp>;
-};
-
-
-/** columns and relationships of "user_roles" */
-export type User_RolesUsers_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Users_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  order_by?: InputMaybe<Array<Users_Order_By>>;
-  where?: InputMaybe<Users_Bool_Exp>;
+  code: Scalars['String']['output'];
+  created_at: Scalars['timestamp']['output'];
+  id: Scalars['uuid']['output'];
+  name: Scalars['String']['output'];
+  updated_at?: Maybe<Scalars['timestamp']['output']>;
 };
 
 /** aggregated selection of "user_roles" */
@@ -2096,55 +2090,46 @@ export type User_Roles_Bool_Exp = {
   _and?: InputMaybe<Array<User_Roles_Bool_Exp>>;
   _not?: InputMaybe<User_Roles_Bool_Exp>;
   _or?: InputMaybe<Array<User_Roles_Bool_Exp>>;
-  content?: InputMaybe<String_Comparison_Exp>;
-  users?: InputMaybe<Users_Bool_Exp>;
-  users_aggregate?: InputMaybe<Users_Aggregate_Bool_Exp>;
-  value?: InputMaybe<String_Comparison_Exp>;
+  code?: InputMaybe<String_Comparison_Exp>;
+  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  name?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "user_roles" */
 export enum User_Roles_Constraint {
-  /** unique or primary key constraint on columns "content" */
-  user_roles_content_key = 'user_roles_content_key',
-  /** unique or primary key constraint on columns "value" */
+  /** unique or primary key constraint on columns "code" */
+  user_roles_code_key = 'user_roles_code_key',
+  /** unique or primary key constraint on columns "id" */
   user_roles_pkey = 'user_roles_pkey'
 }
 
-export enum User_Roles_Enum {
-  /** user-role-auto-mechanic */
-  autoMechanic = 'autoMechanic',
-  /** user-role-customer */
-  customer = 'customer',
-  /** user-role-service-specialist */
-  serviceSpecialist = 'serviceSpecialist'
-}
-
-/** Boolean expression to compare columns of type "user_roles_enum". All fields are combined with logical 'AND'. */
-export type User_Roles_Enum_Comparison_Exp = {
-  _eq?: InputMaybe<User_Roles_Enum>;
-  _in?: InputMaybe<Array<User_Roles_Enum>>;
-  _is_null?: InputMaybe<Scalars['Boolean']['input']>;
-  _neq?: InputMaybe<User_Roles_Enum>;
-  _nin?: InputMaybe<Array<User_Roles_Enum>>;
-};
-
 /** input type for inserting data into table "user_roles" */
 export type User_Roles_Insert_Input = {
-  content?: InputMaybe<Scalars['String']['input']>;
-  users?: InputMaybe<Users_Arr_Rel_Insert_Input>;
-  value?: InputMaybe<Scalars['String']['input']>;
+  code?: InputMaybe<Scalars['String']['input']>;
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamp']['input']>;
 };
 
 /** aggregate max on columns */
 export type User_Roles_Max_Fields = {
-  content?: Maybe<Scalars['String']['output']>;
-  value?: Maybe<Scalars['String']['output']>;
+  code?: Maybe<Scalars['String']['output']>;
+  created_at?: Maybe<Scalars['timestamp']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamp']['output']>;
 };
 
 /** aggregate min on columns */
 export type User_Roles_Min_Fields = {
-  content?: Maybe<Scalars['String']['output']>;
-  value?: Maybe<Scalars['String']['output']>;
+  code?: Maybe<Scalars['String']['output']>;
+  created_at?: Maybe<Scalars['timestamp']['output']>;
+  id?: Maybe<Scalars['uuid']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamp']['output']>;
 };
 
 /** response of any mutation on the table "user_roles" */
@@ -2171,28 +2156,39 @@ export type User_Roles_On_Conflict = {
 
 /** Ordering options when selecting data from "user_roles". */
 export type User_Roles_Order_By = {
-  content?: InputMaybe<Order_By>;
-  users_aggregate?: InputMaybe<Users_Aggregate_Order_By>;
-  value?: InputMaybe<Order_By>;
+  code?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  name?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
 };
 
 /** primary key columns input for table: user_roles */
 export type User_Roles_Pk_Columns_Input = {
-  value: Scalars['String']['input'];
+  id: Scalars['uuid']['input'];
 };
 
 /** select columns of table "user_roles" */
 export enum User_Roles_Select_Column {
   /** column name */
-  content = 'content',
+  code = 'code',
   /** column name */
-  value = 'value'
+  created_at = 'created_at',
+  /** column name */
+  id = 'id',
+  /** column name */
+  name = 'name',
+  /** column name */
+  updated_at = 'updated_at'
 }
 
 /** input type for updating data in table "user_roles" */
 export type User_Roles_Set_Input = {
-  content?: InputMaybe<Scalars['String']['input']>;
-  value?: InputMaybe<Scalars['String']['input']>;
+  code?: InputMaybe<Scalars['String']['input']>;
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamp']['input']>;
 };
 
 /** Streaming cursor of the table "user_roles" */
@@ -2205,16 +2201,25 @@ export type User_Roles_Stream_Cursor_Input = {
 
 /** Initial value of the column from where the streaming should start */
 export type User_Roles_Stream_Cursor_Value_Input = {
-  content?: InputMaybe<Scalars['String']['input']>;
-  value?: InputMaybe<Scalars['String']['input']>;
+  code?: InputMaybe<Scalars['String']['input']>;
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
+  id?: InputMaybe<Scalars['uuid']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamp']['input']>;
 };
 
 /** update columns of table "user_roles" */
 export enum User_Roles_Update_Column {
   /** column name */
-  content = 'content',
+  code = 'code',
   /** column name */
-  value = 'value'
+  created_at = 'created_at',
+  /** column name */
+  id = 'id',
+  /** column name */
+  name = 'name',
+  /** column name */
+  updated_at = 'updated_at'
 }
 
 export type User_Roles_Updates = {
@@ -2226,28 +2231,28 @@ export type User_Roles_Updates = {
 
 /** columns and relationships of "users" */
 export type Users = {
-  created_at: Scalars['timestamptz']['output'];
+  created_at: Scalars['timestamp']['output'];
   email: Scalars['String']['output'];
-  family: Scalars['String']['output'];
-  gender: Genders_Enum;
+  first_name: Scalars['String']['output'];
   /** An object relationship */
-  gender_enum: Genders;
+  gender: Genders;
+  gender_id: Scalars['uuid']['output'];
   id: Scalars['uuid']['output'];
-  name: Scalars['String']['output'];
+  last_name: Scalars['String']['output'];
   password: Scalars['String']['output'];
+  phone?: Maybe<Scalars['String']['output']>;
   /** An array relationship */
   repair_requests: Array<Repair_Requests>;
   /** An aggregate relationship */
   repair_requests_aggregate: Repair_Requests_Aggregate;
-  /** An array relationship */
-  requests_logs: Array<Requests_Logs>;
-  /** An aggregate relationship */
-  requests_logs_aggregate: Requests_Logs_Aggregate;
-  role: User_Roles_Enum;
+  role_id: Scalars['uuid']['output'];
+  updated_at?: Maybe<Scalars['timestamp']['output']>;
   /** An object relationship */
-  role_enum: User_Roles;
-  surname: Scalars['String']['output'];
-  updated_at: Scalars['timestamptz']['output'];
+  user_role: User_Roles;
+  /** An array relationship */
+  vehicles: Array<Vehicles>;
+  /** An aggregate relationship */
+  vehicles_aggregate: Vehicles_Aggregate;
 };
 
 
@@ -2272,39 +2277,28 @@ export type UsersRepair_Requests_AggregateArgs = {
 
 
 /** columns and relationships of "users" */
-export type UsersRequests_LogsArgs = {
-  distinct_on?: InputMaybe<Array<Requests_Logs_Select_Column>>;
+export type UsersVehiclesArgs = {
+  distinct_on?: InputMaybe<Array<Vehicles_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
-  order_by?: InputMaybe<Array<Requests_Logs_Order_By>>;
-  where?: InputMaybe<Requests_Logs_Bool_Exp>;
+  order_by?: InputMaybe<Array<Vehicles_Order_By>>;
+  where?: InputMaybe<Vehicles_Bool_Exp>;
 };
 
 
 /** columns and relationships of "users" */
-export type UsersRequests_Logs_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Requests_Logs_Select_Column>>;
+export type UsersVehicles_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Vehicles_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
-  order_by?: InputMaybe<Array<Requests_Logs_Order_By>>;
-  where?: InputMaybe<Requests_Logs_Bool_Exp>;
+  order_by?: InputMaybe<Array<Vehicles_Order_By>>;
+  where?: InputMaybe<Vehicles_Bool_Exp>;
 };
 
 /** aggregated selection of "users" */
 export type Users_Aggregate = {
   aggregate?: Maybe<Users_Aggregate_Fields>;
   nodes: Array<Users>;
-};
-
-export type Users_Aggregate_Bool_Exp = {
-  count?: InputMaybe<Users_Aggregate_Bool_Exp_Count>;
-};
-
-export type Users_Aggregate_Bool_Exp_Count = {
-  arguments?: InputMaybe<Array<Users_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']['input']>;
-  filter?: InputMaybe<Users_Bool_Exp>;
-  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "users" */
@@ -2321,41 +2315,27 @@ export type Users_Aggregate_FieldsCountArgs = {
   distinct?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-/** order by aggregate values of table "users" */
-export type Users_Aggregate_Order_By = {
-  count?: InputMaybe<Order_By>;
-  max?: InputMaybe<Users_Max_Order_By>;
-  min?: InputMaybe<Users_Min_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "users" */
-export type Users_Arr_Rel_Insert_Input = {
-  data: Array<Users_Insert_Input>;
-  /** upsert condition */
-  on_conflict?: InputMaybe<Users_On_Conflict>;
-};
-
 /** Boolean expression to filter rows from the table "users". All fields are combined with a logical 'AND'. */
 export type Users_Bool_Exp = {
   _and?: InputMaybe<Array<Users_Bool_Exp>>;
   _not?: InputMaybe<Users_Bool_Exp>;
   _or?: InputMaybe<Array<Users_Bool_Exp>>;
-  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
   email?: InputMaybe<String_Comparison_Exp>;
-  family?: InputMaybe<String_Comparison_Exp>;
-  gender?: InputMaybe<Genders_Enum_Comparison_Exp>;
-  gender_enum?: InputMaybe<Genders_Bool_Exp>;
+  first_name?: InputMaybe<String_Comparison_Exp>;
+  gender?: InputMaybe<Genders_Bool_Exp>;
+  gender_id?: InputMaybe<Uuid_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
-  name?: InputMaybe<String_Comparison_Exp>;
+  last_name?: InputMaybe<String_Comparison_Exp>;
   password?: InputMaybe<String_Comparison_Exp>;
+  phone?: InputMaybe<String_Comparison_Exp>;
   repair_requests?: InputMaybe<Repair_Requests_Bool_Exp>;
   repair_requests_aggregate?: InputMaybe<Repair_Requests_Aggregate_Bool_Exp>;
-  requests_logs?: InputMaybe<Requests_Logs_Bool_Exp>;
-  requests_logs_aggregate?: InputMaybe<Requests_Logs_Aggregate_Bool_Exp>;
-  role?: InputMaybe<User_Roles_Enum_Comparison_Exp>;
-  role_enum?: InputMaybe<User_Roles_Bool_Exp>;
-  surname?: InputMaybe<String_Comparison_Exp>;
-  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  role_id?: InputMaybe<Uuid_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  user_role?: InputMaybe<User_Roles_Bool_Exp>;
+  vehicles?: InputMaybe<Vehicles_Bool_Exp>;
+  vehicles_aggregate?: InputMaybe<Vehicles_Aggregate_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "users" */
@@ -2368,68 +2348,48 @@ export enum Users_Constraint {
 
 /** input type for inserting data into table "users" */
 export type Users_Insert_Input = {
-  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
-  family?: InputMaybe<Scalars['String']['input']>;
-  gender?: InputMaybe<Genders_Enum>;
-  gender_enum?: InputMaybe<Genders_Obj_Rel_Insert_Input>;
+  first_name?: InputMaybe<Scalars['String']['input']>;
+  gender?: InputMaybe<Genders_Obj_Rel_Insert_Input>;
+  gender_id?: InputMaybe<Scalars['uuid']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
+  last_name?: InputMaybe<Scalars['String']['input']>;
   password?: InputMaybe<Scalars['String']['input']>;
+  phone?: InputMaybe<Scalars['String']['input']>;
   repair_requests?: InputMaybe<Repair_Requests_Arr_Rel_Insert_Input>;
-  requests_logs?: InputMaybe<Requests_Logs_Arr_Rel_Insert_Input>;
-  role?: InputMaybe<User_Roles_Enum>;
-  role_enum?: InputMaybe<User_Roles_Obj_Rel_Insert_Input>;
-  surname?: InputMaybe<Scalars['String']['input']>;
-  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  role_id?: InputMaybe<Scalars['uuid']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamp']['input']>;
+  user_role?: InputMaybe<User_Roles_Obj_Rel_Insert_Input>;
+  vehicles?: InputMaybe<Vehicles_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
 export type Users_Max_Fields = {
-  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  created_at?: Maybe<Scalars['timestamp']['output']>;
   email?: Maybe<Scalars['String']['output']>;
-  family?: Maybe<Scalars['String']['output']>;
+  first_name?: Maybe<Scalars['String']['output']>;
+  gender_id?: Maybe<Scalars['uuid']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
-  name?: Maybe<Scalars['String']['output']>;
+  last_name?: Maybe<Scalars['String']['output']>;
   password?: Maybe<Scalars['String']['output']>;
-  surname?: Maybe<Scalars['String']['output']>;
-  updated_at?: Maybe<Scalars['timestamptz']['output']>;
-};
-
-/** order by max() on columns of table "users" */
-export type Users_Max_Order_By = {
-  created_at?: InputMaybe<Order_By>;
-  email?: InputMaybe<Order_By>;
-  family?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  name?: InputMaybe<Order_By>;
-  password?: InputMaybe<Order_By>;
-  surname?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
+  phone?: Maybe<Scalars['String']['output']>;
+  role_id?: Maybe<Scalars['uuid']['output']>;
+  updated_at?: Maybe<Scalars['timestamp']['output']>;
 };
 
 /** aggregate min on columns */
 export type Users_Min_Fields = {
-  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  created_at?: Maybe<Scalars['timestamp']['output']>;
   email?: Maybe<Scalars['String']['output']>;
-  family?: Maybe<Scalars['String']['output']>;
+  first_name?: Maybe<Scalars['String']['output']>;
+  gender_id?: Maybe<Scalars['uuid']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
-  name?: Maybe<Scalars['String']['output']>;
+  last_name?: Maybe<Scalars['String']['output']>;
   password?: Maybe<Scalars['String']['output']>;
-  surname?: Maybe<Scalars['String']['output']>;
-  updated_at?: Maybe<Scalars['timestamptz']['output']>;
-};
-
-/** order by min() on columns of table "users" */
-export type Users_Min_Order_By = {
-  created_at?: InputMaybe<Order_By>;
-  email?: InputMaybe<Order_By>;
-  family?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  name?: InputMaybe<Order_By>;
-  password?: InputMaybe<Order_By>;
-  surname?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
+  phone?: Maybe<Scalars['String']['output']>;
+  role_id?: Maybe<Scalars['uuid']['output']>;
+  updated_at?: Maybe<Scalars['timestamp']['output']>;
 };
 
 /** response of any mutation on the table "users" */
@@ -2458,18 +2418,18 @@ export type Users_On_Conflict = {
 export type Users_Order_By = {
   created_at?: InputMaybe<Order_By>;
   email?: InputMaybe<Order_By>;
-  family?: InputMaybe<Order_By>;
-  gender?: InputMaybe<Order_By>;
-  gender_enum?: InputMaybe<Genders_Order_By>;
+  first_name?: InputMaybe<Order_By>;
+  gender?: InputMaybe<Genders_Order_By>;
+  gender_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
-  name?: InputMaybe<Order_By>;
+  last_name?: InputMaybe<Order_By>;
   password?: InputMaybe<Order_By>;
+  phone?: InputMaybe<Order_By>;
   repair_requests_aggregate?: InputMaybe<Repair_Requests_Aggregate_Order_By>;
-  requests_logs_aggregate?: InputMaybe<Requests_Logs_Aggregate_Order_By>;
-  role?: InputMaybe<Order_By>;
-  role_enum?: InputMaybe<User_Roles_Order_By>;
-  surname?: InputMaybe<Order_By>;
+  role_id?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
+  user_role?: InputMaybe<User_Roles_Order_By>;
+  vehicles_aggregate?: InputMaybe<Vehicles_Aggregate_Order_By>;
 };
 
 /** primary key columns input for table: users */
@@ -2484,35 +2444,35 @@ export enum Users_Select_Column {
   /** column name */
   email = 'email',
   /** column name */
-  family = 'family',
+  first_name = 'first_name',
   /** column name */
-  gender = 'gender',
+  gender_id = 'gender_id',
   /** column name */
   id = 'id',
   /** column name */
-  name = 'name',
+  last_name = 'last_name',
   /** column name */
   password = 'password',
   /** column name */
-  role = 'role',
+  phone = 'phone',
   /** column name */
-  surname = 'surname',
+  role_id = 'role_id',
   /** column name */
   updated_at = 'updated_at'
 }
 
 /** input type for updating data in table "users" */
 export type Users_Set_Input = {
-  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
-  family?: InputMaybe<Scalars['String']['input']>;
-  gender?: InputMaybe<Genders_Enum>;
+  first_name?: InputMaybe<Scalars['String']['input']>;
+  gender_id?: InputMaybe<Scalars['uuid']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
+  last_name?: InputMaybe<Scalars['String']['input']>;
   password?: InputMaybe<Scalars['String']['input']>;
-  role?: InputMaybe<User_Roles_Enum>;
-  surname?: InputMaybe<Scalars['String']['input']>;
-  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  phone?: InputMaybe<Scalars['String']['input']>;
+  role_id?: InputMaybe<Scalars['uuid']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamp']['input']>;
 };
 
 /** Streaming cursor of the table "users" */
@@ -2525,16 +2485,16 @@ export type Users_Stream_Cursor_Input = {
 
 /** Initial value of the column from where the streaming should start */
 export type Users_Stream_Cursor_Value_Input = {
-  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
-  family?: InputMaybe<Scalars['String']['input']>;
-  gender?: InputMaybe<Genders_Enum>;
+  first_name?: InputMaybe<Scalars['String']['input']>;
+  gender_id?: InputMaybe<Scalars['uuid']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
+  last_name?: InputMaybe<Scalars['String']['input']>;
   password?: InputMaybe<Scalars['String']['input']>;
-  role?: InputMaybe<User_Roles_Enum>;
-  surname?: InputMaybe<Scalars['String']['input']>;
-  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  phone?: InputMaybe<Scalars['String']['input']>;
+  role_id?: InputMaybe<Scalars['uuid']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamp']['input']>;
 };
 
 /** update columns of table "users" */
@@ -2544,19 +2504,19 @@ export enum Users_Update_Column {
   /** column name */
   email = 'email',
   /** column name */
-  family = 'family',
+  first_name = 'first_name',
   /** column name */
-  gender = 'gender',
+  gender_id = 'gender_id',
   /** column name */
   id = 'id',
   /** column name */
-  name = 'name',
+  last_name = 'last_name',
   /** column name */
   password = 'password',
   /** column name */
-  role = 'role',
+  phone = 'phone',
   /** column name */
-  surname = 'surname',
+  role_id = 'role_id',
   /** column name */
   updated_at = 'updated_at'
 }
@@ -2583,35 +2543,13 @@ export type Uuid_Comparison_Exp = {
 
 /** columns and relationships of "vehicle_statuses" */
 export type Vehicle_Statuses = {
+  code: Scalars['String']['output'];
   color: Scalars['String']['output'];
-  content: Scalars['String']['output'];
+  created_at: Scalars['timestamp']['output'];
   id: Scalars['uuid']['output'];
-  value: Scalars['String']['output'];
-  /** An array relationship */
-  vehicles: Array<Vehicles>;
-  /** An aggregate relationship */
-  vehicles_aggregate: Vehicles_Aggregate;
+  name: Scalars['String']['output'];
+  updated_at?: Maybe<Scalars['timestamp']['output']>;
   weight: Scalars['Int']['output'];
-};
-
-
-/** columns and relationships of "vehicle_statuses" */
-export type Vehicle_StatusesVehiclesArgs = {
-  distinct_on?: InputMaybe<Array<Vehicles_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  order_by?: InputMaybe<Array<Vehicles_Order_By>>;
-  where?: InputMaybe<Vehicles_Bool_Exp>;
-};
-
-
-/** columns and relationships of "vehicle_statuses" */
-export type Vehicle_StatusesVehicles_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Vehicles_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  order_by?: InputMaybe<Array<Vehicles_Order_By>>;
-  where?: InputMaybe<Vehicles_Bool_Exp>;
 };
 
 /** aggregated selection of "vehicle_statuses" */
@@ -2652,21 +2590,21 @@ export type Vehicle_Statuses_Bool_Exp = {
   _and?: InputMaybe<Array<Vehicle_Statuses_Bool_Exp>>;
   _not?: InputMaybe<Vehicle_Statuses_Bool_Exp>;
   _or?: InputMaybe<Array<Vehicle_Statuses_Bool_Exp>>;
+  code?: InputMaybe<String_Comparison_Exp>;
   color?: InputMaybe<String_Comparison_Exp>;
-  content?: InputMaybe<String_Comparison_Exp>;
+  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
-  value?: InputMaybe<String_Comparison_Exp>;
-  vehicles?: InputMaybe<Vehicles_Bool_Exp>;
-  vehicles_aggregate?: InputMaybe<Vehicles_Aggregate_Bool_Exp>;
+  name?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
   weight?: InputMaybe<Int_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "vehicle_statuses" */
 export enum Vehicle_Statuses_Constraint {
+  /** unique or primary key constraint on columns "code" */
+  vehicle_statuses_code_key = 'vehicle_statuses_code_key',
   /** unique or primary key constraint on columns "id" */
-  vehicle_statuses_pkey = 'vehicle_statuses_pkey',
-  /** unique or primary key constraint on columns "value" */
-  vehicle_statuses_value_key = 'vehicle_statuses_value_key'
+  vehicle_statuses_pkey = 'vehicle_statuses_pkey'
 }
 
 /** input type for incrementing numeric columns in table "vehicle_statuses" */
@@ -2676,29 +2614,34 @@ export type Vehicle_Statuses_Inc_Input = {
 
 /** input type for inserting data into table "vehicle_statuses" */
 export type Vehicle_Statuses_Insert_Input = {
+  code?: InputMaybe<Scalars['String']['input']>;
   color?: InputMaybe<Scalars['String']['input']>;
-  content?: InputMaybe<Scalars['String']['input']>;
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
-  value?: InputMaybe<Scalars['String']['input']>;
-  vehicles?: InputMaybe<Vehicles_Arr_Rel_Insert_Input>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamp']['input']>;
   weight?: InputMaybe<Scalars['Int']['input']>;
 };
 
 /** aggregate max on columns */
 export type Vehicle_Statuses_Max_Fields = {
+  code?: Maybe<Scalars['String']['output']>;
   color?: Maybe<Scalars['String']['output']>;
-  content?: Maybe<Scalars['String']['output']>;
+  created_at?: Maybe<Scalars['timestamp']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
-  value?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamp']['output']>;
   weight?: Maybe<Scalars['Int']['output']>;
 };
 
 /** aggregate min on columns */
 export type Vehicle_Statuses_Min_Fields = {
+  code?: Maybe<Scalars['String']['output']>;
   color?: Maybe<Scalars['String']['output']>;
-  content?: Maybe<Scalars['String']['output']>;
+  created_at?: Maybe<Scalars['timestamp']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
-  value?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamp']['output']>;
   weight?: Maybe<Scalars['Int']['output']>;
 };
 
@@ -2726,11 +2669,12 @@ export type Vehicle_Statuses_On_Conflict = {
 
 /** Ordering options when selecting data from "vehicle_statuses". */
 export type Vehicle_Statuses_Order_By = {
+  code?: InputMaybe<Order_By>;
   color?: InputMaybe<Order_By>;
-  content?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
-  value?: InputMaybe<Order_By>;
-  vehicles_aggregate?: InputMaybe<Vehicles_Aggregate_Order_By>;
+  name?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
   weight?: InputMaybe<Order_By>;
 };
 
@@ -2742,23 +2686,29 @@ export type Vehicle_Statuses_Pk_Columns_Input = {
 /** select columns of table "vehicle_statuses" */
 export enum Vehicle_Statuses_Select_Column {
   /** column name */
+  code = 'code',
+  /** column name */
   color = 'color',
   /** column name */
-  content = 'content',
+  created_at = 'created_at',
   /** column name */
   id = 'id',
   /** column name */
-  value = 'value',
+  name = 'name',
+  /** column name */
+  updated_at = 'updated_at',
   /** column name */
   weight = 'weight'
 }
 
 /** input type for updating data in table "vehicle_statuses" */
 export type Vehicle_Statuses_Set_Input = {
+  code?: InputMaybe<Scalars['String']['input']>;
   color?: InputMaybe<Scalars['String']['input']>;
-  content?: InputMaybe<Scalars['String']['input']>;
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
-  value?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamp']['input']>;
   weight?: InputMaybe<Scalars['Int']['input']>;
 };
 
@@ -2787,10 +2737,12 @@ export type Vehicle_Statuses_Stream_Cursor_Input = {
 
 /** Initial value of the column from where the streaming should start */
 export type Vehicle_Statuses_Stream_Cursor_Value_Input = {
+  code?: InputMaybe<Scalars['String']['input']>;
   color?: InputMaybe<Scalars['String']['input']>;
-  content?: InputMaybe<Scalars['String']['input']>;
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
-  value?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamp']['input']>;
   weight?: InputMaybe<Scalars['Int']['input']>;
 };
 
@@ -2802,13 +2754,17 @@ export type Vehicle_Statuses_Sum_Fields = {
 /** update columns of table "vehicle_statuses" */
 export enum Vehicle_Statuses_Update_Column {
   /** column name */
+  code = 'code',
+  /** column name */
   color = 'color',
   /** column name */
-  content = 'content',
+  created_at = 'created_at',
   /** column name */
   id = 'id',
   /** column name */
-  value = 'value',
+  name = 'name',
+  /** column name */
+  updated_at = 'updated_at',
   /** column name */
   weight = 'weight'
 }
@@ -2839,26 +2795,27 @@ export type Vehicle_Statuses_Variance_Fields = {
 
 /** columns and relationships of "vehicles" */
 export type Vehicles = {
-  color: Scalars['String']['output'];
-  created_at?: Maybe<Scalars['timestamptz']['output']>;
-  fuel: Fuel_Types_Enum;
+  created_at: Scalars['timestamp']['output'];
   /** An object relationship */
-  fuel_type: Fuel_Types;
+  fuel_type?: Maybe<Fuel_Types>;
+  fuel_type_id?: Maybe<Scalars['uuid']['output']>;
   id: Scalars['uuid']['output'];
   make: Scalars['String']['output'];
-  mileage: Scalars['Int']['output'];
   model: Scalars['String']['output'];
-  plate: Scalars['String']['output'];
+  owner_id: Scalars['uuid']['output'];
+  plate_number: Scalars['String']['output'];
   /** An array relationship */
   repair_requests: Array<Repair_Requests>;
   /** An aggregate relationship */
   repair_requests_aggregate: Repair_Requests_Aggregate;
-  status_id: Scalars['uuid']['output'];
-  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  status_id?: Maybe<Scalars['uuid']['output']>;
+  updated_at?: Maybe<Scalars['timestamp']['output']>;
   /** An object relationship */
-  vehicle_status: Vehicle_Statuses;
+  user: Users;
+  /** An object relationship */
+  vehicle_status?: Maybe<Vehicle_Statuses>;
   vin: Scalars['String']['output'];
-  year: Scalars['Int']['output'];
+  year?: Maybe<Scalars['Int']['output']>;
 };
 
 
@@ -2944,13 +2901,11 @@ export type Vehicles_Arr_Rel_Insert_Input = {
 
 /** aggregate avg on columns */
 export type Vehicles_Avg_Fields = {
-  mileage?: Maybe<Scalars['Float']['output']>;
   year?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by avg() on columns of table "vehicles" */
 export type Vehicles_Avg_Order_By = {
-  mileage?: InputMaybe<Order_By>;
   year?: InputMaybe<Order_By>;
 };
 
@@ -2959,19 +2914,19 @@ export type Vehicles_Bool_Exp = {
   _and?: InputMaybe<Array<Vehicles_Bool_Exp>>;
   _not?: InputMaybe<Vehicles_Bool_Exp>;
   _or?: InputMaybe<Array<Vehicles_Bool_Exp>>;
-  color?: InputMaybe<String_Comparison_Exp>;
-  created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-  fuel?: InputMaybe<Fuel_Types_Enum_Comparison_Exp>;
+  created_at?: InputMaybe<Timestamp_Comparison_Exp>;
   fuel_type?: InputMaybe<Fuel_Types_Bool_Exp>;
+  fuel_type_id?: InputMaybe<Uuid_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
   make?: InputMaybe<String_Comparison_Exp>;
-  mileage?: InputMaybe<Int_Comparison_Exp>;
   model?: InputMaybe<String_Comparison_Exp>;
-  plate?: InputMaybe<String_Comparison_Exp>;
+  owner_id?: InputMaybe<Uuid_Comparison_Exp>;
+  plate_number?: InputMaybe<String_Comparison_Exp>;
   repair_requests?: InputMaybe<Repair_Requests_Bool_Exp>;
   repair_requests_aggregate?: InputMaybe<Repair_Requests_Aggregate_Bool_Exp>;
   status_id?: InputMaybe<Uuid_Comparison_Exp>;
-  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  user?: InputMaybe<Users_Bool_Exp>;
   vehicle_status?: InputMaybe<Vehicle_Statuses_Bool_Exp>;
   vin?: InputMaybe<String_Comparison_Exp>;
   year?: InputMaybe<Int_Comparison_Exp>;
@@ -2981,30 +2936,31 @@ export type Vehicles_Bool_Exp = {
 export enum Vehicles_Constraint {
   /** unique or primary key constraint on columns "id" */
   vehicles_pkey = 'vehicles_pkey',
+  /** unique or primary key constraint on columns "plate_number" */
+  vehicles_plate_number_key = 'vehicles_plate_number_key',
   /** unique or primary key constraint on columns "vin" */
   vehicles_vin_key = 'vehicles_vin_key'
 }
 
 /** input type for incrementing numeric columns in table "vehicles" */
 export type Vehicles_Inc_Input = {
-  mileage?: InputMaybe<Scalars['Int']['input']>;
   year?: InputMaybe<Scalars['Int']['input']>;
 };
 
 /** input type for inserting data into table "vehicles" */
 export type Vehicles_Insert_Input = {
-  color?: InputMaybe<Scalars['String']['input']>;
-  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
-  fuel?: InputMaybe<Fuel_Types_Enum>;
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
   fuel_type?: InputMaybe<Fuel_Types_Obj_Rel_Insert_Input>;
+  fuel_type_id?: InputMaybe<Scalars['uuid']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
   make?: InputMaybe<Scalars['String']['input']>;
-  mileage?: InputMaybe<Scalars['Int']['input']>;
   model?: InputMaybe<Scalars['String']['input']>;
-  plate?: InputMaybe<Scalars['String']['input']>;
+  owner_id?: InputMaybe<Scalars['uuid']['input']>;
+  plate_number?: InputMaybe<Scalars['String']['input']>;
   repair_requests?: InputMaybe<Repair_Requests_Arr_Rel_Insert_Input>;
   status_id?: InputMaybe<Scalars['uuid']['input']>;
-  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamp']['input']>;
+  user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
   vehicle_status?: InputMaybe<Vehicle_Statuses_Obj_Rel_Insert_Input>;
   vin?: InputMaybe<Scalars['String']['input']>;
   year?: InputMaybe<Scalars['Int']['input']>;
@@ -3012,28 +2968,28 @@ export type Vehicles_Insert_Input = {
 
 /** aggregate max on columns */
 export type Vehicles_Max_Fields = {
-  color?: Maybe<Scalars['String']['output']>;
-  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  created_at?: Maybe<Scalars['timestamp']['output']>;
+  fuel_type_id?: Maybe<Scalars['uuid']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
   make?: Maybe<Scalars['String']['output']>;
-  mileage?: Maybe<Scalars['Int']['output']>;
   model?: Maybe<Scalars['String']['output']>;
-  plate?: Maybe<Scalars['String']['output']>;
+  owner_id?: Maybe<Scalars['uuid']['output']>;
+  plate_number?: Maybe<Scalars['String']['output']>;
   status_id?: Maybe<Scalars['uuid']['output']>;
-  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  updated_at?: Maybe<Scalars['timestamp']['output']>;
   vin?: Maybe<Scalars['String']['output']>;
   year?: Maybe<Scalars['Int']['output']>;
 };
 
 /** order by max() on columns of table "vehicles" */
 export type Vehicles_Max_Order_By = {
-  color?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
+  fuel_type_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   make?: InputMaybe<Order_By>;
-  mileage?: InputMaybe<Order_By>;
   model?: InputMaybe<Order_By>;
-  plate?: InputMaybe<Order_By>;
+  owner_id?: InputMaybe<Order_By>;
+  plate_number?: InputMaybe<Order_By>;
   status_id?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
   vin?: InputMaybe<Order_By>;
@@ -3042,28 +2998,28 @@ export type Vehicles_Max_Order_By = {
 
 /** aggregate min on columns */
 export type Vehicles_Min_Fields = {
-  color?: Maybe<Scalars['String']['output']>;
-  created_at?: Maybe<Scalars['timestamptz']['output']>;
+  created_at?: Maybe<Scalars['timestamp']['output']>;
+  fuel_type_id?: Maybe<Scalars['uuid']['output']>;
   id?: Maybe<Scalars['uuid']['output']>;
   make?: Maybe<Scalars['String']['output']>;
-  mileage?: Maybe<Scalars['Int']['output']>;
   model?: Maybe<Scalars['String']['output']>;
-  plate?: Maybe<Scalars['String']['output']>;
+  owner_id?: Maybe<Scalars['uuid']['output']>;
+  plate_number?: Maybe<Scalars['String']['output']>;
   status_id?: Maybe<Scalars['uuid']['output']>;
-  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  updated_at?: Maybe<Scalars['timestamp']['output']>;
   vin?: Maybe<Scalars['String']['output']>;
   year?: Maybe<Scalars['Int']['output']>;
 };
 
 /** order by min() on columns of table "vehicles" */
 export type Vehicles_Min_Order_By = {
-  color?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
+  fuel_type_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   make?: InputMaybe<Order_By>;
-  mileage?: InputMaybe<Order_By>;
   model?: InputMaybe<Order_By>;
-  plate?: InputMaybe<Order_By>;
+  owner_id?: InputMaybe<Order_By>;
+  plate_number?: InputMaybe<Order_By>;
   status_id?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
   vin?: InputMaybe<Order_By>;
@@ -3094,18 +3050,18 @@ export type Vehicles_On_Conflict = {
 
 /** Ordering options when selecting data from "vehicles". */
 export type Vehicles_Order_By = {
-  color?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
-  fuel?: InputMaybe<Order_By>;
   fuel_type?: InputMaybe<Fuel_Types_Order_By>;
+  fuel_type_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   make?: InputMaybe<Order_By>;
-  mileage?: InputMaybe<Order_By>;
   model?: InputMaybe<Order_By>;
-  plate?: InputMaybe<Order_By>;
+  owner_id?: InputMaybe<Order_By>;
+  plate_number?: InputMaybe<Order_By>;
   repair_requests_aggregate?: InputMaybe<Repair_Requests_Aggregate_Order_By>;
   status_id?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
+  user?: InputMaybe<Users_Order_By>;
   vehicle_status?: InputMaybe<Vehicle_Statuses_Order_By>;
   vin?: InputMaybe<Order_By>;
   year?: InputMaybe<Order_By>;
@@ -3119,21 +3075,19 @@ export type Vehicles_Pk_Columns_Input = {
 /** select columns of table "vehicles" */
 export enum Vehicles_Select_Column {
   /** column name */
-  color = 'color',
-  /** column name */
   created_at = 'created_at',
   /** column name */
-  fuel = 'fuel',
+  fuel_type_id = 'fuel_type_id',
   /** column name */
   id = 'id',
   /** column name */
   make = 'make',
   /** column name */
-  mileage = 'mileage',
-  /** column name */
   model = 'model',
   /** column name */
-  plate = 'plate',
+  owner_id = 'owner_id',
+  /** column name */
+  plate_number = 'plate_number',
   /** column name */
   status_id = 'status_id',
   /** column name */
@@ -3146,53 +3100,46 @@ export enum Vehicles_Select_Column {
 
 /** input type for updating data in table "vehicles" */
 export type Vehicles_Set_Input = {
-  color?: InputMaybe<Scalars['String']['input']>;
-  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
-  fuel?: InputMaybe<Fuel_Types_Enum>;
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
+  fuel_type_id?: InputMaybe<Scalars['uuid']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
   make?: InputMaybe<Scalars['String']['input']>;
-  mileage?: InputMaybe<Scalars['Int']['input']>;
   model?: InputMaybe<Scalars['String']['input']>;
-  plate?: InputMaybe<Scalars['String']['input']>;
+  owner_id?: InputMaybe<Scalars['uuid']['input']>;
+  plate_number?: InputMaybe<Scalars['String']['input']>;
   status_id?: InputMaybe<Scalars['uuid']['input']>;
-  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamp']['input']>;
   vin?: InputMaybe<Scalars['String']['input']>;
   year?: InputMaybe<Scalars['Int']['input']>;
 };
 
 /** aggregate stddev on columns */
 export type Vehicles_Stddev_Fields = {
-  mileage?: Maybe<Scalars['Float']['output']>;
   year?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by stddev() on columns of table "vehicles" */
 export type Vehicles_Stddev_Order_By = {
-  mileage?: InputMaybe<Order_By>;
   year?: InputMaybe<Order_By>;
 };
 
 /** aggregate stddev_pop on columns */
 export type Vehicles_Stddev_Pop_Fields = {
-  mileage?: Maybe<Scalars['Float']['output']>;
   year?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by stddev_pop() on columns of table "vehicles" */
 export type Vehicles_Stddev_Pop_Order_By = {
-  mileage?: InputMaybe<Order_By>;
   year?: InputMaybe<Order_By>;
 };
 
 /** aggregate stddev_samp on columns */
 export type Vehicles_Stddev_Samp_Fields = {
-  mileage?: Maybe<Scalars['Float']['output']>;
   year?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by stddev_samp() on columns of table "vehicles" */
 export type Vehicles_Stddev_Samp_Order_By = {
-  mileage?: InputMaybe<Order_By>;
   year?: InputMaybe<Order_By>;
 };
 
@@ -3206,50 +3153,45 @@ export type Vehicles_Stream_Cursor_Input = {
 
 /** Initial value of the column from where the streaming should start */
 export type Vehicles_Stream_Cursor_Value_Input = {
-  color?: InputMaybe<Scalars['String']['input']>;
-  created_at?: InputMaybe<Scalars['timestamptz']['input']>;
-  fuel?: InputMaybe<Fuel_Types_Enum>;
+  created_at?: InputMaybe<Scalars['timestamp']['input']>;
+  fuel_type_id?: InputMaybe<Scalars['uuid']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
   make?: InputMaybe<Scalars['String']['input']>;
-  mileage?: InputMaybe<Scalars['Int']['input']>;
   model?: InputMaybe<Scalars['String']['input']>;
-  plate?: InputMaybe<Scalars['String']['input']>;
+  owner_id?: InputMaybe<Scalars['uuid']['input']>;
+  plate_number?: InputMaybe<Scalars['String']['input']>;
   status_id?: InputMaybe<Scalars['uuid']['input']>;
-  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamp']['input']>;
   vin?: InputMaybe<Scalars['String']['input']>;
   year?: InputMaybe<Scalars['Int']['input']>;
 };
 
 /** aggregate sum on columns */
 export type Vehicles_Sum_Fields = {
-  mileage?: Maybe<Scalars['Int']['output']>;
   year?: Maybe<Scalars['Int']['output']>;
 };
 
 /** order by sum() on columns of table "vehicles" */
 export type Vehicles_Sum_Order_By = {
-  mileage?: InputMaybe<Order_By>;
   year?: InputMaybe<Order_By>;
 };
 
 /** update columns of table "vehicles" */
 export enum Vehicles_Update_Column {
   /** column name */
-  color = 'color',
-  /** column name */
   created_at = 'created_at',
   /** column name */
-  fuel = 'fuel',
+  fuel_type_id = 'fuel_type_id',
   /** column name */
   id = 'id',
   /** column name */
   make = 'make',
   /** column name */
-  mileage = 'mileage',
-  /** column name */
   model = 'model',
   /** column name */
-  plate = 'plate',
+  owner_id = 'owner_id',
+  /** column name */
+  plate_number = 'plate_number',
   /** column name */
   status_id = 'status_id',
   /** column name */
@@ -3271,37 +3213,31 @@ export type Vehicles_Updates = {
 
 /** aggregate var_pop on columns */
 export type Vehicles_Var_Pop_Fields = {
-  mileage?: Maybe<Scalars['Float']['output']>;
   year?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by var_pop() on columns of table "vehicles" */
 export type Vehicles_Var_Pop_Order_By = {
-  mileage?: InputMaybe<Order_By>;
   year?: InputMaybe<Order_By>;
 };
 
 /** aggregate var_samp on columns */
 export type Vehicles_Var_Samp_Fields = {
-  mileage?: Maybe<Scalars['Float']['output']>;
   year?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by var_samp() on columns of table "vehicles" */
 export type Vehicles_Var_Samp_Order_By = {
-  mileage?: InputMaybe<Order_By>;
   year?: InputMaybe<Order_By>;
 };
 
 /** aggregate variance on columns */
 export type Vehicles_Variance_Fields = {
-  mileage?: Maybe<Scalars['Float']['output']>;
   year?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by variance() on columns of table "vehicles" */
 export type Vehicles_Variance_Order_By = {
-  mileage?: InputMaybe<Order_By>;
   year?: InputMaybe<Order_By>;
 };
 
@@ -3313,18 +3249,25 @@ export type GetRepairRequestsQueryVariables = Exact<{
 }>;
 
 
-export type GetRepairRequestsQuery = { repair_requests: Array<{ id: any, created_at: any, updated_at: any, mechanic_id?: any | null, vehicle_id: any, requests_logs: Array<{ id: any, created_at: any, updated_at: any, editable: boolean, short_description: string, long_description: string, repair_request_id: any, user: { id: any, created_at: any, updated_at: any, email: string, name: string, surname: string, family: string, gender_enum: { value: string, content: string }, role_enum: { value: string, content: string } } }>, mechanic?: { id: any, created_at: any, updated_at: any, email: string, name: string, surname: string, family: string, gender_enum: { value: string, content: string }, role_enum: { value: string, content: string } } | null, vehicle: { id: any, created_at?: any | null, updated_at?: any | null, vin: string, plate: string, model: string, year: number, make: string, mileage: number, fuel: Fuel_Types_Enum, color: string, vehicle_status: { value: string, content: string } } }>, repair_requests_aggregate: { aggregate?: { count: number } | null } };
+export type GetRepairRequestsQuery = { repair_requests: Array<{ id: any, created_at: any, updated_at?: any | null, logsCount: { aggregate?: { count: number } | null }, vehicle: { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, name: string, code: string } | null } }>, repair_requests_aggregate: { aggregate?: { count: number } | null } };
 
-export type Repair_RequestFragment = { id: any, created_at: any, updated_at: any, mechanic_id?: any | null, vehicle_id: any, requests_logs: Array<{ id: any, created_at: any, updated_at: any, editable: boolean, short_description: string, long_description: string, repair_request_id: any, user: { id: any, created_at: any, updated_at: any, email: string, name: string, surname: string, family: string, gender_enum: { value: string, content: string }, role_enum: { value: string, content: string } } }>, mechanic?: { id: any, created_at: any, updated_at: any, email: string, name: string, surname: string, family: string, gender_enum: { value: string, content: string }, role_enum: { value: string, content: string } } | null, vehicle: { id: any, created_at?: any | null, updated_at?: any | null, vin: string, plate: string, model: string, year: number, make: string, mileage: number, fuel: Fuel_Types_Enum, color: string, vehicle_status: { value: string, content: string } } };
+export type Repair_RequestFragment = { id: any, created_at: any, updated_at?: any | null, logsCount: { aggregate?: { count: number } | null }, vehicle: { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, name: string, code: string } | null } };
 
-export type Request_LogFragment = { id: any, created_at: any, updated_at: any, editable: boolean, short_description: string, long_description: string, repair_request_id: any, user: { id: any, created_at: any, updated_at: any, email: string, name: string, surname: string, family: string, gender_enum: { value: string, content: string }, role_enum: { value: string, content: string } } };
+export type Request_LogFragment = { id: any, created_at: any, updated_at?: any | null, message: string, user: { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } } };
+
+export type GetUserRolesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetUserRolesQuery = { user_roles: Array<{ id: any, code: string, name: string }> };
+
+export type RoleFragment = { id: any, code: string, name: string };
 
 export type RegisterMutationVariables = Exact<{
   user: Users_Insert_Input;
 }>;
 
 
-export type RegisterMutation = { insert_users_one?: { id: any, created_at: any, updated_at: any, email: string, name: string, surname: string, family: string, gender_enum: { value: string, content: string }, role_enum: { value: string, content: string } } | null };
+export type RegisterMutation = { insert_users_one?: { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } } | null };
 
 export type LoginQueryVariables = Exact<{
   email: Scalars['String']['input'];
@@ -3332,7 +3275,7 @@ export type LoginQueryVariables = Exact<{
 }>;
 
 
-export type LoginQuery = { users: Array<{ id: any, created_at: any, updated_at: any, email: string, name: string, surname: string, family: string, gender_enum: { value: string, content: string }, role_enum: { value: string, content: string } }> };
+export type LoginQuery = { users: Array<{ id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } }> };
 
 export type GetUsersQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -3342,14 +3285,14 @@ export type GetUsersQueryVariables = Exact<{
 }>;
 
 
-export type GetUsersQuery = { users: Array<{ id: any, created_at: any, updated_at: any, email: string, name: string, surname: string, family: string, gender_enum: { value: string, content: string }, role_enum: { value: string, content: string } }>, users_aggregate: { aggregate?: { count: number } | null } };
+export type GetUsersQuery = { users: Array<{ id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } }>, users_aggregate: { aggregate?: { count: number } | null } };
 
-export type UserFragment = { id: any, created_at: any, updated_at: any, email: string, name: string, surname: string, family: string, gender_enum: { value: string, content: string }, role_enum: { value: string, content: string } };
+export type UserFragment = { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } };
 
 export type GetVehicleStatusesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetVehicleStatusesQuery = { vehicle_statuses: Array<{ id: any, value: string, content: string, weight: number, color: string }> };
+export type GetVehicleStatusesQuery = { vehicle_statuses: Array<{ id: any, code: string, name: string, color: string, weight: number }> };
 
 export type GetVehiclesQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -3359,59 +3302,29 @@ export type GetVehiclesQueryVariables = Exact<{
 }>;
 
 
-export type GetVehiclesQuery = { vehicles: Array<{ id: any, created_at?: any | null, updated_at?: any | null, vin: string, plate: string, model: string, year: number, make: string, mileage: number, fuel: Fuel_Types_Enum, color: string, vehicle_status: { value: string, content: string } }>, vehicles_aggregate: { aggregate?: { count: number } | null } };
+export type GetVehiclesQuery = { vehicles: Array<{ id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, name: string, code: string } | null }>, vehicles_aggregate: { aggregate?: { count: number } | null } };
 
-export type VehicleFragment = { id: any, created_at?: any | null, updated_at?: any | null, vin: string, plate: string, model: string, year: number, make: string, mileage: number, fuel: Fuel_Types_Enum, color: string, vehicle_status: { value: string, content: string } };
+export type VehicleFragment = { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, name: string, code: string } | null };
 
-export const UserFragmentDoc = gql`
-    fragment user on users {
-  id
-  created_at
-  updated_at
-  email
-  name
-  surname
-  family
-  gender_enum {
-    value
-    content
-  }
-  role_enum {
-    value
-    content
-  }
-}
-    `;
-export const Request_LogFragmentDoc = gql`
-    fragment request_log on requests_logs {
-  id
-  created_at
-  updated_at
-  editable
-  short_description
-  long_description
-  repair_request_id
-  user {
-    ...user
-  }
-}
-    ${UserFragmentDoc}`;
 export const VehicleFragmentDoc = gql`
     fragment vehicle on vehicles {
   id
   created_at
   updated_at
   vin
-  plate
+  plate_number
   model
   year
   make
-  mileage
-  fuel
-  color
+  fuel_type {
+    id
+    name
+    code
+  }
   vehicle_status {
-    value
-    content
+    id
+    name
+    code
   }
 }
     `;
@@ -3420,21 +3333,54 @@ export const Repair_RequestFragmentDoc = gql`
   id
   created_at
   updated_at
-  requests_logs {
-    ...request_log
+  logsCount: requests_logs_aggregate {
+    aggregate {
+      count
+    }
   }
-  mechanic_id
-  mechanic {
-    ...user
-  }
-  vehicle_id
   vehicle {
     ...vehicle
   }
 }
-    ${Request_LogFragmentDoc}
-${UserFragmentDoc}
-${VehicleFragmentDoc}`;
+    ${VehicleFragmentDoc}`;
+export const UserFragmentDoc = gql`
+    fragment user on users {
+  id
+  created_at
+  updated_at
+  email
+  first_name
+  last_name
+  gender {
+    id
+    code
+    name
+  }
+  user_role {
+    id
+    name
+    code
+  }
+}
+    `;
+export const Request_LogFragmentDoc = gql`
+    fragment request_log on requests_logs {
+  id
+  created_at
+  updated_at
+  message
+  user {
+    ...user
+  }
+}
+    ${UserFragmentDoc}`;
+export const RoleFragmentDoc = gql`
+    fragment role on user_roles {
+  id
+  code
+  name
+}
+    `;
 export const GetRepairRequestsDocument = gql`
     query GetRepairRequests($limit: Int, $offset: Int, $condition: repair_requests_bool_exp! = {}, $orderBy: [repair_requests_order_by!] = {created_at: asc}) {
   repair_requests(
@@ -3488,6 +3434,45 @@ export type GetRepairRequestsQueryHookResult = ReturnType<typeof useGetRepairReq
 export type GetRepairRequestsLazyQueryHookResult = ReturnType<typeof useGetRepairRequestsLazyQuery>;
 export type GetRepairRequestsSuspenseQueryHookResult = ReturnType<typeof useGetRepairRequestsSuspenseQuery>;
 export type GetRepairRequestsQueryResult = ApolloReactCommon.QueryResult<GetRepairRequestsQuery, GetRepairRequestsQueryVariables>;
+export const GetUserRolesDocument = gql`
+    query GetUserRoles {
+  user_roles {
+    ...role
+  }
+}
+    ${RoleFragmentDoc}`;
+
+/**
+ * __useGetUserRolesQuery__
+ *
+ * To run a query within a React component, call `useGetUserRolesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserRolesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserRolesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetUserRolesQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetUserRolesQuery, GetUserRolesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<GetUserRolesQuery, GetUserRolesQueryVariables>(GetUserRolesDocument, options);
+      }
+export function useGetUserRolesLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetUserRolesQuery, GetUserRolesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<GetUserRolesQuery, GetUserRolesQueryVariables>(GetUserRolesDocument, options);
+        }
+export function useGetUserRolesSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<GetUserRolesQuery, GetUserRolesQueryVariables>) {
+          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useSuspenseQuery<GetUserRolesQuery, GetUserRolesQueryVariables>(GetUserRolesDocument, options);
+        }
+export type GetUserRolesQueryHookResult = ReturnType<typeof useGetUserRolesQuery>;
+export type GetUserRolesLazyQueryHookResult = ReturnType<typeof useGetUserRolesLazyQuery>;
+export type GetUserRolesSuspenseQueryHookResult = ReturnType<typeof useGetUserRolesSuspenseQuery>;
+export type GetUserRolesQueryResult = ApolloReactCommon.QueryResult<GetUserRolesQuery, GetUserRolesQueryVariables>;
 export const RegisterDocument = gql`
     mutation Register($user: users_insert_input!) {
   insert_users_one(object: $user) {
@@ -3614,10 +3599,10 @@ export const GetVehicleStatusesDocument = gql`
     query GetVehicleStatuses {
   vehicle_statuses(order_by: {weight: asc}) {
     id
-    value
-    content
-    weight
+    code
+    name
     color
+    weight
   }
 }
     `;
