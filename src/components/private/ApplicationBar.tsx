@@ -21,14 +21,7 @@ import CommuteIcon from '@mui/icons-material/Commute';
 import CarRepairIcon from '@mui/icons-material/CarRepair';
 
 import UserContextMenu from './UserContextMenu';
-import { Outlet, Route, Routes, useNavigate } from 'react-router';
-import UsersList from './users/UsersList';
-import { Navigate } from 'react-router';
-import RepairRequestDetails from './repair-requests/RepairRequestDetails';
-import RepairRequestsList from './repair-requests/RepairRequestsList';
-import UserDetails from './users/UserDetails';
-import VehicleDetails from './vehicles/VehicleDetails';
-import VehiclesList from './vehicles/VehiclesList';
+import { Outlet, useNavigate } from 'react-router';
 
 const drawerWidth = 240;
 
@@ -101,7 +94,7 @@ export default function ApplicationBar() {
   const navigate = useNavigate();
   const [auth] = React.useState(true);
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -111,8 +104,7 @@ export default function ApplicationBar() {
     setOpen(false);
   };
 
-  const handleMenuClick = (value: string) => {
-    console.log("/" + value);
+  const handleMenuClick = (value: string) => { 
     navigate('/' + value);
     // return <Navigate to={value}/>
   };
@@ -126,7 +118,7 @@ export default function ApplicationBar() {
   return (
 
 
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex' }}> 
       <CssBaseline />
       <AppBar position="fixed" open={open}>
         <Toolbar>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -7,7 +7,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import { Box, LinearProgress } from '@mui/material';
 import TableNavbar from '../common/TableNavbar';
 import { Order_By, useGetRepairRequestsQuery, type Repair_RequestFragment } from '../../../../graphql/generated';
 import RowContextMenu from '../common/RowContextMenu';
@@ -39,6 +38,7 @@ const columns: readonly ColumnSettings<Repair_RequestFragment>[] = [
 
 
 export default function RepairRequestsList() {
+    const abortControllerRef = useRef<AbortController | null>(null);
     console.log('OOOOOOOOOOOOOO');
     //const statuses = useGetVehicleStatusesQuery().data?.vehicle_statuses;
     const vehicleStatuses: string[] = [];// ['all'];
@@ -49,17 +49,33 @@ export default function RepairRequestsList() {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
     const [condition, setCondition] = useState({});
-    const { data, loading, error } = useGetRepairRequestsQuery({ variables: { limit: rowsPerPage, offset: page * rowsPerPage, condition: condition, orderBy: { created_at: Order_By.asc } } });
+    const { data, loading, error } = useGetRepairRequestsQuery({
+        variables: { limit: rowsPerPage, offset: page * rowsPerPage, condition: condition, orderBy: { created_at: Order_By.asc } },
+        context: {
+            fetchOptions: {
+                signal: abortControllerRef.current?.signal,
+            }
+        }
+    });
     console.log(data, loading, error);
 
     // useEffect(() => { // Listens for the data changes
     //     console.log('data changed', data);
     // }, [data]);
+    useEffect(() => {
+        // Create a new AbortController when the component mounts
+        abortControllerRef.current = new AbortController();
+
+        // Return a cleanup function to abort the request when the component unmounts
+        return () => {
+            abortControllerRef.current?.abort();
+        };
+    }, []);
 
     //TODo: error handling
 
     const handleChangePage = (event: unknown, newPage: number) => {
-        // console.log(event, newPage);
+        console.log(event, newPage);
         setPage(newPage);
     };
 
@@ -69,9 +85,11 @@ export default function RepairRequestsList() {
     };
 
     const filterSelectedHandler = (event: string) => {
+        console.log(event);
         // const criteria = statuses?.find((e) => e.value === event);
         // const condition: Repair_Requests_Bool_Exp = criteria ? { vehicle: {status_id } : { _eq: criteria.id } } : {};
         // setCondition(condition);
+        setPage(0)
     };
 
     const addClickedHandler = () => {
@@ -93,14 +111,14 @@ export default function RepairRequestsList() {
                 options={vehicleStatuses}
                 addClickedHandler={addClickedHandler}
                 filterSelectedHandler={filterSelectedHandler}
+                error={error}
+                loading={loading}
             ></TableNavbar>
 
             {data?.repair_requests_aggregate.aggregate?.count ? (
                 <div>
                     <TableContainer sx={{ height: '100%' }}>
-                        <Box sx={{ width: '100%' }}>
-                            {loading && <LinearProgress />}
-                        </Box>
+
                         <Table stickyHeader aria-label="sticky table">
                             <TableHead>
                                 <TableRow>

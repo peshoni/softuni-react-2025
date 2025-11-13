@@ -94,6 +94,7 @@ cd .\graphql\
 npx hasura migrate apply --database-name "default"
 npx hasura migrate apply --database-name "default" --admin-secret ""
 npx hasura seed apply --database-name "default"
+npx hasura metadata apply
 
 npx hasura console --admin-secret "softuniReactAdminSecret"
 

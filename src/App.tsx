@@ -1,23 +1,19 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import { useRegisterMutation, type UserFragment } from './../graphql/generated';
-import { ApolloError } from '@apollo/client';
 import ApplicationBar from './components/private/ApplicationBar';
-// import CarServiceLanding from './components/public/LandingPage';
-// import UsersListExample from './components/private/users/UsersListExample';
 import UsersList from './components/private/users/UsersList';
 import VehiclesList from './components/private/vehicles/VehiclesList';
 import RepairRequestsList from './components/private/repair-requests/RepairRequestsList';
 import RepairRequestDetails from './components/private/repair-requests/RepairRequestDetails';
-// import UsersList from './components/private/users/UsersList';
-
 import { Routes, Route } from 'react-router';
 import UserDetails from './components/private/users/UserDetails';
 import VehicleDetails from './components/private/vehicles/VehicleDetails';
 import { PathSegments } from './components/routes/enums';
 import CarServiceLanding from './components/public/LandingPage';
 import PublicLayout from './components/public/PublicLayout';
-import AuthForm from './components/public/AuthForm';
+import LoginForm from './components/public/LoginForm';
+import RegisterForm from './components/public/RegisterFrom';
 
 function App() {
   // const [isParentVisible, setIsParentVisible] = useState(true);
@@ -58,63 +54,26 @@ function App() {
   }, []);
 
   return (
-    <>
-      <Routes>
-        <Route path='/' element={<ApplicationBar />}>
+    <Routes>
+      <Route path='/' element={<ApplicationBar />}>
+        <Route path={PathSegments.USERS} element={<UsersList />} />
+        <Route path={PathSegments.USERS + '/' + PathSegments.DETAILS + '/:id'} element={<UserDetails />} />
 
-          <Route path={PathSegments.USERS} element={<UsersList />} >
-            <Route path=':id' element={<UserDetails />} />
-          </Route>
+        <Route path={PathSegments.VEHICLES} element={<VehiclesList />} />
+        <Route path={PathSegments.VEHICLES + '/' + PathSegments.DETAILS + '/:id'} element={<VehicleDetails />} />
 
-          <Route path='vehicles' element={<VehiclesList />} >
-            <Route path=':id' element={<VehicleDetails />} />
-          </Route>
+        <Route path={PathSegments.REPAIR_REQUESTS} element={<RepairRequestsList />} />
+        <Route path={PathSegments.VEHICLES + '/' + PathSegments.DETAILS + '/:id'} element={<RepairRequestDetails />} />
+      </Route>
 
-          <Route path='repair-requests' element={<RepairRequestsList />}>
-            <Route path=':id' element={<RepairRequestDetails />} />
-          </Route>
-        </Route>
+      <Route element={<PublicLayout />}>
+        <Route path='landingPage' element={<CarServiceLanding />} />
+        <Route path='login' element={<LoginForm />} />
+        <Route path='register' element={<RegisterForm />} />
+      </Route>
 
-        <Route element={<PublicLayout />}>
-          <Route path='landingPage' element={<CarServiceLanding />} />
-          <Route path='register' element={<AuthForm />} />
-          <Route path='login' element={<AuthForm />} />
-        </Route>
-
-
-        <Route path='*' element={<div>404 Not Found</div>} />
-      </Routes>
-      {/* <ApplicationBar /> */}
-
-      {/* https://reactrouter.com/home */}
-      {/* <Routes>
-        <Route path='/' element={<div>Home Page</div>} />
- 
-        <Route path='/users' element={<UsersList />} />
-        <Route path='/users/:id' element={<UserDetails />} />
-        <Route path='/vehicles' element={<VehiclesList />} />
-        <Route path='/vehicles/:id' element={<VehicleDetails />} />
-        <Route path='/repair-requests' element={<RepairRequestsList />} />
-        <Route path='/repair-requests/:id' element={<RepairRequestDetails />} />
-        <Route path='*' element={<div>404 Not Found</div>} />
-
-
-      </Routes> */}
-      {/* <ApplicationBar /> */}
-      {/* <CarServiceLanding/> */}
-      {/* <UsersList /> */}
-      {/* <RepairRequestDetails /> */}
-      {/* <VehiclesList/> */}
-      {/* <RepairRequestsList /> */}
-
-
-      {/* <h1>hello world</h1>
-      <button onClick={() => setIsParentVisible((curr) => !curr)}>toggle</button>
-      {isParentVisible
-        ? <Parent />
-        : <section>Disabled</section>
-      } */}
-    </>
+      <Route path='*' element={<div>404 Not Found</div>} />
+    </Routes>
   );
 }
 

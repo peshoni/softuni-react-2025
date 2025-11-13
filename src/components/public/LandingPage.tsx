@@ -1,6 +1,6 @@
 
 // npm install @mui/material @mui/icons-material @emotion/react @emotion/styled framer-motion
-import React, { type JSX } from "react";
+import { type JSX } from "react";
 import { motion } from "framer-motion";
 import {
   AppBar,
@@ -17,8 +17,11 @@ import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import BuildIcon from "@mui/icons-material/Build";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturing";
+import { useNavigate } from "react-router";
 
 export default function CarServiceLanding() {
+  const navigate = useNavigate();
+
   const aboutSettings: {
     title: string;
     text: string;
@@ -40,6 +43,13 @@ export default function CarServiceLanding() {
         icon: <PrecisionManufacturingIcon color="primary" sx={{ fontSize: 40, mb: 2 }} />
       }
     ];
+
+
+  const handleButtonClick = (value: string) => {
+    navigate('/' + value);
+  };
+
+
   return (
     <Box sx={{ minHeight: "100vh", bgcolor: "#f8f9fa" }}>
       {/* Header */}
@@ -53,14 +63,11 @@ export default function CarServiceLanding() {
           </Box>
 
           <Box display="flex" gap={2}>
-            {/* <Button color="inherit">About</Button>
-            <Button color="inherit">Services</Button>
-            <Button color="inherit">Contact</Button> */}
-            <Button variant="outlined" color="primary">
-              Вход
+            <Button variant="outlined" color="primary" onClick={() => handleButtonClick('login')}>
+              login
             </Button>
-            <Button variant="contained" color="primary">
-              Регистрация
+            <Button variant="contained" color="primary" onClick={() => handleButtonClick('register')}>
+              register
             </Button>
           </Box>
         </Toolbar>
@@ -81,15 +88,13 @@ export default function CarServiceLanding() {
                 fontWeight="bold"
                 gutterBottom
               >
-                Професионален автомобилен сервиз, на който можете да се доверите
+                Professional car service you can trust
               </Typography>
               <Typography variant="body1" color="text.secondary" mb={4}>
                 We take pride in offering top-quality automotive care,
                 ensuring your vehicle stays reliable and safe on the road.
               </Typography>
-              <Button size="large" variant="contained" color="primary">
-                Book a Service
-              </Button>
+
             </motion.div>
           </Grid>
 
@@ -149,7 +154,7 @@ export default function CarServiceLanding() {
       {/* Footer */}
       <Box sx={{ bgcolor: "#0d0d0d", color: "#ccc", py: 3, textAlign: "center" }}>
         <Typography variant="body2">
-          © {new Date().getFullYear()} AutoCare Pro. Всички права запазени.
+          © {new Date().getFullYear()} AutoCare Pro. All rights reserved.
         </Typography>
       </Box>
     </Box>
