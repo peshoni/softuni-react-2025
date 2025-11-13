@@ -1,5 +1,4 @@
 import { ListItem, ListItemAvatar, Avatar, ListItemText, Typography, TextareaAutosize, Divider } from "@mui/material";
-import React from "react";
 import type { Requests_Logs } from "../../../../graphql/generated";
 
 export default function Log({ log, isFromCurrentUser }: { readonly log: Requests_Logs; readonly isFromCurrentUser: boolean; }) {
@@ -11,12 +10,12 @@ export default function Log({ log, isFromCurrentUser }: { readonly log: Requests
     return (
         <>
             <ListItem alignItems="flex-start" sx={{ display: 'flex', flexDirection: rowDirection }}>
-                <ListItemAvatar sx={{display:'flex', justifyContent:'center'}}>
-                    <Avatar alt={`${log.user.name}`} src="/static/images/avatar/2.jpg" />
+                <ListItemAvatar sx={{ display: 'flex', justifyContent: 'center' }}>
+                    <Avatar alt={`${log.user.first_name}`} src="/static/images/avatar/2.jpg" />
                 </ListItemAvatar>
 
                 <ListItemText
-                    primary={log.short_description}
+                    primary={log.created_at}
                     secondary={
                         <>
                             {editable ? (
@@ -25,7 +24,7 @@ export default function Log({ log, isFromCurrentUser }: { readonly log: Requests
                                     disabled={false}
                                     contentEditable={true}
                                     maxRows={10}
-                                    defaultValue={log.long_description}
+                                    defaultValue={log.message}
                                     style={{ width: '100%', maxWidth: '100%' }}
                                 />
                             ) : (<Typography
@@ -33,7 +32,7 @@ export default function Log({ log, isFromCurrentUser }: { readonly log: Requests
                                 variant="body2"
                                 sx={{ color: 'text.primary', display: 'inline' }}
                             >
-                                {log.long_description}
+                                {log.message}
                             </Typography>)}
                         </>
                     }

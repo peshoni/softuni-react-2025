@@ -26,8 +26,10 @@ export default function TableNavbar({ preselectedOption, options, label, shouldS
     };
 
     return (
-        // sx={ {backgroundColor:'#e8e8e8'} }
         <>
+            <Box sx={{ width: '100%' }}>
+                {loading && <LinearProgress color="primary" />}
+            </Box>
             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }} >
                 {innerOptions.length > 1
                     && <Grid size={{ xs: 1, sm: 2, md: 2 }}>
@@ -67,10 +69,6 @@ export default function TableNavbar({ preselectedOption, options, label, shouldS
                     </Grid>
                 }
             </Grid>
-
-            <Box sx={{ width: '100%' }}>
-                {loading && <LinearProgress />}
-            </Box>
         </>
     );
 }

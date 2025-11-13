@@ -13,26 +13,14 @@ import RowContextMenu from '../common/RowContextMenu';
 import EmptyDatasource from '../common/EmptyDataSources';
 import { fromIsoDate } from '../../../utils/dateUtils';
 import type { ColumnSettings } from '../common/table-interfaces';
+import DatasourceError from '../common/DatasourceError';
 
 const columns: readonly ColumnSettings<VehicleFragment>[] = [
-    { property: 'created_at', label: 'Created', minWidth: 100, formatDate: (value) => fromIsoDate(value) },
-    { property: 'updated_at', label: 'Updated', minWidth: 100, formatDate: (value) => fromIsoDate(value) },
-    { property: 'make', label: 'Make', minWidth: 100 },
-    { property: 'model', label: 'Model', minWidth: 100 },
-
-    // {
-    //   id: 'population',
-    //   label: 'Population',
-    //   minWidth: 170,
-    //   align: 'right',
-    //   format: (value: number) => value.toLocaleString('en-US'),
-    // }, 
-    {
-        property: 'actions',
-        label: 'actions',
-        minWidth: 60,
-        align: 'right'
-    }
+    { property: 'created_at', label: 'Created', width: '80px', formatDate: (value) => fromIsoDate(value) },
+    { property: 'updated_at', label: 'Updated', width: '80px', formatDate: (value) => fromIsoDate(value) },
+    { property: 'make', label: 'Make' },
+    { property: 'model', label: 'Model' },
+    { property: 'actions', label: 'actions', width: '60x', align: 'right' }
 ];
 
 
@@ -48,7 +36,12 @@ export default function VehiclesList() {
     const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
     const [condition, setCondition] = useState({});
     const { data, loading, error } = useGetVehiclesQuery({
-        variables: { limit: rowsPerPage, offset: page * rowsPerPage, condition: condition, orderBy: { created_at: Order_By.asc } },
+        variables: {
+            limit: rowsPerPage,
+            offset: page * rowsPerPage,
+            condition: condition,
+            orderBy: { created_at: Order_By.asc }
+        },
         context: {
             fetchOptions: {
                 signal: abortControllerRef.current?.signal,
@@ -100,10 +93,14 @@ export default function VehiclesList() {
         //setChildEvent(event);
     };
 
-    // setTimeout(() => {
-    //   setIsLoading(false);
-    // }, 2000); 
+    const isTableVisible: boolean = (Boolean(data?.vehicles_aggregate.aggregate?.count)) && (!error || !loading);
 
+    let fallbackComponent;
+    if (error) {
+        fallbackComponent = <DatasourceError />;
+    } else if (!loading) {
+        fallbackComponent = <EmptyDatasource />;
+    }
     return (
         <Paper sx={{ width: '100%', overflow: 'hidden' }}>
             <TableNavbar
@@ -117,8 +114,8 @@ export default function VehiclesList() {
                 loading={loading}
             ></TableNavbar>
 
-            {data?.vehicles_aggregate.aggregate?.count && !loading ? (
-                <div>
+            {isTableVisible ? (
+                <>
                     <TableContainer sx={{ height: '100%' }}>
                         <Table stickyHeader aria-label="sticky table">
                             <TableHead>
@@ -127,7 +124,8 @@ export default function VehiclesList() {
                                         <TableCell
                                             key={column.property}
                                             align={column.align}
-                                            style={{ minWidth: column.minWidth }}
+                                            width={column.width}
+                                            style={{ backgroundColor: '#f0f6ffff', fontSize: '16px' }}
                                         >
                                             {column.label}
                                         </TableCell>
@@ -136,9 +134,9 @@ export default function VehiclesList() {
                             </TableHead>
 
                             <TableBody>
-                                {data?.vehicles.map((vehicle) => {
+                                {data?.vehicles.map((vehicle, index) => {
                                     return (
-                                        <TableRow hover tabIndex={-1} key={vehicle.id}>
+                                        <TableRow hover tabIndex={-1} key={vehicle.id} style={{ backgroundColor: index % 2 ? '#f7f8faff' : 'white' }}>
                                             {columns.map((column) => {
                                                 return processColumn(column, vehicle);
                                             })}
@@ -157,9 +155,9 @@ export default function VehiclesList() {
                         onPageChange={handleChangePage}
                         onRowsPerPageChange={handleChangeRowsPerPage}
                     />
-                </div>
+                </>
             ) : (
-                <EmptyDatasource />
+                fallbackComponent
             )}
         </Paper>
     );
@@ -170,11 +168,7 @@ function processColumn(column: ColumnSettings<VehicleFragment>, user: VehicleFra
         switch (column.property) {
             case 'created_at':
             case 'updated_at':
-                return column.formatDate?.(value) ?? '';
-            // case 'make':
-            // case 'model':
-            // case 'mileage':
-            //     return value; // same string value
+                return column.formatDate?.(value);
             case 'actions':
                 return <RowContextMenu />;
             default: return value;

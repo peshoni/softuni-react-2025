@@ -18,12 +18,11 @@ import { useNavigate } from 'react-router';
 
 
 const columns: readonly ColumnSettings<UserFragment>[] = [
-
-  { property: 'created_at', label: 'Създаден', minWidth: 80, formatDate: (value) => fromIsoDate(value) },
-  { property: 'updated_at', label: 'Промемен', minWidth: 80, formatDate: (value) => fromIsoDate(value) },
-  { property: 'user_role', label: 'Роля', minWidth: 100 },
-  { property: 'first_name', label: 'Име', minWidth: 100 },
-  { property: 'last_name', label: 'Фамилия', minWidth: 100 },
+  { property: 'created_at', label: 'Създаден', width: '80px', formatDate: (value) => fromIsoDate(value) },
+  { property: 'updated_at', label: 'Промемен', width: '80px', formatDate: (value) => fromIsoDate(value) },
+  { property: 'user_role', label: 'Роля' },
+  { property: 'first_name', label: 'Име' },
+  { property: 'last_name', label: 'Фамилия' },
   // { property: 'family', label: 'Family', minWidth: 100 },
   // {
   //   id: 'population',
@@ -35,7 +34,7 @@ const columns: readonly ColumnSettings<UserFragment>[] = [
   {
     property: 'actions',
     label: 'actions',
-    minWidth: 60,
+    width: '60px',
     align: 'right'
   }
 ];
@@ -75,10 +74,6 @@ export default function UsersList() {
 
   useEffect(() => { // Listens for the data changes 
     console.log('data changed');
-    // setTimeout(() => { 
-    //   navigate('/vehicles');
-    // }, 3);
-
     if (error) {
       userRoles = [];
     }
@@ -97,12 +92,8 @@ export default function UsersList() {
   };
 
   const filterSelectedHandler = (event: string) => {
-    console.log(event);
-    console.log(roles);
     const role = roles.find(r => r.code === event);
     const condition: Users_Bool_Exp = role ? { role_id: { _eq: role.id } } : {};
-    console.log(condition);
-
     setCondition(condition);
     setPage(0);
   };
@@ -116,7 +107,7 @@ export default function UsersList() {
   //   setIsLoading(false);
   // }, 2000); 
 
-  const showTable: boolean = (Boolean(data?.users_aggregate.aggregate?.count)) && (!error || !loading);
+  const isTableVisible: boolean = (Boolean(data?.users_aggregate.aggregate?.count)) && (!error || !loading);
 
   const navBarProps: TableNavbarProps = {
     label: 'Списък с потребители',
@@ -129,12 +120,20 @@ export default function UsersList() {
     filterSelectedHandler,
   };
 
+  let fallbackComponent;
+  if (error) {
+    fallbackComponent = <DatasourceError />;
+  } else if (!loading) {
+    fallbackComponent = <EmptyDatasource />;
+  }
+
+
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
 
       <TableNavbar {...navBarProps}></TableNavbar>
 
-      {showTable ? (
+      {isTableVisible ? (
         <div>
           <TableContainer sx={{ height: '100%' }}>
             <Table stickyHeader aria-label="sticky table">
@@ -144,7 +143,8 @@ export default function UsersList() {
                     <TableCell
                       key={column.property}
                       align={column.align}
-                      style={{ minWidth: column.minWidth }}
+                      width={column.width}
+                      style={{ backgroundColor: '#f0f6ffff', fontSize: '16px' }}
                     >
                       {column.label}
                     </TableCell>
@@ -153,9 +153,9 @@ export default function UsersList() {
               </TableHead>
 
               <TableBody>
-                {data?.users.map((user) => {
+                {data?.users.map((user, index) => {
                   return (
-                    <TableRow hover tabIndex={-1} key={user.id}>
+                    <TableRow hover tabIndex={-1} key={user.id} style={{ backgroundColor: index % 2 ? '#f7f8faff' : 'white' }}>
                       {columns.map((column) => {
                         return processColumn(column, user);
                       })}
@@ -177,7 +177,7 @@ export default function UsersList() {
           />
         </div>
       ) : (
-        error ? <DatasourceError /> : <EmptyDatasource />
+        fallbackComponent
       )}
     </Paper>
   );
@@ -189,20 +189,16 @@ function processColumn(column: ColumnSettings<UserFragment>, user: UserFragment)
     switch (column.property) {
       case 'created_at':
       case 'updated_at':
-        return column.formatDate?.(value) ?? '';
+        return column.formatDate?.(value);
       case 'user_role':
         return (value as RoleFragment).name;
-      // case 'name':
-      // case 'surname':
-      // case 'family':
-      //   return value; // same string value
       case 'actions':
         return <RowContextMenu />;
       default: return value;
     }
   };
 
-  return <TableCell key={column.property} align={column.align}>
+  return <TableCell key={column.property} align={column.align}  >
     {cellValue()}
   </TableCell>;
 }

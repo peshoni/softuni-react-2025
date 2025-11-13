@@ -1,7 +1,7 @@
+import { useParams } from 'react-router';
 import List from '@mui/material/List';
 import type { Requests_Logs } from '../../../../graphql/generated';
 import Log from './Log';
-import {   useParams } from 'react-router';
 
 export default function RepairRequestDetails() {
     let { id } = useParams<{ id: string }>();
@@ -10,28 +10,28 @@ export default function RepairRequestDetails() {
 
     const currentUserId = 'uuuy';
     const logs: Requests_Logs[] = [
-//         {
-//             id: 'asd',
-//             created_at: '',
-//             updated_at: '',
-//             author_role_id:'',
-//             // repair_request:{
-                
-//             // } as any as Repair_RequestFragment,
-// user_role
-      
-           
-//             message: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cupiditate omnis corrupti quos, quisquam tempora mollitia iure repudiandae magnam! Magnam repellendus blanditiis saepe tempore dignissimos accusantium ad rerum atque cupiditate soluta?',
-//             request_id: '11',
-//             author_id: 's',
-//             user: {} as any as Users
+        //         {
+        //             id: 'asd',
+        //             created_at: '',
+        //             updated_at: '',
+        //             author_role_id:'',
+        //             // repair_request:{
 
-//         },
+        //             // } as any as Repair_RequestFragment,
+        // user_role
+
+
+        //             message: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cupiditate omnis corrupti quos, quisquam tempora mollitia iure repudiandae magnam! Magnam repellendus blanditiis saepe tempore dignissimos accusantium ad rerum atque cupiditate soluta?',
+        //             request_id: '11',
+        //             author_id: 's',
+        //             user: {} as any as Users
+
+        //         },
         // {
         //     id: 'uuuy',
         //     created_at: '',
         //     updated_at: '',
-          
+
         //     short_description: 'short note',
         //     long_description: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cupiditate omnis corrupti quos, quisquam tempora mollitia iure repudiandae magnam! Magnam repellendus blanditiis saepe tempore dignissimos accusantium ad rerum atque cupiditate soluta?',
         //     repair_request_id: '11',
