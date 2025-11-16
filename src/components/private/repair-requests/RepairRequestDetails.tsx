@@ -4,11 +4,10 @@ import { useGetRepairRequestByIdQuery, type Repair_Request_With_LogsFragment } f
 import Log from './Log';
 import { isNullOrUndefined } from 'is-what';
 import DetailsHeader from '../common/forms/DetailsHeader';
-import EmptyDatasource from '../common/tables/EmptyDataSources';
+import DatasourceEmptyResult from '../common/tables/DataSourceEmptyResult';
 
 export default function RepairRequestDetails() {
-    let { id } = useParams<{ id: string; }>();
-    // const loc = useLocation();
+    let { id } = useParams<{ id: string; }>(); 
     console.log('RepairRequestDetails id=', id);
     const params = useParams();
     const isCreateMode = isNullOrUndefined(params?.id);
@@ -20,7 +19,7 @@ export default function RepairRequestDetails() {
         <>
             <DetailsHeader isCreateMode={isCreateMode} />
 
-            {!repairRequest && <EmptyDatasource />}
+            {!repairRequest && <DatasourceEmptyResult />}
             {repairRequest &&
                 <div>
 

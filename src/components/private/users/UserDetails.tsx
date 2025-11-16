@@ -1,6 +1,6 @@
 import { useParams } from "react-router";
 import { useGetUserByIdQuery, type UserFragment } from "../../../../graphql/generated";
-import EmptyDatasource from "../common/tables/EmptyDataSources";
+import DatasourceEmptyResult from "../common/tables/DataSourceEmptyResult";
 import { isNullOrUndefined } from "is-what";
 import DetailsHeader from "../common/forms/DetailsHeader";
 
@@ -15,7 +15,7 @@ export default function UserDetails() {
         <>
             <DetailsHeader isCreateMode={isCreateMode} />
 
-            {!user && <EmptyDatasource />}
+            {!user && <DatasourceEmptyResult />}
             {user &&
                 <div>
                     details

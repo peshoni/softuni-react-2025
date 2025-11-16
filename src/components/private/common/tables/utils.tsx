@@ -1,6 +1,6 @@
 import type { ApolloError } from "@apollo/client";
 import DatasourceError from "./DatasourceError";
-import EmptyDatasource from "./EmptyDataSources";
+import DatasourceEmptyResult from "./DataSourceEmptyResult";
 import type { JSX } from "@emotion/react/jsx-runtime";
 import { TableHead, TableRow, TableCell } from "@mui/material";
 import type { Repair_RequestFragment, UserFragment, VehicleFragment } from "../../../../../graphql/generated";
@@ -19,7 +19,7 @@ export function getFallbackTemplate(error: ApolloError | undefined, loading: boo
     if (error) {
         return <DatasourceError />;
     } else if (!loading) {
-        return <EmptyDatasource />;
+        return <DatasourceEmptyResult />;
     }
 }
 

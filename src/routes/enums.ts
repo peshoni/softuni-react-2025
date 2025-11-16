@@ -1,5 +1,4 @@
 export enum PathSegments {
-    LANDING_PAGE = 'landing-page',
     LOGIN = 'login',
     REGISTER = 'register',
     USERS = 'users',

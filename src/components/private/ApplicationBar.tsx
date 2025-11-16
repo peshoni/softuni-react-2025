@@ -20,8 +20,10 @@ import GroupIcon from '@mui/icons-material/Group';
 import CommuteIcon from '@mui/icons-material/Commute';
 import CarRepairIcon from '@mui/icons-material/CarRepair';
 import UserContextMenu from './UserContextMenu';
-import { Outlet, useNavigate } from 'react-router';
-import { useLoginQuery } from '../../../graphql/generated';
+import { Outlet, useNavigate } from 'react-router'; 
+import { isNullOrUndefined } from 'is-what';
+import type { UserFragment } from '../../../graphql/generated';
+import { useEffect } from 'react';
 
 const drawerWidth = 240;
 
@@ -89,16 +91,8 @@ interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
 }
 
-export default function ApplicationBar() {
+export default function ApplicationBar({ user }: { readonly user?: UserFragment; }) {
   const navigate = useNavigate();
-  // mariyaivaneva@autoservice.bg UserPass!
-  // ivanastanska@autoservice.bg Mechanic!
-  // raykokirilin@autoservice.bg Service123!
-
-  const user = useLoginQuery({ variables: { email: 'mariyaivaneva@autoservice.bg', password: 'UserPass!' } }).data?.users[0];
-  console.log(user);
-  // const [authenticatedUser, setAuthenticatedUser] = React.useState<UserFragment | undefined>(user);
-
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
 
@@ -114,6 +108,38 @@ export default function ApplicationBar() {
     navigate('/' + value);
     // return <Navigate to={value}/>
   };
+
+  //   useEffect(() => { 
+  //   console.log('MOUNT...');
+ 
+  //   if (!isNullOrUndefined(user)) {
+
+  //     navigate('/vehicles');
+  //   }
+  //   // mutate({
+  //   //   variables: {
+  //   //     user: {
+  //   //       name: 'Pepe',
+  //   //       surname: 'Ivanov',
+  //   //       family: 'Ivanov',
+  //   //       gender: 'male',
+  //   //       email: 'aaa@aaa.bg',
+  //   //       password: 'aaaaa',
+  //   //       role: 'customer'
+  //   //     }
+  //   //   }
+  //   // }).then((res) => {
+  //   //   setUser(res.data?.insert_users_one as UserFragment);
+  //   //   console.log(res);
+  //   // }).catch(e => {
+  //   //   if (e instanceof ApolloError) {
+  //   //     console.log(e);
+  //   //     // setIsServerOffline(true);
+  //   //   }
+  //   // });
+  //   // console.log(data, loading, error ); 
+
+  // }, []);
 
   const menuItems = [
     { label: 'Users', icon: <GroupIcon />, path: 'users' },
@@ -141,8 +167,7 @@ export default function ApplicationBar() {
             Автосервиз
           </Typography>
 
-          {/* The context menu for an authorized user */}
-
+          {/* The context menu for an authorized user */} 
           {user && <UserContextMenu  {...user} />}
 
         </Toolbar>

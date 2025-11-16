@@ -8,7 +8,7 @@ const MyPaper = styled(Paper)(({ theme }) => ({
     color: theme.palette.grey[500],
     alignContent: 'center' 
 }));
-export default function EmptyDatasource() {
+export default function DatasourceEmptyResult() {
     return (
         <MyPaper>
             No records were found

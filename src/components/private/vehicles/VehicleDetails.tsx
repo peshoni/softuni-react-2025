@@ -2,7 +2,7 @@ import { isNullOrUndefined } from "is-what";
 import { useParams } from "react-router";
 import { useGetVehicleByIdQuery, type VehicleFragment } from "../../../../graphql/generated";
 import DetailsHeader from "../common/forms/DetailsHeader";
-import EmptyDatasource from "../common/tables/EmptyDataSources";
+import DatasourceEmptyResult from "../common/tables/DataSourceEmptyResult";
 
 export default function VehicleDetails() {
     const params = useParams();
@@ -15,7 +15,7 @@ export default function VehicleDetails() {
         <>
             <DetailsHeader isCreateMode={isCreateMode} />
 
-            {!vehicle && <EmptyDatasource />}
+            {!vehicle && <DatasourceEmptyResult />}
             {vehicle &&
                 <div>
                     details

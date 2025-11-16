@@ -1,12 +1,12 @@
 import { isNullOrUndefined } from "is-what";
-import { Navigate, Outlet } from "react-router";
+import { Navigate } from "react-router";
+import { buildUrl } from "../routes-util";
+import { PathSegments } from "../enums";
+import ApplicationBar from "../../components/private/ApplicationBar";
+import type { UserFragment } from "../../../graphql/generated";
 
-export default function AuthGuard({ user }: { readonly user: object | undefined; }) {
-
-    if (isNullOrUndefined(user)) {
-        return <Navigate to={"/login"} />;
-    }
-
-   return <Navigate to={"/"} />;
-
+export default function AuthGuard({ user }: { readonly user: UserFragment | undefined; }) {  
+    return isNullOrUndefined(user)
+        ? <Navigate to={buildUrl(PathSegments.LOGIN)} />
+        : <ApplicationBar user={user} />; 
 }
