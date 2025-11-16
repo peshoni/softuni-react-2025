@@ -4,29 +4,36 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import TableNavbar, { type TableNavbarProps } from "../common/TableNavbar";
-import { Order_By, useGetRepairRequestsQuery, type Repair_RequestFragment, } from "../../../../graphql/generated";
-import RowContextMenu from "../common/RowContextMenu";
-import EmptyDatasource from "../common/EmptyDataSources";
+import TableNavbar, { type TableNavbarProps } from "../common/tables/TableNavbar";
+import { Order_By, useGetRepairRequestsQuery, useGetVehicleStatusesQuery, type Repair_RequestFragment, type Repair_Requests_Bool_Exp, type Vehicle_StatusFragment, } from "../../../../graphql/generated";
+import TableRowContextMenu, { type ROW_ACTIONS, type RowContextFunctionType } from "../common/tables/RowContextMenu";
 import { fromIsoDate } from "../../../utils/dateUtils";
-import type { ColumnSettings } from "../common/table-interfaces";
-import DatasourceError from "../common/DatasourceError";
+import type { ColumnSettings } from "../common/tables/table-interfaces";
+import { useNavigate } from "react-router";
+import { PathSegments } from "../../../routes/enums";
+import { buildUrl } from "../../../routes/routes-util";
+import { buildHeaderRow, getFallbackTemplate as getTableFallbackElement } from "../common/tables/utils";
+import { TableHead } from "@mui/material";
 
-const columns: readonly ColumnSettings<Repair_RequestFragment>[] = [
+const columns: ColumnSettings<Repair_RequestFragment>[] = [
     { property: "created_at", label: "създаден", width: "80px", formatDate: (value) => fromIsoDate(value), },
     { property: "updated_at", label: "променен", width: "100px", formatDate: (value) => fromIsoDate(value), },
-    { property: "logsCount", label: "коментари" },
+    { property: "title", label: "описание" },
+    { property: "vehicle_status", label: "статус" },
+    { property: "logsCount", label: "бележки" },
     { property: "actions", label: "actions", width: "60px", align: "right" },
 ];
 
 export default function RepairRequestsList() {
+    const navigate = useNavigate();
     const abortControllerRef = useRef<AbortController | null>(null);
     console.log("OOOOOOOOOOOOOO");
-    //const statuses = useGetVehicleStatusesQuery().data?.vehicle_statuses;
-    const vehicleStatuses: string[] = []; // ['all'];
+    const statuses = useGetVehicleStatusesQuery().data?.vehicle_statuses;
+    const vehicleStatuses = ['all'];
+    const enumValues: string[] = statuses?.map(e => e.name) ?? [];
+    vehicleStatuses.push(...enumValues);
     // const enumValues: string[] = statuses?.map(e => e.value) ?? [];
     // vehicleStatuses.push(...enumValues);
     const rowsPerPageOptions = [5, 10, 15];
@@ -78,9 +85,9 @@ export default function RepairRequestsList() {
 
     const filterSelectedHandler = (event: string) => {
         console.log(event);
-        // const criteria = statuses?.find((e) => e.value === event);
-        // const condition: Repair_Requests_Bool_Exp = criteria ? { vehicle: {status_id } : { _eq: criteria.id } } : {};
-        // setCondition(condition);
+        const criteria = statuses?.find((e) => e.name === event);
+        const condition: Repair_Requests_Bool_Exp = criteria ? { status_id: { _eq: criteria.id } } : {};
+        setCondition(condition);
         setPage(0);
     };
 
@@ -88,6 +95,12 @@ export default function RepairRequestsList() {
         console.log("child -> parent: add click");
         console.log("Open add user details");
         //setChildEvent(event);
+    };
+
+    const rowContextMenuCallback: RowContextFunctionType = (action: ROW_ACTIONS, id: string) => {
+        if (action === 'edit') {
+            navigate(buildUrl(PathSegments.REPAIR_REQUESTS, PathSegments.DETAILS, id));
+        }
     };
 
     const isTableVisible: boolean = Boolean(data?.repair_requests_aggregate.aggregate?.count) && (!error || !loading);
@@ -102,12 +115,6 @@ export default function RepairRequestsList() {
         filterSelectedHandler,
     };
 
-    let fallbackComponent;
-    if (error) {
-        fallbackComponent = <DatasourceError />;
-    } else if (!loading) {
-        fallbackComponent = <EmptyDatasource />;
-    }
     return (
         <Paper sx={{ width: "100%", overflow: "hidden" }}>
             <TableNavbar {...navBarProps}></TableNavbar>
@@ -116,19 +123,9 @@ export default function RepairRequestsList() {
                 <div>
                     <TableContainer sx={{ height: "100%" }}>
                         <Table stickyHeader aria-label="sticky table">
+
                             <TableHead>
-                                <TableRow>
-                                    {columns.map((column) => (
-                                        <TableCell
-                                            key={column.property}
-                                            align={column.align}
-                                            width={column.width}
-                                            style={{ backgroundColor: '#f0f6ffff', fontSize: '16px' }}
-                                        >
-                                            {column.label}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
+                                {buildHeaderRow(columns)}
                             </TableHead>
 
                             <TableBody>
@@ -136,7 +133,7 @@ export default function RepairRequestsList() {
                                     return (
                                         <TableRow hover tabIndex={-1} key={entity.id} style={{ backgroundColor: index % 2 ? '#f7f8faff' : 'white' }}>
                                             {columns.map((column) => {
-                                                return processColumn(column, entity);
+                                                return processColumn(column, entity, rowContextMenuCallback);
                                             })}
                                         </TableRow>
                                     );
@@ -155,25 +152,24 @@ export default function RepairRequestsList() {
                     />
                 </div>
             ) : (
-                fallbackComponent
+                getTableFallbackElement(error, loading)
             )}
         </Paper>
     );
 }
-function processColumn(
-    column: ColumnSettings<Repair_RequestFragment>,
-    user: Repair_RequestFragment
-) {
-    const value = user[column.property as keyof Repair_RequestFragment];
+function processColumn(column: ColumnSettings<Repair_RequestFragment>, entity: Repair_RequestFragment, contextCallback: RowContextFunctionType) {
+    const value = entity[column.property as keyof Repair_RequestFragment];
     const cellValue = () => {
         switch (column.property) {
             case "created_at":
             case "updated_at":
                 return column.formatDate?.(value);
             case "logsCount":
-                return (value as { aggregate?: { count: number } }).aggregate?.count;
+                return (value as { aggregate?: { count: number; }; }).aggregate?.count;
+            case "vehicle_status":
+                return (value as Vehicle_StatusFragment).name;
             case "actions":
-                return <RowContextMenu />;
+                return <TableRowContextMenu key={entity.id} id={entity.id} callback={contextCallback} />;
             default:
                 return value;
         }

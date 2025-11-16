@@ -7,39 +7,28 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import TableNavbar, { type TableNavbarProps } from '../common/TableNavbar';
+import TableNavbar, { type TableNavbarProps } from '../common/tables/TableNavbar';
 import { Order_By, useGetUserRolesQuery, useGetUsersQuery, type RoleFragment, type UserFragment, type Users_Bool_Exp } from '../../../../graphql/generated';
-import RowContextMenu from '../common/RowContextMenu';
-import EmptyDatasource from '../common/EmptyDataSources';
+import TableRowContextMenu, { type ROW_ACTIONS, type RowContextFunctionType } from '../common/tables/RowContextMenu';
 import { fromIsoDate } from '../../../utils/dateUtils';
-import type { ColumnSettings } from '../common/table-interfaces';
-import DatasourceError from '../common/DatasourceError';
+import type { ColumnSettings } from '../common/tables/table-interfaces';
 import { useNavigate } from 'react-router';
+import { buildUrl } from '../../../routes/routes-util';
+import { PathSegments } from '../../../routes/enums';
+import { buildHeaderRow, getFallbackTemplate } from '../common/tables/utils';
 
 
-const columns: readonly ColumnSettings<UserFragment>[] = [
+const columns: ColumnSettings<UserFragment>[] = [
   { property: 'created_at', label: 'Създаден', width: '80px', formatDate: (value) => fromIsoDate(value) },
   { property: 'updated_at', label: 'Промемен', width: '80px', formatDate: (value) => fromIsoDate(value) },
   { property: 'user_role', label: 'Роля' },
   { property: 'first_name', label: 'Име' },
   { property: 'last_name', label: 'Фамилия' },
-  // { property: 'family', label: 'Family', minWidth: 100 },
-  // {
-  //   id: 'population',
-  //   label: 'Population',
-  //   minWidth: 170,
-  //   align: 'right',
-  //   format: (value: number) => value.toLocaleString('en-US'),
-  // }, 
-  {
-    property: 'actions',
-    label: 'actions',
-    width: '60px',
-    align: 'right'
-  }
+  { property: 'actions', label: 'actions', width: '60px', align: 'right' }
 ];
 
 export default function UsersList() {
+  const navigate = useNavigate();
   const abortControllerRef = useRef<AbortController | null>(null);
   const roles: RoleFragment[] = useGetUserRolesQuery().data?.user_roles ?? [];
 
@@ -49,7 +38,6 @@ export default function UsersList() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
   const [condition, setCondition] = useState({});
-  const navigate = useNavigate();
 
   const { data, loading, error } = useGetUsersQuery({
     variables: { limit: rowsPerPage, offset: page * rowsPerPage, condition: condition, orderBy: { created_at: Order_By.asc } },
@@ -97,21 +85,24 @@ export default function UsersList() {
     setCondition(condition);
     setPage(0);
   };
+
   const addClickedHandler = () => {
     console.log('child -> parent: add click');
     console.log('Open add user details');
     //setChildEvent(event);
   };
 
-  // setTimeout(() => {
-  //   setIsLoading(false);
-  // }, 2000); 
+  const rowContextMenuCallback: RowContextFunctionType = (action: ROW_ACTIONS, id: string) => {
+    if (action === 'edit') {
+      navigate(buildUrl(PathSegments.USERS, PathSegments.DETAILS, id));
+    }
+  };
 
   const isTableVisible: boolean = (Boolean(data?.users_aggregate.aggregate?.count)) && (!error || !loading);
 
   const navBarProps: TableNavbarProps = {
     label: 'Списък с потребители',
-    shouldShowAddButton: true,
+    shouldShowAddButton: false,
     preselectedOption: 'all',
     options: userRoles,
     error,
@@ -119,14 +110,6 @@ export default function UsersList() {
     addClickedHandler,
     filterSelectedHandler,
   };
-
-  let fallbackComponent;
-  if (error) {
-    fallbackComponent = <DatasourceError />;
-  } else if (!loading) {
-    fallbackComponent = <EmptyDatasource />;
-  }
-
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -138,18 +121,7 @@ export default function UsersList() {
           <TableContainer sx={{ height: '100%' }}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
-                <TableRow>
-                  {columns.map((column) => (
-                    <TableCell
-                      key={column.property}
-                      align={column.align}
-                      width={column.width}
-                      style={{ backgroundColor: '#f0f6ffff', fontSize: '16px' }}
-                    >
-                      {column.label}
-                    </TableCell>
-                  ))}
-                </TableRow>
+                {buildHeaderRow(columns)}
               </TableHead>
 
               <TableBody>
@@ -157,7 +129,7 @@ export default function UsersList() {
                   return (
                     <TableRow hover tabIndex={-1} key={user.id} style={{ backgroundColor: index % 2 ? '#f7f8faff' : 'white' }}>
                       {columns.map((column) => {
-                        return processColumn(column, user);
+                        return processColumn(column, user, rowContextMenuCallback);
                       })}
                     </TableRow>
                   );
@@ -177,14 +149,14 @@ export default function UsersList() {
           />
         </div>
       ) : (
-        fallbackComponent
+        getFallbackTemplate(error, loading)
       )}
     </Paper>
   );
-
 }
-function processColumn(column: ColumnSettings<UserFragment>, user: UserFragment) {
-  const value = user[column.property as keyof UserFragment];
+
+function processColumn(column: ColumnSettings<UserFragment>, entity: UserFragment, contextCallback: RowContextFunctionType) {
+  const value = entity[column.property as keyof UserFragment];
   const cellValue = () => {
     switch (column.property) {
       case 'created_at':
@@ -193,7 +165,7 @@ function processColumn(column: ColumnSettings<UserFragment>, user: UserFragment)
       case 'user_role':
         return (value as RoleFragment).name;
       case 'actions':
-        return <RowContextMenu />;
+        return <TableRowContextMenu key={entity.id} id={entity.id} callback={contextCallback} />;
       default: return value;
     }
   };

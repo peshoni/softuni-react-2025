@@ -1,5 +1,5 @@
 import { ListItem, ListItemAvatar, Avatar, ListItemText, Typography, TextareaAutosize, Divider } from "@mui/material";
-import type { Requests_Logs } from "../../../../graphql/generated";
+import type { Requests_Logs, Users } from "../../../../graphql/generated";
 
 export default function Log({ log, isFromCurrentUser }: { readonly log: Requests_Logs; readonly isFromCurrentUser: boolean; }) {
     // TODO reverse only the current user logs
@@ -7,6 +7,7 @@ export default function Log({ log, isFromCurrentUser }: { readonly log: Requests
 
     const editable = true;
     const rowDirection: string = isFromCurrentUser ? 'row-reverse' : 'row';
+
     return (
         <>
             <ListItem alignItems="flex-start" sx={{ display: 'flex', flexDirection: rowDirection }}>
@@ -15,7 +16,7 @@ export default function Log({ log, isFromCurrentUser }: { readonly log: Requests
                 </ListItemAvatar>
 
                 <ListItemText
-                    primary={log.created_at}
+                    primary={getUserPreview(log.user)}
                     secondary={
                         <>
                             {editable ? (
@@ -45,4 +46,8 @@ export default function Log({ log, isFromCurrentUser }: { readonly log: Requests
             <Divider variant="middle" component="li" />
         </>
     );
+}
+
+function getUserPreview(user: Users) {
+    return `${user.first_name} ${user.last_name} (${user.user_role.name})`;
 }

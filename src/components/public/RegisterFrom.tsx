@@ -3,8 +3,7 @@ import { Container, Box, TextField, Button, Typography, Paper, Link, } from "@mu
 import Grid from '@mui/material/Grid';
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router";
-import { PathSegments } from "../routes/enums";
-
+import { PathSegments } from "../../routes/enums";
 
 export default function RegisterForm() {
   const navigate = useNavigate();
@@ -84,8 +83,6 @@ export default function RegisterForm() {
               >
                 Already have an account? Login
               </Link>
-
-
             </Grid>
           </Grid>
         </Paper>

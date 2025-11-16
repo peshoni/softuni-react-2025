@@ -19,9 +19,9 @@ import ListItemText from '@mui/material/ListItemText';
 import GroupIcon from '@mui/icons-material/Group';
 import CommuteIcon from '@mui/icons-material/Commute';
 import CarRepairIcon from '@mui/icons-material/CarRepair';
-
 import UserContextMenu from './UserContextMenu';
 import { Outlet, useNavigate } from 'react-router';
+import { useLoginQuery } from '../../../graphql/generated';
 
 const drawerWidth = 240;
 
@@ -35,7 +35,6 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
     duration: theme.transitions.duration.leavingScreen,
   }),
   marginTop: '64px',
-
   marginLeft: `-${drawerWidth}px`,
   variants: [
     {
@@ -92,7 +91,14 @@ interface AppBarProps extends MuiAppBarProps {
 
 export default function ApplicationBar() {
   const navigate = useNavigate();
-  const [auth] = React.useState(true);
+  // mariyaivaneva@autoservice.bg UserPass!
+  // ivanastanska@autoservice.bg Mechanic!
+  // raykokirilin@autoservice.bg Service123!
+
+  const user = useLoginQuery({ variables: { email: 'mariyaivaneva@autoservice.bg', password: 'UserPass!' } }).data?.users[0];
+  console.log(user);
+  // const [authenticatedUser, setAuthenticatedUser] = React.useState<UserFragment | undefined>(user);
+
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
 
@@ -104,7 +110,7 @@ export default function ApplicationBar() {
     setOpen(false);
   };
 
-  const handleMenuClick = (value: string) => { 
+  const handleMenuClick = (value: string) => {
     navigate('/' + value);
     // return <Navigate to={value}/>
   };
@@ -114,11 +120,8 @@ export default function ApplicationBar() {
     { label: 'Vehicles', icon: <CommuteIcon />, path: 'vehicles' },
     { label: 'Repair requests', icon: <CarRepairIcon />, path: 'repair-requests' },
   ];
-
   return (
-
-
-    <Box sx={{ display: 'flex' }}> 
+    <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
         <Toolbar>
@@ -139,7 +142,8 @@ export default function ApplicationBar() {
           </Typography>
 
           {/* The context menu for an authorized user */}
-          {auth && <UserContextMenu />}
+
+          {user && <UserContextMenu  {...user} />}
 
         </Toolbar>
       </AppBar>
@@ -165,9 +169,7 @@ export default function ApplicationBar() {
             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         </DrawerHeader>
-
         {/* <Divider /> */}
-
         <List>
           {menuItems.map((menu) => (
             <ListItem key={menu.label} disablePadding>
@@ -185,7 +187,7 @@ export default function ApplicationBar() {
       <Main open={open}>
 
         <Outlet />
-       
+
       </Main>
     </Box>
   );

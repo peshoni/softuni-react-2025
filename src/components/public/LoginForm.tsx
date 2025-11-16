@@ -1,17 +1,9 @@
 import { useState } from "react";
-import {
-    Container,
-    Box,
-    TextField,
-    Button,
-    Typography,
-    Paper,
-    Link,
-} from "@mui/material";
+import { Container, Box, TextField, Button, Typography, Paper, Link } from "@mui/material";
 import Grid from '@mui/material/Grid';
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router";
-import { PathSegments } from "../routes/enums";
+import { PathSegments } from "../../routes/enums";
 import { useLoginLazyQuery } from "../../../graphql/generated";
 
 
