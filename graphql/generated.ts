@@ -3249,9 +3249,18 @@ export type GetRepairRequestsQueryVariables = Exact<{
 }>;
 
 
-export type GetRepairRequestsQuery = { repair_requests: Array<{ id: any, created_at: any, updated_at?: any | null, logsCount: { aggregate?: { count: number } | null }, vehicle: { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, name: string, code: string } | null } }>, repair_requests_aggregate: { aggregate?: { count: number } | null } };
+export type GetRepairRequestsQuery = { repair_requests: Array<{ id: any, created_at: any, updated_at?: any | null, scheduled_for?: any | null, description?: string | null, title: string, vehicle_status: { id: any, code: string, color: string, name: string, weight: number }, logsCount: { aggregate?: { count: number } | null }, vehicle: { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, code: string, color: string, name: string, weight: number } | null } }>, repair_requests_aggregate: { aggregate?: { count: number } | null } };
 
-export type Repair_RequestFragment = { id: any, created_at: any, updated_at?: any | null, logsCount: { aggregate?: { count: number } | null }, vehicle: { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, name: string, code: string } | null } };
+export type GetRepairRequestByIdQueryVariables = Exact<{
+  id: Scalars['uuid']['input'];
+}>;
+
+
+export type GetRepairRequestByIdQuery = { repair_requests_by_pk?: { id: any, created_at: any, updated_at?: any | null, scheduled_for?: any | null, description?: string | null, title: string, vehicle_status: { id: any, code: string, color: string, name: string, weight: number }, requests_logs: Array<{ id: any, created_at: any, updated_at?: any | null, message: string, user: { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } } }>, logsCount: { aggregate?: { count: number } | null }, vehicle: { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, code: string, color: string, name: string, weight: number } | null } } | null };
+
+export type Repair_RequestFragment = { id: any, created_at: any, updated_at?: any | null, scheduled_for?: any | null, description?: string | null, title: string, vehicle_status: { id: any, code: string, color: string, name: string, weight: number }, logsCount: { aggregate?: { count: number } | null }, vehicle: { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, code: string, color: string, name: string, weight: number } | null } };
+
+export type Repair_Request_With_LogsFragment = { id: any, created_at: any, updated_at?: any | null, scheduled_for?: any | null, description?: string | null, title: string, vehicle_status: { id: any, code: string, color: string, name: string, weight: number }, requests_logs: Array<{ id: any, created_at: any, updated_at?: any | null, message: string, user: { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } } }>, logsCount: { aggregate?: { count: number } | null }, vehicle: { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, code: string, color: string, name: string, weight: number } | null } };
 
 export type Request_LogFragment = { id: any, created_at: any, updated_at?: any | null, message: string, user: { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } } };
 
@@ -3287,12 +3296,19 @@ export type GetUsersQueryVariables = Exact<{
 
 export type GetUsersQuery = { users: Array<{ id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } }>, users_aggregate: { aggregate?: { count: number } | null } };
 
+export type GetUserByIdQueryVariables = Exact<{
+  id: Scalars['uuid']['input'];
+}>;
+
+
+export type GetUserByIdQuery = { users_by_pk?: { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } } | null };
+
 export type UserFragment = { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } };
 
 export type GetVehicleStatusesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetVehicleStatusesQuery = { vehicle_statuses: Array<{ id: any, code: string, name: string, color: string, weight: number }> };
+export type GetVehicleStatusesQuery = { vehicle_statuses: Array<{ id: any, code: string, color: string, name: string, weight: number }> };
 
 export type GetVehiclesQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -3302,10 +3318,28 @@ export type GetVehiclesQueryVariables = Exact<{
 }>;
 
 
-export type GetVehiclesQuery = { vehicles: Array<{ id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, name: string, code: string } | null }>, vehicles_aggregate: { aggregate?: { count: number } | null } };
+export type GetVehiclesQuery = { vehicles: Array<{ id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, code: string, color: string, name: string, weight: number } | null }>, vehicles_aggregate: { aggregate?: { count: number } | null } };
 
-export type VehicleFragment = { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, name: string, code: string } | null };
+export type GetVehicleByIdQueryVariables = Exact<{
+  id: Scalars['uuid']['input'];
+}>;
 
+
+export type GetVehicleByIdQuery = { vehicles_by_pk?: { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, code: string, color: string, name: string, weight: number } | null } | null };
+
+export type VehicleFragment = { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, code: string, color: string, name: string, weight: number } | null };
+
+export type Vehicle_StatusFragment = { id: any, code: string, color: string, name: string, weight: number };
+
+export const Vehicle_StatusFragmentDoc = gql`
+    fragment vehicle_status on vehicle_statuses {
+  id
+  code
+  color
+  name
+  weight
+}
+    `;
 export const VehicleFragmentDoc = gql`
     fragment vehicle on vehicles {
   id
@@ -3322,17 +3356,21 @@ export const VehicleFragmentDoc = gql`
     code
   }
   vehicle_status {
-    id
-    name
-    code
+    ...vehicle_status
   }
 }
-    `;
+    ${Vehicle_StatusFragmentDoc}`;
 export const Repair_RequestFragmentDoc = gql`
     fragment repair_request on repair_requests {
   id
   created_at
   updated_at
+  scheduled_for
+  vehicle_status {
+    ...vehicle_status
+  }
+  description
+  title
   logsCount: requests_logs_aggregate {
     aggregate {
       count
@@ -3342,7 +3380,8 @@ export const Repair_RequestFragmentDoc = gql`
     ...vehicle
   }
 }
-    ${VehicleFragmentDoc}`;
+    ${Vehicle_StatusFragmentDoc}
+${VehicleFragmentDoc}`;
 export const UserFragmentDoc = gql`
     fragment user on users {
   id
@@ -3374,6 +3413,32 @@ export const Request_LogFragmentDoc = gql`
   }
 }
     ${UserFragmentDoc}`;
+export const Repair_Request_With_LogsFragmentDoc = gql`
+    fragment repair_request_with_logs on repair_requests {
+  id
+  created_at
+  updated_at
+  scheduled_for
+  vehicle_status {
+    ...vehicle_status
+  }
+  description
+  title
+  requests_logs {
+    ...request_log
+  }
+  logsCount: requests_logs_aggregate {
+    aggregate {
+      count
+    }
+  }
+  vehicle {
+    ...vehicle
+  }
+}
+    ${Vehicle_StatusFragmentDoc}
+${Request_LogFragmentDoc}
+${VehicleFragmentDoc}`;
 export const RoleFragmentDoc = gql`
     fragment role on user_roles {
   id
@@ -3434,6 +3499,46 @@ export type GetRepairRequestsQueryHookResult = ReturnType<typeof useGetRepairReq
 export type GetRepairRequestsLazyQueryHookResult = ReturnType<typeof useGetRepairRequestsLazyQuery>;
 export type GetRepairRequestsSuspenseQueryHookResult = ReturnType<typeof useGetRepairRequestsSuspenseQuery>;
 export type GetRepairRequestsQueryResult = ApolloReactCommon.QueryResult<GetRepairRequestsQuery, GetRepairRequestsQueryVariables>;
+export const GetRepairRequestByIdDocument = gql`
+    query GetRepairRequestById($id: uuid!) {
+  repair_requests_by_pk(id: $id) {
+    ...repair_request_with_logs
+  }
+}
+    ${Repair_Request_With_LogsFragmentDoc}`;
+
+/**
+ * __useGetRepairRequestByIdQuery__
+ *
+ * To run a query within a React component, call `useGetRepairRequestByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRepairRequestByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRepairRequestByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetRepairRequestByIdQuery(baseOptions: ApolloReactHooks.QueryHookOptions<GetRepairRequestByIdQuery, GetRepairRequestByIdQueryVariables> & ({ variables: GetRepairRequestByIdQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<GetRepairRequestByIdQuery, GetRepairRequestByIdQueryVariables>(GetRepairRequestByIdDocument, options);
+      }
+export function useGetRepairRequestByIdLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetRepairRequestByIdQuery, GetRepairRequestByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<GetRepairRequestByIdQuery, GetRepairRequestByIdQueryVariables>(GetRepairRequestByIdDocument, options);
+        }
+export function useGetRepairRequestByIdSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<GetRepairRequestByIdQuery, GetRepairRequestByIdQueryVariables>) {
+          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useSuspenseQuery<GetRepairRequestByIdQuery, GetRepairRequestByIdQueryVariables>(GetRepairRequestByIdDocument, options);
+        }
+export type GetRepairRequestByIdQueryHookResult = ReturnType<typeof useGetRepairRequestByIdQuery>;
+export type GetRepairRequestByIdLazyQueryHookResult = ReturnType<typeof useGetRepairRequestByIdLazyQuery>;
+export type GetRepairRequestByIdSuspenseQueryHookResult = ReturnType<typeof useGetRepairRequestByIdSuspenseQuery>;
+export type GetRepairRequestByIdQueryResult = ApolloReactCommon.QueryResult<GetRepairRequestByIdQuery, GetRepairRequestByIdQueryVariables>;
 export const GetUserRolesDocument = gql`
     query GetUserRoles {
   user_roles {
@@ -3595,17 +3700,53 @@ export type GetUsersQueryHookResult = ReturnType<typeof useGetUsersQuery>;
 export type GetUsersLazyQueryHookResult = ReturnType<typeof useGetUsersLazyQuery>;
 export type GetUsersSuspenseQueryHookResult = ReturnType<typeof useGetUsersSuspenseQuery>;
 export type GetUsersQueryResult = ApolloReactCommon.QueryResult<GetUsersQuery, GetUsersQueryVariables>;
+export const GetUserByIdDocument = gql`
+    query GetUserById($id: uuid!) {
+  users_by_pk(id: $id) {
+    ...user
+  }
+}
+    ${UserFragmentDoc}`;
+
+/**
+ * __useGetUserByIdQuery__
+ *
+ * To run a query within a React component, call `useGetUserByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetUserByIdQuery(baseOptions: ApolloReactHooks.QueryHookOptions<GetUserByIdQuery, GetUserByIdQueryVariables> & ({ variables: GetUserByIdQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<GetUserByIdQuery, GetUserByIdQueryVariables>(GetUserByIdDocument, options);
+      }
+export function useGetUserByIdLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetUserByIdQuery, GetUserByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<GetUserByIdQuery, GetUserByIdQueryVariables>(GetUserByIdDocument, options);
+        }
+export function useGetUserByIdSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<GetUserByIdQuery, GetUserByIdQueryVariables>) {
+          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useSuspenseQuery<GetUserByIdQuery, GetUserByIdQueryVariables>(GetUserByIdDocument, options);
+        }
+export type GetUserByIdQueryHookResult = ReturnType<typeof useGetUserByIdQuery>;
+export type GetUserByIdLazyQueryHookResult = ReturnType<typeof useGetUserByIdLazyQuery>;
+export type GetUserByIdSuspenseQueryHookResult = ReturnType<typeof useGetUserByIdSuspenseQuery>;
+export type GetUserByIdQueryResult = ApolloReactCommon.QueryResult<GetUserByIdQuery, GetUserByIdQueryVariables>;
 export const GetVehicleStatusesDocument = gql`
     query GetVehicleStatuses {
   vehicle_statuses(order_by: {weight: asc}) {
-    id
-    code
-    name
-    color
-    weight
+    ...vehicle_status
   }
 }
-    `;
+    ${Vehicle_StatusFragmentDoc}`;
 
 /**
  * __useGetVehicleStatusesQuery__
@@ -3686,3 +3827,43 @@ export type GetVehiclesQueryHookResult = ReturnType<typeof useGetVehiclesQuery>;
 export type GetVehiclesLazyQueryHookResult = ReturnType<typeof useGetVehiclesLazyQuery>;
 export type GetVehiclesSuspenseQueryHookResult = ReturnType<typeof useGetVehiclesSuspenseQuery>;
 export type GetVehiclesQueryResult = ApolloReactCommon.QueryResult<GetVehiclesQuery, GetVehiclesQueryVariables>;
+export const GetVehicleByIdDocument = gql`
+    query GetVehicleById($id: uuid!) {
+  vehicles_by_pk(id: $id) {
+    ...vehicle
+  }
+}
+    ${VehicleFragmentDoc}`;
+
+/**
+ * __useGetVehicleByIdQuery__
+ *
+ * To run a query within a React component, call `useGetVehicleByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetVehicleByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetVehicleByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetVehicleByIdQuery(baseOptions: ApolloReactHooks.QueryHookOptions<GetVehicleByIdQuery, GetVehicleByIdQueryVariables> & ({ variables: GetVehicleByIdQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<GetVehicleByIdQuery, GetVehicleByIdQueryVariables>(GetVehicleByIdDocument, options);
+      }
+export function useGetVehicleByIdLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetVehicleByIdQuery, GetVehicleByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<GetVehicleByIdQuery, GetVehicleByIdQueryVariables>(GetVehicleByIdDocument, options);
+        }
+export function useGetVehicleByIdSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<GetVehicleByIdQuery, GetVehicleByIdQueryVariables>) {
+          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useSuspenseQuery<GetVehicleByIdQuery, GetVehicleByIdQueryVariables>(GetVehicleByIdDocument, options);
+        }
+export type GetVehicleByIdQueryHookResult = ReturnType<typeof useGetVehicleByIdQuery>;
+export type GetVehicleByIdLazyQueryHookResult = ReturnType<typeof useGetVehicleByIdLazyQuery>;
+export type GetVehicleByIdSuspenseQueryHookResult = ReturnType<typeof useGetVehicleByIdSuspenseQuery>;
+export type GetVehicleByIdQueryResult = ApolloReactCommon.QueryResult<GetVehicleByIdQuery, GetVehicleByIdQueryVariables>;

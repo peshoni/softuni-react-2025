@@ -10,10 +10,45 @@ query GetRepairRequests($limit: Int, $offset: Int, $condition: repair_requests_b
   }
 }
 
+query GetRepairRequestById ($id:uuid!) {
+  repair_requests_by_pk(id:$id){
+    ...repair_request_with_logs
+  }
+}
+# Fragments
 fragment repair_request on repair_requests {
   id
   created_at
   updated_at
+  scheduled_for 
+  vehicle_status {
+    ...vehicle_status
+  }
+  description
+  title
+  logsCount: requests_logs_aggregate {
+    aggregate {
+      count
+    }
+  }
+  vehicle {
+    ...vehicle
+  }
+}
+
+fragment repair_request_with_logs on repair_requests {
+  id
+  created_at
+  updated_at
+  scheduled_for 
+  vehicle_status {
+    ...vehicle_status
+  }
+  description
+  title
+  requests_logs {
+    ...request_log
+  }
   logsCount: requests_logs_aggregate {
     aggregate {
       count

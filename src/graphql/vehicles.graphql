@@ -1,11 +1,7 @@
 
 query GetVehicleStatuses {
   vehicle_statuses(order_by: {weight: asc}) {
-    id
-    code
-    name
-    color
-    weight 
+    ...vehicle_status
   }
 }
 
@@ -17,6 +13,12 @@ query GetVehicles($limit: Int, $offset: Int, $condition: vehicles_bool_exp! = {}
     aggregate {
       count
     }
+  }
+}
+
+query GetVehicleById($id: uuid!) {
+  vehicles_by_pk(id: $id) {
+    ...vehicle
   }
 }
 
@@ -35,8 +37,14 @@ fragment vehicle on vehicles {
     code
   }
   vehicle_status {
-    id
-    name
-    code
+    ...vehicle_status
   }
+}
+
+fragment vehicle_status on vehicle_statuses {
+  id
+  code
+  color
+  name
+  weight
 }
