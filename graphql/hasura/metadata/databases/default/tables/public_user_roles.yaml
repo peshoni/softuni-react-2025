@@ -1,3 +1,18 @@
 table:
   name: user_roles
   schema: public
+array_relationships:
+  - name: requests_logs
+    using:
+      foreign_key_constraint_on:
+        column: author_role_id
+        table:
+          name: requests_logs
+          schema: public
+  - name: users
+    using:
+      foreign_key_constraint_on:
+        column: role_id
+        table:
+          name: users
+          schema: public

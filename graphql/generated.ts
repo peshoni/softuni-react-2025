@@ -81,6 +81,30 @@ export type Fuel_Types = {
   id: Scalars['uuid']['output'];
   name: Scalars['String']['output'];
   updated_at?: Maybe<Scalars['timestamp']['output']>;
+  /** An array relationship */
+  vehicles: Array<Vehicles>;
+  /** An aggregate relationship */
+  vehicles_aggregate: Vehicles_Aggregate;
+};
+
+
+/** columns and relationships of "fuel_types" */
+export type Fuel_TypesVehiclesArgs = {
+  distinct_on?: InputMaybe<Array<Vehicles_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Vehicles_Order_By>>;
+  where?: InputMaybe<Vehicles_Bool_Exp>;
+};
+
+
+/** columns and relationships of "fuel_types" */
+export type Fuel_TypesVehicles_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Vehicles_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Vehicles_Order_By>>;
+  where?: InputMaybe<Vehicles_Bool_Exp>;
 };
 
 /** aggregated selection of "fuel_types" */
@@ -113,6 +137,8 @@ export type Fuel_Types_Bool_Exp = {
   id?: InputMaybe<Uuid_Comparison_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  vehicles?: InputMaybe<Vehicles_Bool_Exp>;
+  vehicles_aggregate?: InputMaybe<Vehicles_Aggregate_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "fuel_types" */
@@ -130,6 +156,7 @@ export type Fuel_Types_Insert_Input = {
   id?: InputMaybe<Scalars['uuid']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamp']['input']>;
+  vehicles?: InputMaybe<Vehicles_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -179,6 +206,7 @@ export type Fuel_Types_Order_By = {
   id?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
+  vehicles_aggregate?: InputMaybe<Vehicles_Aggregate_Order_By>;
 };
 
 /** primary key columns input for table: fuel_types */
@@ -254,6 +282,30 @@ export type Genders = {
   id: Scalars['uuid']['output'];
   name: Scalars['String']['output'];
   updated_at?: Maybe<Scalars['timestamp']['output']>;
+  /** An array relationship */
+  users: Array<Users>;
+  /** An aggregate relationship */
+  users_aggregate: Users_Aggregate;
+};
+
+
+/** columns and relationships of "genders" */
+export type GendersUsersArgs = {
+  distinct_on?: InputMaybe<Array<Users_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Users_Order_By>>;
+  where?: InputMaybe<Users_Bool_Exp>;
+};
+
+
+/** columns and relationships of "genders" */
+export type GendersUsers_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Users_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Users_Order_By>>;
+  where?: InputMaybe<Users_Bool_Exp>;
 };
 
 /** aggregated selection of "genders" */
@@ -286,6 +338,8 @@ export type Genders_Bool_Exp = {
   id?: InputMaybe<Uuid_Comparison_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  users?: InputMaybe<Users_Bool_Exp>;
+  users_aggregate?: InputMaybe<Users_Aggregate_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "genders" */
@@ -303,6 +357,7 @@ export type Genders_Insert_Input = {
   id?: InputMaybe<Scalars['uuid']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamp']['input']>;
+  users?: InputMaybe<Users_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -352,6 +407,7 @@ export type Genders_Order_By = {
   id?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
+  users_aggregate?: InputMaybe<Users_Aggregate_Order_By>;
 };
 
 /** primary key columns input for table: genders */
@@ -955,9 +1011,9 @@ export type Query_Root = {
   user_roles_aggregate: User_Roles_Aggregate;
   /** fetch data from the table: "user_roles" using primary key columns */
   user_roles_by_pk?: Maybe<User_Roles>;
-  /** fetch data from the table: "users" */
+  /** An array relationship */
   users: Array<Users>;
-  /** fetch aggregated fields from the table: "users" */
+  /** An aggregate relationship */
   users_aggregate: Users_Aggregate;
   /** fetch data from the table: "users" using primary key columns */
   users_by_pk?: Maybe<Users>;
@@ -1161,6 +1217,7 @@ export type Query_RootVehicles_By_PkArgs = {
 
 /** columns and relationships of "repair_requests" */
 export type Repair_Requests = {
+  automechanic_id?: Maybe<Scalars['uuid']['output']>;
   created_at: Scalars['timestamp']['output'];
   customer_id: Scalars['uuid']['output'];
   description?: Maybe<Scalars['String']['output']>;
@@ -1175,7 +1232,9 @@ export type Repair_Requests = {
   title: Scalars['String']['output'];
   updated_at?: Maybe<Scalars['timestamp']['output']>;
   /** An object relationship */
-  user: Users;
+  user?: Maybe<Users>;
+  /** An object relationship */
+  userByCustomerId: Users;
   /** An object relationship */
   vehicle: Vehicles;
   vehicle_id: Scalars['uuid']['output'];
@@ -1253,6 +1312,7 @@ export type Repair_Requests_Bool_Exp = {
   _and?: InputMaybe<Array<Repair_Requests_Bool_Exp>>;
   _not?: InputMaybe<Repair_Requests_Bool_Exp>;
   _or?: InputMaybe<Array<Repair_Requests_Bool_Exp>>;
+  automechanic_id?: InputMaybe<Uuid_Comparison_Exp>;
   created_at?: InputMaybe<Timestamp_Comparison_Exp>;
   customer_id?: InputMaybe<Uuid_Comparison_Exp>;
   description?: InputMaybe<String_Comparison_Exp>;
@@ -1265,6 +1325,7 @@ export type Repair_Requests_Bool_Exp = {
   title?: InputMaybe<String_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
   user?: InputMaybe<Users_Bool_Exp>;
+  userByCustomerId?: InputMaybe<Users_Bool_Exp>;
   vehicle?: InputMaybe<Vehicles_Bool_Exp>;
   vehicle_id?: InputMaybe<Uuid_Comparison_Exp>;
   vehicle_status?: InputMaybe<Vehicle_Statuses_Bool_Exp>;
@@ -1278,6 +1339,7 @@ export enum Repair_Requests_Constraint {
 
 /** input type for inserting data into table "repair_requests" */
 export type Repair_Requests_Insert_Input = {
+  automechanic_id?: InputMaybe<Scalars['uuid']['input']>;
   created_at?: InputMaybe<Scalars['timestamp']['input']>;
   customer_id?: InputMaybe<Scalars['uuid']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
@@ -1289,6 +1351,7 @@ export type Repair_Requests_Insert_Input = {
   title?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamp']['input']>;
   user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
+  userByCustomerId?: InputMaybe<Users_Obj_Rel_Insert_Input>;
   vehicle?: InputMaybe<Vehicles_Obj_Rel_Insert_Input>;
   vehicle_id?: InputMaybe<Scalars['uuid']['input']>;
   vehicle_status?: InputMaybe<Vehicle_Statuses_Obj_Rel_Insert_Input>;
@@ -1296,6 +1359,7 @@ export type Repair_Requests_Insert_Input = {
 
 /** aggregate max on columns */
 export type Repair_Requests_Max_Fields = {
+  automechanic_id?: Maybe<Scalars['uuid']['output']>;
   created_at?: Maybe<Scalars['timestamp']['output']>;
   customer_id?: Maybe<Scalars['uuid']['output']>;
   description?: Maybe<Scalars['String']['output']>;
@@ -1310,6 +1374,7 @@ export type Repair_Requests_Max_Fields = {
 
 /** order by max() on columns of table "repair_requests" */
 export type Repair_Requests_Max_Order_By = {
+  automechanic_id?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
   customer_id?: InputMaybe<Order_By>;
   description?: InputMaybe<Order_By>;
@@ -1324,6 +1389,7 @@ export type Repair_Requests_Max_Order_By = {
 
 /** aggregate min on columns */
 export type Repair_Requests_Min_Fields = {
+  automechanic_id?: Maybe<Scalars['uuid']['output']>;
   created_at?: Maybe<Scalars['timestamp']['output']>;
   customer_id?: Maybe<Scalars['uuid']['output']>;
   description?: Maybe<Scalars['String']['output']>;
@@ -1338,6 +1404,7 @@ export type Repair_Requests_Min_Fields = {
 
 /** order by min() on columns of table "repair_requests" */
 export type Repair_Requests_Min_Order_By = {
+  automechanic_id?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
   customer_id?: InputMaybe<Order_By>;
   description?: InputMaybe<Order_By>;
@@ -1374,6 +1441,7 @@ export type Repair_Requests_On_Conflict = {
 
 /** Ordering options when selecting data from "repair_requests". */
 export type Repair_Requests_Order_By = {
+  automechanic_id?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
   customer_id?: InputMaybe<Order_By>;
   description?: InputMaybe<Order_By>;
@@ -1385,6 +1453,7 @@ export type Repair_Requests_Order_By = {
   title?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
   user?: InputMaybe<Users_Order_By>;
+  userByCustomerId?: InputMaybe<Users_Order_By>;
   vehicle?: InputMaybe<Vehicles_Order_By>;
   vehicle_id?: InputMaybe<Order_By>;
   vehicle_status?: InputMaybe<Vehicle_Statuses_Order_By>;
@@ -1397,6 +1466,8 @@ export type Repair_Requests_Pk_Columns_Input = {
 
 /** select columns of table "repair_requests" */
 export enum Repair_Requests_Select_Column {
+  /** column name */
+  automechanic_id = 'automechanic_id',
   /** column name */
   created_at = 'created_at',
   /** column name */
@@ -1421,6 +1492,7 @@ export enum Repair_Requests_Select_Column {
 
 /** input type for updating data in table "repair_requests" */
 export type Repair_Requests_Set_Input = {
+  automechanic_id?: InputMaybe<Scalars['uuid']['input']>;
   created_at?: InputMaybe<Scalars['timestamp']['input']>;
   customer_id?: InputMaybe<Scalars['uuid']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
@@ -1443,6 +1515,7 @@ export type Repair_Requests_Stream_Cursor_Input = {
 
 /** Initial value of the column from where the streaming should start */
 export type Repair_Requests_Stream_Cursor_Value_Input = {
+  automechanic_id?: InputMaybe<Scalars['uuid']['input']>;
   created_at?: InputMaybe<Scalars['timestamp']['input']>;
   customer_id?: InputMaybe<Scalars['uuid']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
@@ -1457,6 +1530,8 @@ export type Repair_Requests_Stream_Cursor_Value_Input = {
 
 /** update columns of table "repair_requests" */
 export enum Repair_Requests_Update_Column {
+  /** column name */
+  automechanic_id = 'automechanic_id',
   /** column name */
   created_at = 'created_at',
   /** column name */
@@ -1777,9 +1852,9 @@ export type Subscription_Root = {
   user_roles_by_pk?: Maybe<User_Roles>;
   /** fetch data from the table in a streaming manner: "user_roles" */
   user_roles_stream: Array<User_Roles>;
-  /** fetch data from the table: "users" */
+  /** An array relationship */
   users: Array<Users>;
-  /** fetch aggregated fields from the table: "users" */
+  /** An aggregate relationship */
   users_aggregate: Users_Aggregate;
   /** fetch data from the table: "users" using primary key columns */
   users_by_pk?: Maybe<Users>;
@@ -2062,7 +2137,55 @@ export type User_Roles = {
   created_at: Scalars['timestamp']['output'];
   id: Scalars['uuid']['output'];
   name: Scalars['String']['output'];
+  /** An array relationship */
+  requests_logs: Array<Requests_Logs>;
+  /** An aggregate relationship */
+  requests_logs_aggregate: Requests_Logs_Aggregate;
   updated_at?: Maybe<Scalars['timestamp']['output']>;
+  /** An array relationship */
+  users: Array<Users>;
+  /** An aggregate relationship */
+  users_aggregate: Users_Aggregate;
+};
+
+
+/** columns and relationships of "user_roles" */
+export type User_RolesRequests_LogsArgs = {
+  distinct_on?: InputMaybe<Array<Requests_Logs_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Requests_Logs_Order_By>>;
+  where?: InputMaybe<Requests_Logs_Bool_Exp>;
+};
+
+
+/** columns and relationships of "user_roles" */
+export type User_RolesRequests_Logs_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Requests_Logs_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Requests_Logs_Order_By>>;
+  where?: InputMaybe<Requests_Logs_Bool_Exp>;
+};
+
+
+/** columns and relationships of "user_roles" */
+export type User_RolesUsersArgs = {
+  distinct_on?: InputMaybe<Array<Users_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Users_Order_By>>;
+  where?: InputMaybe<Users_Bool_Exp>;
+};
+
+
+/** columns and relationships of "user_roles" */
+export type User_RolesUsers_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Users_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Users_Order_By>>;
+  where?: InputMaybe<Users_Bool_Exp>;
 };
 
 /** aggregated selection of "user_roles" */
@@ -2094,7 +2217,11 @@ export type User_Roles_Bool_Exp = {
   created_at?: InputMaybe<Timestamp_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
+  requests_logs?: InputMaybe<Requests_Logs_Bool_Exp>;
+  requests_logs_aggregate?: InputMaybe<Requests_Logs_Aggregate_Bool_Exp>;
   updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  users?: InputMaybe<Users_Bool_Exp>;
+  users_aggregate?: InputMaybe<Users_Aggregate_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "user_roles" */
@@ -2111,7 +2238,9 @@ export type User_Roles_Insert_Input = {
   created_at?: InputMaybe<Scalars['timestamp']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  requests_logs?: InputMaybe<Requests_Logs_Arr_Rel_Insert_Input>;
   updated_at?: InputMaybe<Scalars['timestamp']['input']>;
+  users?: InputMaybe<Users_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -2160,7 +2289,9 @@ export type User_Roles_Order_By = {
   created_at?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
+  requests_logs_aggregate?: InputMaybe<Requests_Logs_Aggregate_Order_By>;
   updated_at?: InputMaybe<Order_By>;
+  users_aggregate?: InputMaybe<Users_Aggregate_Order_By>;
 };
 
 /** primary key columns input for table: user_roles */
@@ -2242,9 +2373,17 @@ export type Users = {
   password: Scalars['String']['output'];
   phone?: Maybe<Scalars['String']['output']>;
   /** An array relationship */
+  repairRequestsByCustomerId: Array<Repair_Requests>;
+  /** An aggregate relationship */
+  repairRequestsByCustomerId_aggregate: Repair_Requests_Aggregate;
+  /** An array relationship */
   repair_requests: Array<Repair_Requests>;
   /** An aggregate relationship */
   repair_requests_aggregate: Repair_Requests_Aggregate;
+  /** An array relationship */
+  requests_logs: Array<Requests_Logs>;
+  /** An aggregate relationship */
+  requests_logs_aggregate: Requests_Logs_Aggregate;
   role_id: Scalars['uuid']['output'];
   updated_at?: Maybe<Scalars['timestamp']['output']>;
   /** An object relationship */
@@ -2253,6 +2392,26 @@ export type Users = {
   vehicles: Array<Vehicles>;
   /** An aggregate relationship */
   vehicles_aggregate: Vehicles_Aggregate;
+};
+
+
+/** columns and relationships of "users" */
+export type UsersRepairRequestsByCustomerIdArgs = {
+  distinct_on?: InputMaybe<Array<Repair_Requests_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Repair_Requests_Order_By>>;
+  where?: InputMaybe<Repair_Requests_Bool_Exp>;
+};
+
+
+/** columns and relationships of "users" */
+export type UsersRepairRequestsByCustomerId_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Repair_Requests_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Repair_Requests_Order_By>>;
+  where?: InputMaybe<Repair_Requests_Bool_Exp>;
 };
 
 
@@ -2273,6 +2432,26 @@ export type UsersRepair_Requests_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   order_by?: InputMaybe<Array<Repair_Requests_Order_By>>;
   where?: InputMaybe<Repair_Requests_Bool_Exp>;
+};
+
+
+/** columns and relationships of "users" */
+export type UsersRequests_LogsArgs = {
+  distinct_on?: InputMaybe<Array<Requests_Logs_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Requests_Logs_Order_By>>;
+  where?: InputMaybe<Requests_Logs_Bool_Exp>;
+};
+
+
+/** columns and relationships of "users" */
+export type UsersRequests_Logs_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Requests_Logs_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Requests_Logs_Order_By>>;
+  where?: InputMaybe<Requests_Logs_Bool_Exp>;
 };
 
 
@@ -2301,6 +2480,17 @@ export type Users_Aggregate = {
   nodes: Array<Users>;
 };
 
+export type Users_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Users_Aggregate_Bool_Exp_Count>;
+};
+
+export type Users_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Users_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Users_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "users" */
 export type Users_Aggregate_Fields = {
   count: Scalars['Int']['output'];
@@ -2313,6 +2503,20 @@ export type Users_Aggregate_Fields = {
 export type Users_Aggregate_FieldsCountArgs = {
   columns?: InputMaybe<Array<Users_Select_Column>>;
   distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** order by aggregate values of table "users" */
+export type Users_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Users_Max_Order_By>;
+  min?: InputMaybe<Users_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "users" */
+export type Users_Arr_Rel_Insert_Input = {
+  data: Array<Users_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Users_On_Conflict>;
 };
 
 /** Boolean expression to filter rows from the table "users". All fields are combined with a logical 'AND'. */
@@ -2329,8 +2533,12 @@ export type Users_Bool_Exp = {
   last_name?: InputMaybe<String_Comparison_Exp>;
   password?: InputMaybe<String_Comparison_Exp>;
   phone?: InputMaybe<String_Comparison_Exp>;
+  repairRequestsByCustomerId?: InputMaybe<Repair_Requests_Bool_Exp>;
+  repairRequestsByCustomerId_aggregate?: InputMaybe<Repair_Requests_Aggregate_Bool_Exp>;
   repair_requests?: InputMaybe<Repair_Requests_Bool_Exp>;
   repair_requests_aggregate?: InputMaybe<Repair_Requests_Aggregate_Bool_Exp>;
+  requests_logs?: InputMaybe<Requests_Logs_Bool_Exp>;
+  requests_logs_aggregate?: InputMaybe<Requests_Logs_Aggregate_Bool_Exp>;
   role_id?: InputMaybe<Uuid_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
   user_role?: InputMaybe<User_Roles_Bool_Exp>;
@@ -2357,7 +2565,9 @@ export type Users_Insert_Input = {
   last_name?: InputMaybe<Scalars['String']['input']>;
   password?: InputMaybe<Scalars['String']['input']>;
   phone?: InputMaybe<Scalars['String']['input']>;
+  repairRequestsByCustomerId?: InputMaybe<Repair_Requests_Arr_Rel_Insert_Input>;
   repair_requests?: InputMaybe<Repair_Requests_Arr_Rel_Insert_Input>;
+  requests_logs?: InputMaybe<Requests_Logs_Arr_Rel_Insert_Input>;
   role_id?: InputMaybe<Scalars['uuid']['input']>;
   updated_at?: InputMaybe<Scalars['timestamp']['input']>;
   user_role?: InputMaybe<User_Roles_Obj_Rel_Insert_Input>;
@@ -2378,6 +2588,20 @@ export type Users_Max_Fields = {
   updated_at?: Maybe<Scalars['timestamp']['output']>;
 };
 
+/** order by max() on columns of table "users" */
+export type Users_Max_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  email?: InputMaybe<Order_By>;
+  first_name?: InputMaybe<Order_By>;
+  gender_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  last_name?: InputMaybe<Order_By>;
+  password?: InputMaybe<Order_By>;
+  phone?: InputMaybe<Order_By>;
+  role_id?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
 /** aggregate min on columns */
 export type Users_Min_Fields = {
   created_at?: Maybe<Scalars['timestamp']['output']>;
@@ -2390,6 +2614,20 @@ export type Users_Min_Fields = {
   phone?: Maybe<Scalars['String']['output']>;
   role_id?: Maybe<Scalars['uuid']['output']>;
   updated_at?: Maybe<Scalars['timestamp']['output']>;
+};
+
+/** order by min() on columns of table "users" */
+export type Users_Min_Order_By = {
+  created_at?: InputMaybe<Order_By>;
+  email?: InputMaybe<Order_By>;
+  first_name?: InputMaybe<Order_By>;
+  gender_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  last_name?: InputMaybe<Order_By>;
+  password?: InputMaybe<Order_By>;
+  phone?: InputMaybe<Order_By>;
+  role_id?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
 };
 
 /** response of any mutation on the table "users" */
@@ -2425,7 +2663,9 @@ export type Users_Order_By = {
   last_name?: InputMaybe<Order_By>;
   password?: InputMaybe<Order_By>;
   phone?: InputMaybe<Order_By>;
+  repairRequestsByCustomerId_aggregate?: InputMaybe<Repair_Requests_Aggregate_Order_By>;
   repair_requests_aggregate?: InputMaybe<Repair_Requests_Aggregate_Order_By>;
+  requests_logs_aggregate?: InputMaybe<Requests_Logs_Aggregate_Order_By>;
   role_id?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
   user_role?: InputMaybe<User_Roles_Order_By>;
@@ -2548,8 +2788,56 @@ export type Vehicle_Statuses = {
   created_at: Scalars['timestamp']['output'];
   id: Scalars['uuid']['output'];
   name: Scalars['String']['output'];
+  /** An array relationship */
+  repair_requests: Array<Repair_Requests>;
+  /** An aggregate relationship */
+  repair_requests_aggregate: Repair_Requests_Aggregate;
   updated_at?: Maybe<Scalars['timestamp']['output']>;
+  /** An array relationship */
+  vehicles: Array<Vehicles>;
+  /** An aggregate relationship */
+  vehicles_aggregate: Vehicles_Aggregate;
   weight: Scalars['Int']['output'];
+};
+
+
+/** columns and relationships of "vehicle_statuses" */
+export type Vehicle_StatusesRepair_RequestsArgs = {
+  distinct_on?: InputMaybe<Array<Repair_Requests_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Repair_Requests_Order_By>>;
+  where?: InputMaybe<Repair_Requests_Bool_Exp>;
+};
+
+
+/** columns and relationships of "vehicle_statuses" */
+export type Vehicle_StatusesRepair_Requests_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Repair_Requests_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Repair_Requests_Order_By>>;
+  where?: InputMaybe<Repair_Requests_Bool_Exp>;
+};
+
+
+/** columns and relationships of "vehicle_statuses" */
+export type Vehicle_StatusesVehiclesArgs = {
+  distinct_on?: InputMaybe<Array<Vehicles_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Vehicles_Order_By>>;
+  where?: InputMaybe<Vehicles_Bool_Exp>;
+};
+
+
+/** columns and relationships of "vehicle_statuses" */
+export type Vehicle_StatusesVehicles_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Vehicles_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Vehicles_Order_By>>;
+  where?: InputMaybe<Vehicles_Bool_Exp>;
 };
 
 /** aggregated selection of "vehicle_statuses" */
@@ -2595,7 +2883,11 @@ export type Vehicle_Statuses_Bool_Exp = {
   created_at?: InputMaybe<Timestamp_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
+  repair_requests?: InputMaybe<Repair_Requests_Bool_Exp>;
+  repair_requests_aggregate?: InputMaybe<Repair_Requests_Aggregate_Bool_Exp>;
   updated_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  vehicles?: InputMaybe<Vehicles_Bool_Exp>;
+  vehicles_aggregate?: InputMaybe<Vehicles_Aggregate_Bool_Exp>;
   weight?: InputMaybe<Int_Comparison_Exp>;
 };
 
@@ -2619,7 +2911,9 @@ export type Vehicle_Statuses_Insert_Input = {
   created_at?: InputMaybe<Scalars['timestamp']['input']>;
   id?: InputMaybe<Scalars['uuid']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  repair_requests?: InputMaybe<Repair_Requests_Arr_Rel_Insert_Input>;
   updated_at?: InputMaybe<Scalars['timestamp']['input']>;
+  vehicles?: InputMaybe<Vehicles_Arr_Rel_Insert_Input>;
   weight?: InputMaybe<Scalars['Int']['input']>;
 };
 
@@ -2674,7 +2968,9 @@ export type Vehicle_Statuses_Order_By = {
   created_at?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
+  repair_requests_aggregate?: InputMaybe<Repair_Requests_Aggregate_Order_By>;
   updated_at?: InputMaybe<Order_By>;
+  vehicles_aggregate?: InputMaybe<Vehicles_Aggregate_Order_By>;
   weight?: InputMaybe<Order_By>;
 };
 
@@ -3424,7 +3720,7 @@ export const Repair_Request_With_LogsFragmentDoc = gql`
   }
   description
   title
-  requests_logs {
+  requests_logs(order_by: {created_at: asc}) {
     ...request_log
   }
   logsCount: requests_logs_aggregate {

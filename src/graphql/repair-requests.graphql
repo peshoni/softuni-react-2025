@@ -46,7 +46,7 @@ fragment repair_request_with_logs on repair_requests {
   }
   description
   title
-  requests_logs {
+  requests_logs(order_by: {created_at: desc}) {
     ...request_log
   }
   logsCount: requests_logs_aggregate {

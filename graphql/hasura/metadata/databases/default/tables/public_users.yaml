@@ -9,12 +9,26 @@ object_relationships:
     using:
       foreign_key_constraint_on: role_id
 array_relationships:
-  - name: repair_requests
+  - name: repairRequestsByCustomerId
     using:
       foreign_key_constraint_on:
         column: customer_id
         table:
           name: repair_requests
+          schema: public
+  - name: repair_requests
+    using:
+      foreign_key_constraint_on:
+        column: automechanic_id
+        table:
+          name: repair_requests
+          schema: public
+  - name: requests_logs
+    using:
+      foreign_key_constraint_on:
+        column: author_id
+        table:
+          name: requests_logs
           schema: public
   - name: vehicles
     using:
