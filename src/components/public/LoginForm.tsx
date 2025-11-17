@@ -31,10 +31,7 @@ export default function LoginForm() {
         //   return;
         // }
         // Simulate login/register action
-
-
-        //nikolaystanov@autoservice.bg
-        // UserPass!
+ 
 
         console.log(formData);
 

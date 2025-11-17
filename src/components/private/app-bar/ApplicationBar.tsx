@@ -16,14 +16,13 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import GroupIcon from '@mui/icons-material/Group';
-import CommuteIcon from '@mui/icons-material/Commute';
-import CarRepairIcon from '@mui/icons-material/CarRepair';
+
+import { Outlet, useNavigate } from 'react-router';
 import UserContextMenu from './UserContextMenu';
-import { Outlet, useNavigate } from 'react-router'; 
-import { isNullOrUndefined } from 'is-what';
-import type { UserFragment } from '../../../graphql/generated';
+import type { RoleFragment, UserFragment } from '../../../../graphql/generated';
 import { useEffect } from 'react';
+import { buildUrl } from '../../../routes/routes-util';
+import type { LoggedUserMenu } from '../../../App'; 
 
 const drawerWidth = 240;
 
@@ -91,10 +90,11 @@ interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
 }
 
-export default function ApplicationBar({ user }: { readonly user?: UserFragment; }) {
+export default function ApplicationBar({ user,menu }: { readonly user?: UserFragment; readonly menu:LoggedUserMenu[] }) {
   const navigate = useNavigate();
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
+  // const [menus, setMenus] = React.useState<LoggedUserMenu[]>([]);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -105,47 +105,67 @@ export default function ApplicationBar({ user }: { readonly user?: UserFragment;
   };
 
   const handleMenuClick = (value: string) => {
-    navigate('/' + value);
-    // return <Navigate to={value}/>
+    navigate(buildUrl(value));
   };
 
-  //   useEffect(() => { 
-  //   console.log('MOUNT...');
- 
-  //   if (!isNullOrUndefined(user)) {
+  useEffect(() => {
+    // console.log('MOUNT...');
+    // console.log(user);
+    // if (user) {
+    //   const role: RoleFragment = user?.user_role;
+    //   buildMenuAccordingRole(role);
+    // }
 
-  //     navigate('/vehicles');
+    //   if (!isNullOrUndefined(user)) {
+
+    //     navigate('/vehicles');
+    //   }
+    //   // mutate({
+    //   //   variables: {
+    //   //     user: {
+    //   //       name: 'Pepe',
+    //   //       surname: 'Ivanov',
+    //   //       family: 'Ivanov',
+    //   //       gender: 'male',
+    //   //       email: 'aaa@aaa.bg',
+    //   //       password: 'aaaaa',
+    //   //       role: 'customer'
+    //   //     }
+    //   //   }
+    //   // }).then((res) => {
+    //   //   setUser(res.data?.insert_users_one as UserFragment);
+    //   //   console.log(res);
+    //   // }).catch(e => {
+    //   //   if (e instanceof ApolloError) {
+    //   //     console.log(e);
+    //   //     // setIsServerOffline(true);
+    //   //   }
+    //   // });
+    //   // console.log(data, loading, error ); 
+
+  }, []);
+
+  // const buildMenuAccordingRole = (role: RoleFragment) => {
+  //   const users: LoggedUserMenu = { label: 'Users', icon: <GroupIcon />, path: 'users' };
+  //   const vehicles: LoggedUserMenu = { label: 'Vehicles', icon: <CommuteIcon />, path: 'vehicles' };
+  //   const repairRequests: LoggedUserMenu = { label: 'Repair requests', icon: <CarRepairIcon />, path: 'repair-requests' };
+
+  //   switch (role.code) {
+  //     case 'customer':
+  //       setMenus([users, vehicles, repairRequests]);
+  //       break;
+  //     case 'serviceSpecialist':
+  //       setMenus([users, vehicles, repairRequests]);
+  //       break;
+  //     case 'autoMechanic':
+  //       setMenus([vehicles, repairRequests]);
+  //       break;
+  //     default:
+  //       setMenus([]);
+  //       break;
   //   }
-  //   // mutate({
-  //   //   variables: {
-  //   //     user: {
-  //   //       name: 'Pepe',
-  //   //       surname: 'Ivanov',
-  //   //       family: 'Ivanov',
-  //   //       gender: 'male',
-  //   //       email: 'aaa@aaa.bg',
-  //   //       password: 'aaaaa',
-  //   //       role: 'customer'
-  //   //     }
-  //   //   }
-  //   // }).then((res) => {
-  //   //   setUser(res.data?.insert_users_one as UserFragment);
-  //   //   console.log(res);
-  //   // }).catch(e => {
-  //   //   if (e instanceof ApolloError) {
-  //   //     console.log(e);
-  //   //     // setIsServerOffline(true);
-  //   //   }
-  //   // });
-  //   // console.log(data, loading, error ); 
+  // };
 
-  // }, []);
-
-  const menuItems = [
-    { label: 'Users', icon: <GroupIcon />, path: 'users' },
-    { label: 'Vehicles', icon: <CommuteIcon />, path: 'vehicles' },
-    { label: 'Repair requests', icon: <CarRepairIcon />, path: 'repair-requests' },
-  ];
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -167,7 +187,7 @@ export default function ApplicationBar({ user }: { readonly user?: UserFragment;
             Автосервиз
           </Typography>
 
-          {/* The context menu for an authorized user */} 
+          {/* The context menu for an authorized user */}
           {user && <UserContextMenu  {...user} />}
 
         </Toolbar>
@@ -196,13 +216,13 @@ export default function ApplicationBar({ user }: { readonly user?: UserFragment;
         </DrawerHeader>
         {/* <Divider /> */}
         <List>
-          {menuItems.map((menu) => (
-            <ListItem key={menu.label} disablePadding>
-              <ListItemButton onClick={() => handleMenuClick(menu.path)}>
+          {menu.map((option) => (
+            <ListItem key={option.label} disablePadding>
+              <ListItemButton onClick={() => handleMenuClick(option.path)}>
                 <ListItemIcon >
-                  {menu.icon}
+                  {option.icon}
                 </ListItemIcon>
-                <ListItemText primary={menu.label} />
+                <ListItemText primary={option.label} />
               </ListItemButton>
             </ListItem>
           ))}
@@ -217,3 +237,4 @@ export default function ApplicationBar({ user }: { readonly user?: UserFragment;
     </Box>
   );
 }
+

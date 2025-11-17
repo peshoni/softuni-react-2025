@@ -3720,7 +3720,7 @@ export const Repair_Request_With_LogsFragmentDoc = gql`
   }
   description
   title
-  requests_logs(order_by: {created_at: asc}) {
+  requests_logs(order_by: {created_at: desc}) {
     ...request_log
   }
   logsCount: requests_logs_aggregate {

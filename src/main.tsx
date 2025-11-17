@@ -12,9 +12,9 @@ createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
     <ApolloProvider client={client}>
       <StyledEngineProvider injectFirst>
-        <StrictMode>
+        {/* <StrictMode> */}
           <App />
-        </StrictMode>
+        {/* </StrictMode> */}
       </StyledEngineProvider>
     </ApolloProvider>
   </BrowserRouter>

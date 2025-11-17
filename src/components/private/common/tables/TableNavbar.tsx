@@ -1,26 +1,32 @@
 import type { ApolloError } from "@apollo/client";
 import { Box, Button, FormControl, FormHelperText, Grid, InputLabel, LinearProgress, MenuItem, Paper, Select, Tooltip, type SelectChangeEvent } from "@mui/material";
 import { useState } from "react";
+import type { FilterFields } from "./table-interfaces";
+
 
 export interface TableNavbarProps {
-    readonly preselectedOption?: string;
-    readonly options: string[];
+    readonly options: FilterFields[];
     readonly label: string;
     readonly shouldShowAddButton: boolean; //TODO add object for enable disabe filtering    
     readonly error: ApolloError | undefined;
     readonly loading: boolean;
     readonly addClickedHandler: () => void;
-    readonly filterSelectedHandler: (arg: string) => void;
+    readonly filterSelectedHandler: (arg: FilterFields) => void;
 }
 
-export default function TableNavbar({ preselectedOption, options, label, shouldShowAddButton, error, loading, filterSelectedHandler, addClickedHandler }: TableNavbarProps) {
-    const innerOptions = error ? [] : [...options];
-    const [selected, setSelected] = useState(preselectedOption);
+export default function TableNavbar({ options, label, shouldShowAddButton, error, loading, filterSelectedHandler, addClickedHandler }: TableNavbarProps) {
+    const innerOptions: FilterFields[] = error ? [] : [{ id: '', code: 'all', name: 'Всички' }, ...options];
+    const [selected, setSelected] = useState(innerOptions[0].code);
 
-    const handleSelectChange = (event: SelectChangeEvent) => {
-        const selectedOption: string = event.target.value;
-        setSelected(selectedOption);
-        filterSelectedHandler(selectedOption);
+    const handleSelectChange = (event: any) => {
+        const selectedOptionCode = event.target.value;
+        console.log(event);
+        // const selectedOptionCode: string = innerOptions.find(e=>e.code === code);
+        const selectedFilter: FilterFields | undefined = innerOptions.find(o => o.code === selectedOptionCode);
+        if (selectedFilter) {
+            setSelected(selectedFilter.code);
+            filterSelectedHandler(selectedFilter);
+        }
     };
 
     return (
@@ -41,7 +47,9 @@ export default function TableNavbar({ preselectedOption, options, label, shouldS
                                 onChange={handleSelectChange}
                                 sx={{ textAlign: 'start' }}
                             >
-                                {innerOptions.map(element => <MenuItem value={element} key={element}>{element}</MenuItem>)}
+                                {innerOptions.map(element => <MenuItem
+                                    value={element.code} key={element.id}>{element.name}
+                                </MenuItem>)}
                             </Select>
                             <FormHelperText>filter by</FormHelperText>
                         </FormControl>

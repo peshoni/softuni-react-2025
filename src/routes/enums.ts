@@ -1,7 +1,8 @@
 export enum PathSegments {
+    LANDING_PAGE = 'landingPage',
     LOGIN = 'login',
     REGISTER = 'register',
-    USERS = 'users',
+    CUSTOMERS = 'customers',
     VEHICLES = 'vehicles',
     DETAILS = 'details',
     REPAIR_REQUESTS = 'repair-requests',

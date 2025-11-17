@@ -2,7 +2,7 @@ import type { ApolloError } from "@apollo/client";
 import DatasourceError from "./DatasourceError";
 import DatasourceEmptyResult from "./DataSourceEmptyResult";
 import type { JSX } from "@emotion/react/jsx-runtime";
-import { TableHead, TableRow, TableCell } from "@mui/material";
+import { TableRow, TableCell } from "@mui/material";
 import type { Repair_RequestFragment, UserFragment, VehicleFragment } from "../../../../../graphql/generated";
 import type { ColumnSettings } from "./table-interfaces";
 /**
@@ -31,7 +31,7 @@ export function getFallbackTemplate(error: ApolloError | undefined, loading: boo
  */
 
 // type union ColumnType = Repair_RequestFragment | UserFragment | VehicleFragment;
-type allowed = Pick<ColumnSettings<Repair_RequestFragment & UserFragment & VehicleFragment>, 'property' | 'label' | 'width' | 'align'>
+type allowed = Pick<ColumnSettings<Repair_RequestFragment & UserFragment & VehicleFragment>, 'property' | 'label' | 'width' | 'align'>;
 export function buildHeaderRow(columns: allowed[]): JSX.Element {
     return (
         <TableRow>
@@ -46,5 +46,5 @@ export function buildHeaderRow(columns: allowed[]): JSX.Element {
                 </TableCell>
             ))}
         </TableRow>
-    )
+    );
 }

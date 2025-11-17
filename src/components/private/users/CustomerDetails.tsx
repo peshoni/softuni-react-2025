@@ -4,7 +4,7 @@ import DatasourceEmptyResult from "../common/tables/DataSourceEmptyResult";
 import { isNullOrUndefined } from "is-what";
 import DetailsHeader from "../common/forms/DetailsHeader";
 
-export default function UserDetails() {
+export default function CustomerDetails() {
     const params = useParams();
     const isCreateMode = isNullOrUndefined(params?.id);
     let user: UserFragment | undefined | null;
@@ -14,7 +14,6 @@ export default function UserDetails() {
     return (
         <>
             <DetailsHeader isCreateMode={isCreateMode} />
-
             {!user && <DatasourceEmptyResult />}
             {user &&
                 <div>

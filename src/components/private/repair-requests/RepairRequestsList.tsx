@@ -7,10 +7,10 @@ import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TableNavbar, { type TableNavbarProps } from "../common/tables/TableNavbar";
-import { Order_By, useGetRepairRequestsQuery, useGetVehicleStatusesQuery, type Repair_RequestFragment, type Repair_Requests_Bool_Exp, type Vehicle_StatusFragment, } from "../../../../graphql/generated";
+import { Order_By, useGetRepairRequestsQuery, useGetVehicleStatusesQuery, type Repair_RequestFragment, type Repair_Requests_Bool_Exp, type UserFragment, type Vehicle_StatusFragment, } from "../../../../graphql/generated";
 import TableRowContextMenu, { type ROW_ACTIONS, type RowContextFunctionType } from "../common/tables/RowContextMenu";
 import { fromIsoDate } from "../../../utils/dateUtils";
-import type { ColumnSettings } from "../common/tables/table-interfaces";
+import type { ColumnSettings, FilterFields } from "../common/tables/table-interfaces";
 import { useNavigate } from "react-router";
 import { PathSegments } from "../../../routes/enums";
 import { buildUrl } from "../../../routes/routes-util";
@@ -27,24 +27,37 @@ const columns: ColumnSettings<Repair_RequestFragment>[] = [
 ];
 
 export default function RepairRequestsList() {
+    // TODO replace this with global User state
+    const customerAsString = localStorage.getItem('customer');
+    let user: UserFragment | null = null;
+
+    if (customerAsString) {
+        user = JSON.parse(customerAsString);
+        console.log(user);
+    }
+    let userCondition: Repair_Requests_Bool_Exp | null;
+    
+    if (user) {
+        if (user.user_role.code === 'autoMechanic') {
+            userCondition = { vehicle_status: { code: { _eq: 'under-repair' } } };
+        } 
+    }
+
     const navigate = useNavigate();
     const abortControllerRef = useRef<AbortController | null>(null);
-    console.log("OOOOOOOOOOOOOO");
     const statuses = useGetVehicleStatusesQuery().data?.vehicle_statuses;
-    const vehicleStatuses = ['all'];
-    const enumValues: string[] = statuses?.map(e => e.name) ?? [];
-    vehicleStatuses.push(...enumValues);
-    // const enumValues: string[] = statuses?.map(e => e.value) ?? [];
-    // vehicleStatuses.push(...enumValues);
+    const vehicleStatuses: FilterFields[] = statuses?.map(e => ({ id: e.id, name: e.name, code: e.code })) ?? [];
+
     const rowsPerPageOptions = [5, 10, 15];
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
-    const [condition, setCondition] = useState({});
+    const [condition, setCondition] = useState<Repair_Requests_Bool_Exp>({});
+    const offset: number = page * rowsPerPage;
 
     const { data, loading, error } = useGetRepairRequestsQuery({
         variables: {
             limit: rowsPerPage,
-            offset: page * rowsPerPage,
+            offset: offset,
             condition: condition,
             orderBy: { created_at: Order_By.asc }
         },
@@ -72,22 +85,24 @@ export default function RepairRequestsList() {
     //TODo: error handling
 
     const handleChangePage = (event: unknown, newPage: number) => {
-        console.log(event, newPage);
         setPage(newPage);
     };
 
-    const handleChangeRowsPerPage = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRowsPerPage(+event.target.value);
         setPage(0);
     };
 
-    const filterSelectedHandler = (event: string) => {
-        console.log(event);
-        const criteria = statuses?.find((e) => e.name === event);
-        const condition: Repair_Requests_Bool_Exp = criteria ? { status_id: { _eq: criteria.id } } : {};
+    const filterSelectedHandler = (selectedFilter: FilterFields) => {
+        console.log(selectedFilter);
+        const criteria: string | null = selectedFilter.id;
+
+        const condition: Repair_Requests_Bool_Exp = criteria ? { status_id: { _eq: criteria } } : {};
+
+
         setCondition(condition);
+
+
         setPage(0);
     };
 
@@ -105,9 +120,8 @@ export default function RepairRequestsList() {
 
     const isTableVisible: boolean = Boolean(data?.repair_requests_aggregate.aggregate?.count) && (!error || !loading);
     const navBarProps: TableNavbarProps = {
-        label: "Repair requests",
+        label: "Заявки за ремонт",
         shouldShowAddButton: true,
-        preselectedOption: vehicleStatuses[0] ?? undefined,
         options: vehicleStatuses,
         error,
         loading,

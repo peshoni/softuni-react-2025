@@ -7,15 +7,16 @@ import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import TableNavbar, { type TableNavbarProps } from '../common/tables/TableNavbar';
-import { Order_By, useGetVehiclesQuery, useGetVehicleStatusesQuery, type VehicleFragment, type Vehicles_Bool_Exp } from '../../../../graphql/generated';
+import { Order_By, useGetVehiclesQuery, useGetVehicleStatusesQuery, type UserFragment, type VehicleFragment, type Vehicles_Bool_Exp } from '../../../../graphql/generated';
 import TableRowContextMenu, { type RowContextFunctionType, type ROW_ACTIONS } from '../common/tables/RowContextMenu';
 import { fromIsoDate } from '../../../utils/dateUtils';
-import type { ColumnSettings } from '../common/tables/table-interfaces';
+import type { ColumnSettings, FilterFields } from '../common/tables/table-interfaces';
 import { useNavigate } from 'react-router';
 import { buildUrl } from '../../../routes/routes-util';
 import { PathSegments } from '../../../routes/enums';
 import { buildHeaderRow, getFallbackTemplate } from '../common/tables/utils';
 import { TableHead } from '@mui/material';
+import { isNullOrUndefined } from 'is-what';
 
 /**
  * Defines the columns for the vehicles table.
@@ -32,17 +33,31 @@ const columns: ColumnSettings<VehicleFragment>[] = [
 ];
 
 export default function VehiclesList() {
+    // TODO replace this with global User state
+    const customerAsString = localStorage.getItem('customer');
+    let user: UserFragment | null = null;
+
+    if (customerAsString) {
+        user = JSON.parse(customerAsString);
+        console.log(user);
+    }
+
+    const userCondition: Vehicles_Bool_Exp = (isNullOrUndefined(user) || (user.user_role.code !== 'customer'))
+        ? {}
+        : { owner_id: { _eq: user.id } }; 
+
     const navigate = useNavigate();
     const abortControllerRef = useRef<AbortController | null>(null);
     const statuses = useGetVehicleStatusesQuery().data?.vehicle_statuses;
-    const vehicleStatuses = ['all'];
-    const enumValues: string[] = statuses?.map(e => e.name) ?? [];
-    vehicleStatuses.push(...enumValues);
+
+    const vehicleStatuses: FilterFields[] = statuses?.map(e => ({ id: e.id, name: e.name, code: e.code })) ?? [];
+
     const rowsPerPageOptions = [5, 10, 15];
     //const offset: number = this.paginator.pageIndex * this.paginator.pageSize;
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
-    const [condition, setCondition] = useState({});
+    const [condition, setCondition] = useState<Vehicles_Bool_Exp>({ _and: [userCondition] });
+
     const { data, loading, error } = useGetVehiclesQuery({
         variables: {
             limit: rowsPerPage,
@@ -84,10 +99,16 @@ export default function VehiclesList() {
         setPage(0);
     };
 
-    const filterSelectedHandler = (event: string) => {
-        const criteria = statuses?.find((e) => e.name === event);
-        const condition: Vehicles_Bool_Exp = criteria ? { status_id: { _eq: criteria.id } } : {};
-        setCondition(condition);
+    const filterSelectedHandler = (selectedFilter: FilterFields) => {
+        const criteria: string | null = selectedFilter.id;
+        const filterCondition: Vehicles_Bool_Exp = criteria ? { status_id: { _eq: criteria } } : {};
+        console.log(condition._and);
+        if (userCondition) {
+            setCondition({ _and: [userCondition, filterCondition] });
+        } else {
+            setCondition(filterCondition);
+        }
+
         setPage(0);
     };
 
@@ -108,8 +129,7 @@ export default function VehiclesList() {
     const navBarProps: TableNavbarProps = {
         label: 'Списък с автомобили',
         shouldShowAddButton: true,
-        preselectedOption: 'all',
-        options: [],
+        options: vehicleStatuses,
         error,
         loading,
         addClickedHandler,

@@ -11,12 +11,11 @@ import TableNavbar, { type TableNavbarProps } from '../common/tables/TableNavbar
 import { Order_By, useGetUserRolesQuery, useGetUsersQuery, type RoleFragment, type UserFragment, type Users_Bool_Exp } from '../../../../graphql/generated';
 import TableRowContextMenu, { type ROW_ACTIONS, type RowContextFunctionType } from '../common/tables/RowContextMenu';
 import { fromIsoDate } from '../../../utils/dateUtils';
-import type { ColumnSettings } from '../common/tables/table-interfaces';
+import type { ColumnSettings, FilterFields } from '../common/tables/table-interfaces';
 import { useNavigate } from 'react-router';
 import { buildUrl } from '../../../routes/routes-util';
 import { PathSegments } from '../../../routes/enums';
 import { buildHeaderRow, getFallbackTemplate } from '../common/tables/utils';
-
 
 const columns: ColumnSettings<UserFragment>[] = [
   { property: 'created_at', label: 'Създаден', width: '80px', formatDate: (value) => fromIsoDate(value) },
@@ -27,20 +26,26 @@ const columns: ColumnSettings<UserFragment>[] = [
   { property: 'actions', label: 'actions', width: '60px', align: 'right' }
 ];
 
-export default function UsersList() {
+export default function CustomersList() {
   const navigate = useNavigate();
   const abortControllerRef = useRef<AbortController | null>(null);
   const roles: RoleFragment[] = useGetUserRolesQuery().data?.user_roles ?? [];
+  let userRoles: FilterFields[] = Object.values(roles.map(e => ({ id: e.id, code: e.code, name: e.name })));
 
-  let userRoles = ['all', ...Object.values(roles.map(e => e.code))];
-  const rowsPerPageOptions = [5, 10, 15];
   //const offset: number = this.paginator.pageIndex * this.paginator.pageSize;
+  const rowsPerPageOptions = [5, 10, 15];
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
   const [condition, setCondition] = useState({});
+  const offset: number = page * rowsPerPage;
 
   const { data, loading, error } = useGetUsersQuery({
-    variables: { limit: rowsPerPage, offset: page * rowsPerPage, condition: condition, orderBy: { created_at: Order_By.asc } },
+    variables: {
+      limit: rowsPerPage,
+      offset, condition:
+        condition,
+      orderBy: { created_at: Order_By.asc }
+    },
     context: {
       fetchOptions: {
         signal: abortControllerRef.current?.signal,
@@ -51,7 +56,6 @@ export default function UsersList() {
   useEffect(() => {
     // Create a new AbortController when the component mounts
     abortControllerRef.current = new AbortController();
-
     // Return a cleanup function to abort the request when the component unmounts
     return () => {
       abortControllerRef.current?.abort();
@@ -68,20 +72,18 @@ export default function UsersList() {
   }, [error]);
 
   const handleChangePage = (event: unknown, newPage: number) => {
-    console.log(event, newPage);
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(+event.target.value);
-    console.log(rowsPerPage);
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
 
-  const filterSelectedHandler = (event: string) => {
-    const role = roles.find(r => r.code === event);
-    const condition: Users_Bool_Exp = role ? { role_id: { _eq: role.id } } : {};
+  const filterSelectedHandler = (selectedFilter: FilterFields) => {
+    console.log(selectedFilter);
+    const criteria: string | null = selectedFilter.id;
+    const condition: Users_Bool_Exp = criteria ? { role_id: { _eq: criteria } } : {};
     setCondition(condition);
     setPage(0);
   };
@@ -94,7 +96,7 @@ export default function UsersList() {
 
   const rowContextMenuCallback: RowContextFunctionType = (action: ROW_ACTIONS, id: string) => {
     if (action === 'edit') {
-      navigate(buildUrl(PathSegments.USERS, PathSegments.DETAILS, id));
+      navigate(buildUrl(PathSegments.CUSTOMERS, PathSegments.DETAILS, id));
     }
   };
 
@@ -103,7 +105,6 @@ export default function UsersList() {
   const navBarProps: TableNavbarProps = {
     label: 'Списък с потребители',
     shouldShowAddButton: false,
-    preselectedOption: 'all',
     options: userRoles,
     error,
     loading,

@@ -91,7 +91,7 @@ CODEGEN: https://the-guild.dev/graphql/codegen/docs/guides/react-vue
 docker compose --env-file .env up --build -d 
 
 cd .\graphql\
-npx hasura migrate apply --database-name "default"
+npx hasura migrate apply --database-name "default" 
 npx hasura metadata apply
 npx hasura seed apply --database-name "default"
 
