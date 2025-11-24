@@ -1,4 +1,4 @@
-import { useEffect, useState, type JSX } from 'react';
+import { useEffect, useRef, useState, type JSX, type RefObject } from 'react';
 import './App.css';
 import { useLoginQuery, useRegisterMutation, type RoleFragment, type UserFragment } from './../graphql/generated';
 import CustomersList from './components/private/users/CustomersList';
@@ -28,37 +28,37 @@ function App() {
   const navigate = useNavigate();
   const [menu, setMenu] = useState<LoggedUserMenu[]>([]);
   const [routes, setRoutes] = useState<{ path: string, element: JSX.Element; }[]>([]);
-
-  const [mutate] = useRegisterMutation({});
+  const userRef: RefObject<UserFragment | undefined> = useRef<UserFragment | undefined>(undefined);
+  // const [mutate] = useRegisterMutation({});
   const location = useLocation();
-  const testUSers = [
 
-  ];
 
-  let user!: UserFragment;// = useLoginQuery({ variables: testUSers[1] }).data?.users[0];
+  //  let user: UserFragment | undefined;  // = useLoginQuery({ variables: testUSers[1] }).data?.users[0];
+  const userInStorage = localStorage.getItem('customer');
 
   useEffect(() => {
     console.log('MOUNT...');
-    //  console.log(user);
-    if (user) {
-      localStorage.setItem('customer', JSON.stringify(user));
+    if (!userRef.current && userInStorage) { // page reload
+      let user: UserFragment | undefined = JSON.parse(userInStorage);
+      userRef.current = user;
+    }
+    if (userRef.current) {
+
       const desiredPath = location.pathname.replace('/', ''); // remove first slash
       const deepLink = menu.find(m => m.path.startsWith(desiredPath)); // on page refresh or URL manually adding 
-      const role: RoleFragment = user.user_role;
+      const role: RoleFragment = userRef.current.user_role;
       const allowedPaths = buildMenuAccordingRole(role);
       setRoutes(buildRoutes(role));
       setMenu(allowedPaths);
       if (desiredPath.length === 0) {
         navigate(buildUrl(allowedPaths[0].path));
-      } else
-        if (deepLink) {
-          navigate(buildUrl(deepLink.path));
-        }
-    } else {
-      navigate(buildUrl(PathSegments.LANDING_PAGE));
+      } else if (deepLink) {
+        navigate(buildUrl(deepLink.path));
+      } else {
+        navigate(buildUrl(desiredPath));
+      }
     }
-  }, [user]);
-
+  }, []);
 
   const buildMenuAccordingRole = (role: RoleFragment) => {
     const customers: LoggedUserMenu = { label: 'Customers', icon: <GroupIcon />, path: PathSegments.CUSTOMERS };
@@ -99,16 +99,15 @@ function App() {
 
   };
 
-
   return (
     <Routes>
       {/* Public area */}
       <Route path={PathSegments.LANDING_PAGE} element={<CarServiceLanding />} />
-      <Route path={PathSegments.LOGIN} element={<LoginForm />} />
+      <Route path={PathSegments.LOGIN} element={<LoginForm userRef={userRef} />} />
       <Route path={PathSegments.REGISTER} element={<RegisterForm />} />
 
       {/* Private area */}
-      <Route element={<AuthGuard user={user} menu={menu} />}>
+      <Route element={<AuthGuard user={userRef.current} menu={menu} />}>
         {/* Add paths according to role */}
         {routes.map(route => (
           <Route key={route.path} path={route.path} element={route.element} />

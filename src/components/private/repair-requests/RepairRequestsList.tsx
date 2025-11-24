@@ -28,30 +28,31 @@ const columns: ColumnSettings<Repair_RequestFragment>[] = [
 
 export default function RepairRequestsList() {
     // TODO replace this with global User state
+    const navigate = useNavigate();
+    const abortControllerRef = useRef<AbortController | null>(null);
+    const statuses = useGetVehicleStatusesQuery().data?.vehicle_statuses; // TODO use global state management for enum
+    let vehicleStatuses: FilterFields[] = statuses?.map(e => ({ id: e.id, name: e.name, code: e.code })) ?? [];
+
     const customerAsString = localStorage.getItem('customer');
-    let user: UserFragment | null = null;
+    let user: UserFragment | undefined = undefined;
 
     if (customerAsString) {
         user = JSON.parse(customerAsString);
-        console.log(user);
-    }
-    let userCondition: Repair_Requests_Bool_Exp | null;
-    
-    if (user) {
-        if (user.user_role.code === 'autoMechanic') {
-            userCondition = { vehicle_status: { code: { _eq: 'under-repair' } } };
-        } 
     }
 
-    const navigate = useNavigate();
-    const abortControllerRef = useRef<AbortController | null>(null);
-    const statuses = useGetVehicleStatusesQuery().data?.vehicle_statuses;
-    const vehicleStatuses: FilterFields[] = statuses?.map(e => ({ id: e.id, name: e.name, code: e.code })) ?? [];
+    let userCondition: Repair_Requests_Bool_Exp | null = {};
+
+    if (user) {
+        if (user.user_role.code === 'autoMechanic') {
+            userCondition = { _and: [{ vehicle_status: { code: { _eq: 'under-repair' } } }, { automechanic_id: { _eq: user.id } }] };
+            vehicleStatuses = [];
+        }
+    }
 
     const rowsPerPageOptions = [5, 10, 15];
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
-    const [condition, setCondition] = useState<Repair_Requests_Bool_Exp>({});
+    const [condition, setCondition] = useState<Repair_Requests_Bool_Exp>(userCondition);
     const offset: number = page * rowsPerPage;
 
     const { data, loading, error } = useGetRepairRequestsQuery({
@@ -97,12 +98,14 @@ export default function RepairRequestsList() {
         console.log(selectedFilter);
         const criteria: string | null = selectedFilter.id;
 
-        const condition: Repair_Requests_Bool_Exp = criteria ? { status_id: { _eq: criteria } } : {};
-
-
-        setCondition(condition);
-
-
+        const filterCondition: Repair_Requests_Bool_Exp = criteria ? { status_id: { _eq: criteria } } : {};
+        if (userCondition) {
+            filterCondition._and = filterCondition._and ? [...(filterCondition._and), userCondition] : [userCondition];
+            // setCondition(userCondition);
+        }
+        //else {
+        setCondition(filterCondition);
+        // }
         setPage(0);
     };
 
@@ -121,7 +124,7 @@ export default function RepairRequestsList() {
     const isTableVisible: boolean = Boolean(data?.repair_requests_aggregate.aggregate?.count) && (!error || !loading);
     const navBarProps: TableNavbarProps = {
         label: "Заявки за ремонт",
-        shouldShowAddButton: true,
+        user,
         options: vehicleStatuses,
         error,
         loading,

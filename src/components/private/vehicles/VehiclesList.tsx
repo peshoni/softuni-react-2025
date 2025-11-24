@@ -35,7 +35,7 @@ const columns: ColumnSettings<VehicleFragment>[] = [
 export default function VehiclesList() {
     // TODO replace this with global User state
     const customerAsString = localStorage.getItem('customer');
-    let user: UserFragment | null = null;
+    let user: UserFragment | undefined;
 
     if (customerAsString) {
         user = JSON.parse(customerAsString);
@@ -44,7 +44,7 @@ export default function VehiclesList() {
 
     const userCondition: Vehicles_Bool_Exp = (isNullOrUndefined(user) || (user.user_role.code !== 'customer'))
         ? {}
-        : { owner_id: { _eq: user.id } }; 
+        : { owner_id: { _eq: user.id } };
 
     const navigate = useNavigate();
     const abortControllerRef = useRef<AbortController | null>(null);
@@ -128,7 +128,7 @@ export default function VehiclesList() {
 
     const navBarProps: TableNavbarProps = {
         label: 'Списък с автомобили',
-        shouldShowAddButton: true,
+        user,
         options: vehicleStatuses,
         error,
         loading,

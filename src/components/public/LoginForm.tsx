@@ -1,44 +1,101 @@
-import { useState } from "react";
-import { Container, Box, TextField, Button, Typography, Paper, Link } from "@mui/material";
+import { useState, type RefObject } from "react";
+import { Container, Box, Button, Typography, Paper, Link, Alert, type AlertColor, FormControl, InputLabel, OutlinedInput } from "@mui/material";
 import Grid from '@mui/material/Grid';
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router";
 import { PathSegments } from "../../routes/enums";
-import { useLoginLazyQuery } from "../../../graphql/generated";
+import { useLoginLazyQuery, type UserFragment } from "../../../graphql/generated";
+import Snackbar, { type SnackbarCloseReason } from '@mui/material/Snackbar';
+import PasswordInput from "../private/common/forms/PasswordInput";
+import { buildUrl } from "../../routes/routes-util";
 
+export interface FormControlError {
+    controlName: string;
+}
 
-export default function LoginForm() {
-    const [performLogin, { called, loading, data }] = useLoginLazyQuery();
+export default function LoginForm({ userRef }: { readonly userRef: RefObject<UserFragment | undefined>; }) {
+    const [performLogin, /* { called, loading, data }*/] = useLoginLazyQuery();
+    const [submitted, setSubmitted] = useState(false);
     const navigate = useNavigate();
-    //   const [isLogin, setIsLogin] = useState(true);
+    const [errors, setErrors] = useState<FormControlError[]>([]);
+
     const [formData, setFormData] = useState({
-        email: "",
-        password: "",
-        // confirmPassword: "",
+        email: '',
+        password: '',
     });
 
     const handleChange = (e: { target: { name: any; value: any; }; }) => {
+        console.log([e.target.name], e.target.value);
+        console.log(errors);
         setFormData({
             ...formData,
             [e.target.name]: e.target.value,
         });
     };
 
+
+    interface ToastState {
+        open: boolean;
+        alertType?: AlertColor;//= "error" | "success" | "info" | "warning"
+        message?: string;
+        duration?: number;
+    }
+
+    const [{ open, alertType, message, duration }, setToastState] = useState<ToastState>({
+        open: false
+    });
+
+    const handleCloseToastMessage = (event?: React.SyntheticEvent | Event, reason?: SnackbarCloseReason,) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setToastState({ open: false });
+    };
+
     const handleSubmit = (e: { preventDefault: () => void; }) => {
+        setErrors([]);
+        setSubmitted(true);
         e.preventDefault();
-        // if (!isLogin && formData.password !== formData.confirmPassword) {
-        //   alert("Passwords do not match!");
-        //   return;
-        // }
-        // Simulate login/register action
- 
 
         console.log(formData);
 
-        performLogin({ variables: { email: formData.email, password: formData.password } }).then((value) => {
-            console.log(value)
-            console.log(called, loading, data);
-        });
+        setTimeout(() => {
+            performLogin({ variables: { email: formData.email, password: formData.password } }).then((result) => {
+                console.log(result);
+                let user: UserFragment | undefined;
+                if (result.data?.users.length) {
+                    user = result.data.users[0];
+                }
+
+                if (user) {
+                    localStorage.setItem('customer', JSON.stringify(user));
+                    const awaitTime: number = 1500;
+                    setToastState({
+                        open: true,
+                        alertType: 'success',
+                        message: 'Login was successfully',
+                        duration: awaitTime
+                    });
+
+                    setTimeout(() => {
+                        const path = buildUrl(PathSegments.CUSTOMERS);
+                        console.log(path);
+                        navigate(path);
+                        userRef.current = user;
+                    }, awaitTime);
+                } else {
+                    setToastState({
+                        open: true,
+                        alertType: 'error',
+                        message: 'User with this email wasn\'t found',
+                        duration: 4000
+                    });
+                    setErrors([{ controlName: 'email' }]);
+                }
+                setSubmitted(false);
+            });
+        }, 500);
+
 
         // alert(`Logging in with ${formData.email}`);
     };
@@ -56,35 +113,39 @@ export default function LoginForm() {
                     <Typography variant="h5" align="center" gutterBottom>
                         {"Login"}
                     </Typography>
-                    <Box component="form" onSubmit={handleSubmit}>
-                        <TextField
-                            fullWidth
-                            label="Email"
-                            name="email"
-                            type="email"
-                            margin="normal"
-                            value={formData.email}
-                            onChange={handleChange}
-                            required
-                        />
-                        <TextField
-                            fullWidth
-                            label="Password"
-                            name="password"
-                            type="password"
-                            margin="normal"
+                    <Box component="form" onSubmit={handleSubmit} autoComplete="off">
+
+                        <FormControl sx={{ margin: '8px 0', width: '100%' }} variant="outlined">
+                            <InputLabel htmlFor="email" error={errors.some(e => e.controlName === 'email')} >Email</InputLabel>
+                            <OutlinedInput
+                                id="email"
+                                name='email'
+                                type='email'
+                                value={formData.email}
+                                onChange={handleChange}
+                                required
+                                error={errors.some(e => e.controlName === 'email')}
+                                label="Email"
+                            />
+                        </FormControl>
+
+                        <PasswordInput
+                            key={'password'}
                             value={formData.password}
-                            onChange={handleChange}
-                            required
+                            errors={errors}
+                            changeCallback={handleChange}
                         />
+
+                        {/* Submit button */}
                         <Button
                             type="submit"
+                            disabled={submitted}
                             fullWidth
                             variant="contained"
                             size="large"
                             sx={{ mt: 2, borderRadius: 2 }}
                         >
-                            {"Login"}
+                            Submit
                         </Button>
                     </Box>
 
@@ -101,6 +162,18 @@ export default function LoginForm() {
                     </Grid>
                 </Paper>
             </Box>
+
+            <Snackbar
+                open={open}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                autoHideDuration={duration ?? 5000}
+                onClose={handleCloseToastMessage}
+                sx={{ minWidth: '300px' }}
+            >
+                <Alert severity={alertType} sx={{ width: '100%' }}>
+                    {message}
+                </Alert>
+            </Snackbar>
         </Container>
     );
 }

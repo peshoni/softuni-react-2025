@@ -32,6 +32,13 @@ export default function CustomersList() {
   const roles: RoleFragment[] = useGetUserRolesQuery().data?.user_roles ?? [];
   let userRoles: FilterFields[] = Object.values(roles.map(e => ({ id: e.id, code: e.code, name: e.name })));
 
+  const customerAsString = localStorage.getItem('customer');
+  let user: UserFragment | undefined = undefined;
+
+  if (customerAsString) {
+    user = JSON.parse(customerAsString);
+  }
+
   //const offset: number = this.paginator.pageIndex * this.paginator.pageSize;
   const rowsPerPageOptions = [5, 10, 15];
   const [page, setPage] = useState(0);
@@ -104,7 +111,7 @@ export default function CustomersList() {
 
   const navBarProps: TableNavbarProps = {
     label: 'Списък с потребители',
-    shouldShowAddButton: false,
+    user,
     options: userRoles,
     error,
     loading,

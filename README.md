@@ -4,7 +4,8 @@ Repo for the exam task for the React course, Softuni October 2025
 
 ## Note! The application was built for educational purposes - a demonstration of what was learned from the REACT-Softuni 2025 course, and has absolutely basic functionality to demonstrate working with roles, tables, and CRUD operations, covering the exam assignment.
 
-
+# Migrations and seeds
+![alt text](readme-resources/image.png)
 
 # React + TypeScript + Vite
 
@@ -79,6 +80,8 @@ export default defineConfig([
   },
 ])
 ```
+
+
 
 
 CODEGEN: https://the-guild.dev/graphql/codegen/docs/guides/react-vue

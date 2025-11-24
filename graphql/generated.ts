@@ -3552,13 +3552,13 @@ export type GetRepairRequestByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetRepairRequestByIdQuery = { repair_requests_by_pk?: { id: any, created_at: any, updated_at?: any | null, scheduled_for?: any | null, description?: string | null, title: string, vehicle_status: { id: any, code: string, color: string, name: string, weight: number }, requests_logs: Array<{ id: any, created_at: any, updated_at?: any | null, message: string, user: { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } } }>, logsCount: { aggregate?: { count: number } | null }, vehicle: { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, code: string, color: string, name: string, weight: number } | null } } | null };
+export type GetRepairRequestByIdQuery = { repair_requests_by_pk?: { id: any, created_at: any, updated_at?: any | null, scheduled_for?: any | null, description?: string | null, title: string, vehicle_status: { id: any, code: string, color: string, name: string, weight: number }, requests_logs: Array<{ id: any, created_at: any, updated_at?: any | null, message: string, user: { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } } }>, logsCount: { aggregate?: { count: number } | null }, vehicle: { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, code: string, color: string, name: string, weight: number } | null } } | null };
 
 export type Repair_RequestFragment = { id: any, created_at: any, updated_at?: any | null, scheduled_for?: any | null, description?: string | null, title: string, vehicle_status: { id: any, code: string, color: string, name: string, weight: number }, logsCount: { aggregate?: { count: number } | null }, vehicle: { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, code: string, color: string, name: string, weight: number } | null } };
 
-export type Repair_Request_With_LogsFragment = { id: any, created_at: any, updated_at?: any | null, scheduled_for?: any | null, description?: string | null, title: string, vehicle_status: { id: any, code: string, color: string, name: string, weight: number }, requests_logs: Array<{ id: any, created_at: any, updated_at?: any | null, message: string, user: { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } } }>, logsCount: { aggregate?: { count: number } | null }, vehicle: { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, code: string, color: string, name: string, weight: number } | null } };
+export type Repair_Request_With_LogsFragment = { id: any, created_at: any, updated_at?: any | null, scheduled_for?: any | null, description?: string | null, title: string, vehicle_status: { id: any, code: string, color: string, name: string, weight: number }, requests_logs: Array<{ id: any, created_at: any, updated_at?: any | null, message: string, user: { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } } }>, logsCount: { aggregate?: { count: number } | null }, vehicle: { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, code: string, color: string, name: string, weight: number } | null } };
 
-export type Request_LogFragment = { id: any, created_at: any, updated_at?: any | null, message: string, user: { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } } };
+export type Request_LogFragment = { id: any, created_at: any, updated_at?: any | null, message: string, user: { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } } };
 
 export type GetUserRolesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3572,7 +3572,7 @@ export type RegisterMutationVariables = Exact<{
 }>;
 
 
-export type RegisterMutation = { insert_users_one?: { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } } | null };
+export type RegisterMutation = { insert_users_one?: { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } } | null };
 
 export type LoginQueryVariables = Exact<{
   email: Scalars['String']['input'];
@@ -3580,7 +3580,7 @@ export type LoginQueryVariables = Exact<{
 }>;
 
 
-export type LoginQuery = { users: Array<{ id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } }> };
+export type LoginQuery = { users: Array<{ id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } }> };
 
 export type GetUsersQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -3590,16 +3590,18 @@ export type GetUsersQueryVariables = Exact<{
 }>;
 
 
-export type GetUsersQuery = { users: Array<{ id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } }>, users_aggregate: { aggregate?: { count: number } | null } };
+export type GetUsersQuery = { users: Array<{ id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } }>, users_aggregate: { aggregate?: { count: number } | null } };
 
 export type GetUserByIdQueryVariables = Exact<{
   id: Scalars['uuid']['input'];
 }>;
 
 
-export type GetUserByIdQuery = { users_by_pk?: { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } } | null };
+export type GetUserByIdQuery = { users_by_pk?: { password: string, id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } } | null };
 
-export type UserFragment = { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } };
+export type Edit_UserFragment = { password: string, id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } };
+
+export type UserFragment = { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } };
 
 export type GetVehicleStatusesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3686,6 +3688,7 @@ export const UserFragmentDoc = gql`
   email
   first_name
   last_name
+  phone
   gender {
     id
     code
@@ -3742,6 +3745,12 @@ export const RoleFragmentDoc = gql`
   name
 }
     `;
+export const Edit_UserFragmentDoc = gql`
+    fragment edit_user on users {
+  password
+  ...user
+}
+    ${UserFragmentDoc}`;
 export const GetRepairRequestsDocument = gql`
     query GetRepairRequests($limit: Int, $offset: Int, $condition: repair_requests_bool_exp! = {}, $orderBy: [repair_requests_order_by!] = {created_at: asc}) {
   repair_requests(
@@ -3999,10 +4008,10 @@ export type GetUsersQueryResult = ApolloReactCommon.QueryResult<GetUsersQuery, G
 export const GetUserByIdDocument = gql`
     query GetUserById($id: uuid!) {
   users_by_pk(id: $id) {
-    ...user
+    ...edit_user
   }
 }
-    ${UserFragmentDoc}`;
+    ${Edit_UserFragmentDoc}`;
 
 /**
  * __useGetUserByIdQuery__

@@ -43,7 +43,7 @@ export default function UserContextMenu({ id, first_name, last_name, user_role }
         <>
             <Grid container rowSpacing={0} columnSpacing={0} columns={{ xs: 2, sm: 2, md: 2 }} sx={{ textAlign: 'right' }}>
                 <Grid size={2} fontSize={18}>{first_name} {last_name}</Grid>
-                <Grid size={2}>({user_role.name})</Grid>
+                <Grid size={2} fontSize={14}>({user_role.name})</Grid>
             </Grid>
 
             <IconButton

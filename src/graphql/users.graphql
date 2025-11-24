@@ -36,8 +36,13 @@ query GetUsers($limit: Int, $offset: Int, $condition: users_bool_exp! = {}, $ord
 
 query GetUserById($id: uuid!) {
   users_by_pk(id: $id) {
-    ...user
+    ...edit_user
   }
+}
+
+fragment edit_user on users {
+  password
+  ...user
 }
 
 fragment user on users {
@@ -47,6 +52,7 @@ fragment user on users {
   email
   first_name
   last_name
+  phone
   gender {
     id
     code

@@ -2,21 +2,23 @@ import type { ApolloError } from "@apollo/client";
 import { Box, Button, FormControl, FormHelperText, Grid, InputLabel, LinearProgress, MenuItem, Paper, Select, Tooltip, type SelectChangeEvent } from "@mui/material";
 import { useState } from "react";
 import type { FilterFields } from "./table-interfaces";
+import type { UserFragment } from "../../../../../graphql/generated";
 
 
 export interface TableNavbarProps {
     readonly options: FilterFields[];
     readonly label: string;
-    readonly shouldShowAddButton: boolean; //TODO add object for enable disabe filtering    
+    readonly user: UserFragment | undefined;
     readonly error: ApolloError | undefined;
     readonly loading: boolean;
     readonly addClickedHandler: () => void;
     readonly filterSelectedHandler: (arg: FilterFields) => void;
 }
 
-export default function TableNavbar({ options, label, shouldShowAddButton, error, loading, filterSelectedHandler, addClickedHandler }: TableNavbarProps) {
+export default function TableNavbar({ options, label, user, error, loading, filterSelectedHandler, addClickedHandler }: TableNavbarProps) {
     const innerOptions: FilterFields[] = error ? [] : [{ id: '', code: 'all', name: 'Всички' }, ...options];
-    const [selected, setSelected] = useState(innerOptions[0].code);
+    const [selected, setSelected] = useState(innerOptions[0]?.code ?? '');
+    const isAddButtonVisible = checkAddButtonVisibility(user);
 
     const handleSelectChange = (event: any) => {
         const selectedOptionCode = event.target.value;
@@ -57,12 +59,12 @@ export default function TableNavbar({ options, label, shouldShowAddButton, error
                 </Grid>
                 {/* If error then select and add button is hidden */}
                 <Grid size={error ? { xs: 4, sm: 8, md: 12 } : { xs: 2, sm: 4, md: 8 }}>
-                    <Paper sx={{ width: '100%', height: '100%', fontSize: 'x-large', fontWeight: 'bold', boxShadow: 'none', alignContent: 'center' }}>
+                    <Paper sx={{ width: '100%', height: '100%', fontSize: 'x-large', fontWeight: 'bold', boxShadow: 'none', alignContent: 'center', minHeight: '70px' }}>
                         {label}
                     </Paper>
                 </Grid>
                 {/* Display add button according to the User permissions */}
-                {!error && shouldShowAddButton &&
+                {!error && isAddButtonVisible &&
                     <Grid size={{ xs: 1, sm: 2, md: 2 }}
                         sx={{
                             display: 'flex', justifyContent: 'end'
@@ -77,5 +79,17 @@ export default function TableNavbar({ options, label, shouldShowAddButton, error
             </Grid>
         </>
     );
+}
+
+function checkAddButtonVisibility(user: UserFragment | undefined) {
+    if (user) {
+        if (user.user_role.code === 'autoMechanic') {
+            return false;
+        }
+
+        return true;
+    } else {
+        return false;
+    }
 }
 
