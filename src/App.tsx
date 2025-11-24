@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState, type JSX, type RefObject } from 'react';
 import './App.css';
-import { useLoginQuery, useRegisterMutation, type RoleFragment, type UserFragment } from './../graphql/generated';
+import { useEffect, useRef, useState, type JSX, type RefObject } from 'react';
+import { type RoleFragment, type UserFragment } from './../graphql/generated';
 import CustomersList from './components/private/users/CustomersList';
 import VehiclesList from './components/private/vehicles/VehiclesList';
 import RepairRequestsList from './components/private/repair-requests/RepairRequestsList';

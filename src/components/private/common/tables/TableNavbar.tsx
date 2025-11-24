@@ -1,9 +1,8 @@
 import type { ApolloError } from "@apollo/client";
-import { Box, Button, FormControl, FormHelperText, Grid, InputLabel, LinearProgress, MenuItem, Paper, Select, Tooltip, type SelectChangeEvent } from "@mui/material";
+import { Box, Button, FormControl, FormHelperText, Grid, InputLabel, LinearProgress, MenuItem, Paper, Select, Tooltip } from "@mui/material";
 import { useState } from "react";
 import type { FilterFields } from "./table-interfaces";
 import type { UserFragment } from "../../../../../graphql/generated";
-
 
 export interface TableNavbarProps {
     readonly options: FilterFields[];

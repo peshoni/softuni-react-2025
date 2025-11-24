@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -16,13 +15,12 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-
 import { Outlet, useNavigate } from 'react-router';
 import UserContextMenu from './UserContextMenu';
-import type { RoleFragment, UserFragment } from '../../../../graphql/generated';
-import { useEffect } from 'react';
+import type { UserFragment } from '../../../../graphql/generated';
+import { useEffect, useState } from 'react';
 import { buildUrl } from '../../../routes/routes-util';
-import type { LoggedUserMenu } from '../../../App'; 
+import type { LoggedUserMenu } from '../../../App';
 
 const drawerWidth = 240;
 
@@ -90,10 +88,10 @@ interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
 }
 
-export default function ApplicationBar({ user,menu }: { readonly user?: UserFragment; readonly menu:LoggedUserMenu[] }) {
+export default function ApplicationBar({ user, menu }: { readonly user?: UserFragment; readonly menu: LoggedUserMenu[] }) {
   const navigate = useNavigate();
   const theme = useTheme();
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = useState(true);
   // const [menus, setMenus] = React.useState<LoggedUserMenu[]>([]);
 
   const handleDrawerOpen = () => {

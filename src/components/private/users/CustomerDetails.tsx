@@ -15,7 +15,7 @@ type FilteredUserProperties = Pick<Edit_UserFragment, typeof omitUserProperties[
 type FormUserProps = Omit<Edit_UserFragment, keyof FilteredUserProperties> & { role: string, genderCode: string; };
 //#endregion Form Types
 export default function CustomerDetails() {
-    const [errors, setErrors] = useState<FormControlError[]>([]);
+    const [errors /*, setErrors*/] = useState<FormControlError[]>([]);
 
     const params = useParams();
     const isCreateMode = isNullOrUndefined(params?.id);

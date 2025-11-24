@@ -91,6 +91,7 @@ export default function VehiclesList() {
     //Todo: error handling
 
     const handleChangePage = (event: unknown, newPage: number) => {
+        console.log(event, newPage)
         setPage(newPage);
     };
 

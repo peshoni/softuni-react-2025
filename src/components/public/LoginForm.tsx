@@ -45,7 +45,8 @@ export default function LoginForm({ userRef }: { readonly userRef: RefObject<Use
         open: false
     });
 
-    const handleCloseToastMessage = (event?: React.SyntheticEvent | Event, reason?: SnackbarCloseReason,) => {
+    const handleCloseToastMessage = (event?: React.SyntheticEvent | Event, reason?: SnackbarCloseReason,) => { 
+        console.log(event)
         if (reason === 'clickaway') {
             return;
         }

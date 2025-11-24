@@ -79,6 +79,7 @@ export default function CustomersList() {
   }, [error]);
 
   const handleChangePage = (event: unknown, newPage: number) => {
+    console.log(event, newPage);
     setPage(newPage);
   };
 

@@ -86,6 +86,7 @@ export default function RepairRequestsList() {
     //TODo: error handling
 
     const handleChangePage = (event: unknown, newPage: number) => {
+        console.log(event, newPage);
         setPage(newPage);
     };
 
