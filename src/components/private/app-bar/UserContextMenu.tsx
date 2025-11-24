@@ -12,10 +12,8 @@ import { buildUrl } from '../../../routes/routes-util';
 
 const menuHeight = 40;
 type ACTIONS = 'logout' | 'edit';
-// export type UnMutable<T> = {
-//   readonly [K in keyof T]: T[K];
-// };
-export default function UserContextMenu({ id, first_name, last_name, user_role }: UserFragment) {
+
+export default function UserContextMenu({ id, first_name, last_name, user_role }: Readonly<UserFragment>) {
 
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -29,6 +27,7 @@ export default function UserContextMenu({ id, first_name, last_name, user_role }
         setAnchorEl(null);
         switch (actionType) {
             case 'logout':
+                localStorage.clear();
                 navigate(buildUrl(PathSegments.LOGIN));
                 break;
             case 'edit':

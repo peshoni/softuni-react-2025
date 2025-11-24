@@ -1,4 +1,4 @@
-import { useState, type RefObject } from "react";
+import { useState, type SetStateAction } from "react";
 import { Container, Box, Button, Typography, Paper, Link, Alert, type AlertColor, FormControl, InputLabel, OutlinedInput } from "@mui/material";
 import Grid from '@mui/material/Grid';
 import { motion } from "framer-motion";
@@ -8,12 +8,13 @@ import { useLoginLazyQuery, type UserFragment } from "../../../graphql/generated
 import Snackbar, { type SnackbarCloseReason } from '@mui/material/Snackbar';
 import PasswordInput from "../private/common/forms/PasswordInput";
 import { buildUrl } from "../../routes/routes-util";
+import { buildMenuAccordingRole } from "../../App";
 
 export interface FormControlError {
     controlName: string;
 }
 
-export default function LoginForm({ userRef }: { readonly userRef: RefObject<UserFragment | undefined>; }) {
+export default function LoginForm({ setUser }: { readonly setUser: (event: SetStateAction<UserFragment | undefined>) => void; }) {
     const [performLogin, /* { called, loading, data }*/] = useLoginLazyQuery();
     const [submitted, setSubmitted] = useState(false);
     const navigate = useNavigate();
@@ -45,12 +46,12 @@ export default function LoginForm({ userRef }: { readonly userRef: RefObject<Use
         open: false
     });
 
-    const handleCloseToastMessage = (event?: React.SyntheticEvent | Event, reason?: SnackbarCloseReason,) => { 
+    const handleCloseToastMessage = (event?: React.SyntheticEvent | Event, reason?: SnackbarCloseReason,) => {
         console.log(event)
         if (reason === 'clickaway') {
             return;
         }
-        setToastState({ open: false });
+        setToastState({ open: false, alertType:undefined, message:'', duration });
     };
 
     const handleSubmit = (e: { preventDefault: () => void; }) => {
@@ -70,6 +71,7 @@ export default function LoginForm({ userRef }: { readonly userRef: RefObject<Use
 
                 if (user) {
                     localStorage.setItem('customer', JSON.stringify(user));
+                    setUser(user);
                     const awaitTime: number = 1500;
                     setToastState({
                         open: true,
@@ -77,14 +79,12 @@ export default function LoginForm({ userRef }: { readonly userRef: RefObject<Use
                         message: 'Login was successfully',
                         duration: awaitTime
                     });
-
                     setTimeout(() => {
-                        const path = buildUrl(PathSegments.CUSTOMERS);
-                        console.log(path);
-                        navigate(path);
-                        userRef.current = user;
+                        const allowedPaths = buildMenuAccordingRole(user.user_role);
+                        navigate(buildUrl(allowedPaths[0].path)); 
                     }, awaitTime);
                 } else {
+                    setUser(undefined);
                     setToastState({
                         open: true,
                         alertType: 'error',
