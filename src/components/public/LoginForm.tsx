@@ -47,58 +47,55 @@ export default function LoginForm({ setUser }: { readonly setUser: (event: SetSt
     });
 
     const handleCloseToastMessage = (event?: React.SyntheticEvent | Event, reason?: SnackbarCloseReason,) => {
-        console.log(event)
+        console.log(event);
         if (reason === 'clickaway') {
             return;
         }
-        setToastState({ open: false, alertType:undefined, message:'', duration });
+        setToastState({ open: false, alertType: undefined, message: '', duration });
     };
 
     const handleSubmit = (e: { preventDefault: () => void; }) => {
         setErrors([]);
-        setSubmitted(true);
         e.preventDefault();
+        setSubmitted(true);
 
         console.log(formData);
+        performLogin({ variables: { email: formData.email, password: formData.password } }).then((result) => {
 
-        setTimeout(() => {
-            performLogin({ variables: { email: formData.email, password: formData.password } }).then((result) => {
-                console.log(result);
-                let user: UserFragment | undefined;
-                if (result.data?.users.length) {
-                    user = result.data.users[0];
-                }
+            let user: UserFragment | undefined;
+            if (result.data?.users.length) {
+                user = result.data.users[0];
+            }
 
-                if (user) {
-                    localStorage.setItem('customer', JSON.stringify(user));
-                    setUser(user);
-                    const awaitTime: number = 1500;
-                    setToastState({
-                        open: true,
-                        alertType: 'success',
-                        message: 'Login was successfully',
-                        duration: awaitTime
-                    });
-                    setTimeout(() => {
-                        const allowedPaths = buildMenuAccordingRole(user.user_role);
-                        navigate(buildUrl(allowedPaths[0].path)); 
-                    }, awaitTime);
-                } else {
-                    setUser(undefined);
-                    setToastState({
-                        open: true,
-                        alertType: 'error',
-                        message: 'User with this email wasn\'t found',
-                        duration: 4000
-                    });
-                    setErrors([{ controlName: 'email' }]);
-                }
+            if (user) {
+                const allowedPaths = buildMenuAccordingRole(user.user_role);
+                console.log(allowedPaths);
+                localStorage.setItem('customer', JSON.stringify(user));
+                setUser(user);
+                const awaitTime: number = 1500;
+
+                setToastState({
+                    open: true,
+                    alertType: 'success',
+                    message: 'Login was successfully',
+                    duration: awaitTime
+                });
+                setTimeout(() => {
+                    setSubmitted(false);
+                    navigate(buildUrl(allowedPaths[0].path));
+                }, awaitTime);
+            } else {
+                setUser(undefined);
+                setToastState({
+                    open: true,
+                    alertType: 'error',
+                    message: 'User with this email wasn\'t found',
+                    duration: 4000
+                });
+                setErrors([{ controlName: 'email' }]);
                 setSubmitted(false);
-            });
-        }, 500);
-
-
-        // alert(`Logging in with ${formData.email}`);
+            }
+        });
     };
 
     return (

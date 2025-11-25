@@ -7,7 +7,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TableNavbar, { type TableNavbarProps } from "../common/tables/TableNavbar";
-import { Order_By, useGetRepairRequestsQuery, useGetVehicleStatusesQuery, type Repair_RequestFragment, type Repair_Requests_Bool_Exp, type UserFragment, type Vehicle_StatusFragment, } from "../../../../graphql/generated";
+import { Order_By, useGetEnumsQuery, useGetRepairRequestsQuery, type GenderFragment, type Repair_RequestFragment, type Repair_Requests_Bool_Exp, type RoleFragment, type Vehicle_StatusFragment, } from "../../../../graphql/generated";
 import TableRowContextMenu, { type ROW_ACTIONS, type RowContextFunctionType } from "../common/tables/RowContextMenu";
 import { fromIsoDate } from "../../../utils/dateUtils";
 import type { ColumnSettings, FilterFields } from "../common/tables/table-interfaces";
@@ -16,6 +16,7 @@ import { PathSegments } from "../../../routes/enums";
 import { buildUrl } from "../../../routes/routes-util";
 import { buildHeaderRow, getFallbackTemplate as getTableFallbackElement } from "../common/tables/utils";
 import { TableHead } from "@mui/material";
+import type { UserAuthorizationProps } from "../common/interfaces";
 
 const columns: ColumnSettings<Repair_RequestFragment>[] = [
     { property: "created_at", label: "създаден", width: "80px", formatDate: (value) => fromIsoDate(value), },
@@ -26,26 +27,28 @@ const columns: ColumnSettings<Repair_RequestFragment>[] = [
     { property: "actions", label: "actions", width: "60px", align: "right" },
 ];
 
-export default function RepairRequestsList() {
-    // TODO replace this with global User state
+export default function RepairRequestsList({ user }: Readonly<UserAuthorizationProps>) {
     const navigate = useNavigate();
-    const abortControllerRef = useRef<AbortController | null>(null);
-    const statuses = useGetVehicleStatusesQuery().data?.vehicle_statuses; // TODO use global state management for enum
-    let vehicleStatuses: FilterFields[] = statuses?.map(e => ({ id: e.id, name: e.name, code: e.code })) ?? [];
 
-    const customerAsString = localStorage.getItem('customer');
-    let user: UserFragment | undefined = undefined;
-
-    if (customerAsString) {
-        user = JSON.parse(customerAsString);
+    const getEnums = useGetEnumsQuery();
+    let genders: GenderFragment[] = [];
+    let userRoles: RoleFragment[] = [];
+    let vehicleStatuses: Vehicle_StatusFragment[] = [];
+    if (getEnums.data) {
+        vehicleStatuses = getEnums.data.vehicle_statuses;
+        userRoles = getEnums.data.user_roles;
+        genders = getEnums.data.genders;
+        console.log(genders, userRoles, vehicleStatuses);
     }
+    let vehicleStatusesFilters: FilterFields[] = vehicleStatuses?.map(e => ({ id: e.id, name: e.name, code: e.code })) ?? [];
 
     let userCondition: Repair_Requests_Bool_Exp | null = {};
+    const abortControllerRef = useRef<AbortController | null>(null);
 
     if (user) {
         if (user.user_role.code === 'autoMechanic') {
             userCondition = { _and: [{ vehicle_status: { code: { _eq: 'under-repair' } } }, { automechanic_id: { _eq: user.id } }] };
-            vehicleStatuses = [];
+            vehicleStatusesFilters = [];
         }
     }
 
@@ -126,7 +129,7 @@ export default function RepairRequestsList() {
     const navBarProps: TableNavbarProps = {
         label: "Заявки за ремонт",
         user,
-        options: vehicleStatuses,
+        options: vehicleStatusesFilters,
         error,
         loading,
         addClickedHandler,

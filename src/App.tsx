@@ -26,19 +26,24 @@ export interface LoggedUserMenu {
 
 function App() {
   const navigate = useNavigate();
-  const [menu, setMenu] = useState<LoggedUserMenu[]>([]);
-  const [routes, setRoutes] = useState<{ path: string, element: JSX.Element; }[]>([]);
   const [user, setUser] = useState<UserFragment | undefined>(undefined);
-  // const [mutate] = useRegisterMutation({});
+  const [routes, setRoutes] = useState<{ path: string, element: JSX.Element; }[]>([]);
+  const [menu, setMenu] = useState<LoggedUserMenu[]>([]);
   const location = useLocation();
 
+  useEffect(() => {
+    const customerAsString = localStorage.getItem('customer');
+    let user: UserFragment | undefined = undefined;
+    if (customerAsString) {
+      user = JSON.parse(customerAsString);
+      setUser(user);
+    } else {
+      navigate(buildUrl(PathSegments.LOGIN));
+    }
 
-  //  let user: UserFragment | undefined;  // = useLoginQuery({ variables: testUSers[1] }).data?.users[0];
-
+  }, []);
 
   useEffect(() => {
-    console.log('MOUNT...');
-
     if (user) {
       const desiredPath = location.pathname.replace('/', ''); // remove first slash
       const deepLink = menu.find(m => m.path.startsWith(desiredPath)); // on page refresh or URL manually adding 
@@ -55,17 +60,38 @@ function App() {
         navigate(buildUrl(desiredPath));
       }
     }
-  }, []);
-
-
+  }, [user]);
 
   const buildRoutes = (role: RoleFragment) => {
     const routes: { path: string, element: JSX.Element; }[] = [];
-    const customersList = { path: PathSegments.CUSTOMERS, element: <CustomersList /> };
-    const customerDetails = { path: PathSegments.CUSTOMERS + '/' + PathSegments.DETAILS + '/:id', element: <CustomerDetails /> };
-    const vehiclesList = { path: PathSegments.VEHICLES, element: <VehiclesList /> };
+    const customersList = {
+      path: PathSegments.CUSTOMERS,
+      element: <CustomersList
+        user={user}
+      />
+    };
+
+    const customerDetails = {
+      path: PathSegments.CUSTOMERS + '/' + PathSegments.DETAILS + '/:id',
+      element: <CustomerDetails />
+    };
+
+    const vehiclesList = {
+      path: PathSegments.VEHICLES,
+      element: <VehiclesList
+        user={user}
+      />
+    };
+
     const vehicleDetails = { path: PathSegments.VEHICLES + '/' + PathSegments.DETAILS + '/:id', element: <VehicleDetails /> };
-    const repairRequestsList = { path: PathSegments.REPAIR_REQUESTS, element: <RepairRequestsList /> };
+
+    const repairRequestsList = {
+      path: PathSegments.REPAIR_REQUESTS,
+      element: <RepairRequestsList
+        user={user}
+      />
+    };
+
     const repairRequestDetails = { path: PathSegments.REPAIR_REQUESTS + '/' + PathSegments.DETAILS + '/:id', element: <RepairRequestDetails /> };
 
     switch (role.code) {

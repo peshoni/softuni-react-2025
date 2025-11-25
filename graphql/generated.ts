@@ -3537,6 +3537,11 @@ export type Vehicles_Variance_Order_By = {
   year?: InputMaybe<Order_By>;
 };
 
+export type GetEnumsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetEnumsQuery = { vehicle_statuses: Array<{ id: any, code: string, color: string, name: string, weight: number }>, user_roles: Array<{ id: any, code: string, name: string }>, genders: Array<{ id: any, code: string, name: string }> };
+
 export type GetRepairRequestsQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
@@ -3552,27 +3557,20 @@ export type GetRepairRequestByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetRepairRequestByIdQuery = { repair_requests_by_pk?: { id: any, created_at: any, updated_at?: any | null, scheduled_for?: any | null, description?: string | null, title: string, vehicle_status: { id: any, code: string, color: string, name: string, weight: number }, requests_logs: Array<{ id: any, created_at: any, updated_at?: any | null, message: string, user: { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } } }>, logsCount: { aggregate?: { count: number } | null }, vehicle: { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, code: string, color: string, name: string, weight: number } | null } } | null };
+export type GetRepairRequestByIdQuery = { repair_requests_by_pk?: { id: any, created_at: any, updated_at?: any | null, scheduled_for?: any | null, description?: string | null, title: string, vehicle_status: { id: any, code: string, color: string, name: string, weight: number }, requests_logs: Array<{ id: any, created_at: any, updated_at?: any | null, message: string, user: { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, code: string, name: string } } }>, logsCount: { aggregate?: { count: number } | null }, vehicle: { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, code: string, color: string, name: string, weight: number } | null } } | null };
 
 export type Repair_RequestFragment = { id: any, created_at: any, updated_at?: any | null, scheduled_for?: any | null, description?: string | null, title: string, vehicle_status: { id: any, code: string, color: string, name: string, weight: number }, logsCount: { aggregate?: { count: number } | null }, vehicle: { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, code: string, color: string, name: string, weight: number } | null } };
 
-export type Repair_Request_With_LogsFragment = { id: any, created_at: any, updated_at?: any | null, scheduled_for?: any | null, description?: string | null, title: string, vehicle_status: { id: any, code: string, color: string, name: string, weight: number }, requests_logs: Array<{ id: any, created_at: any, updated_at?: any | null, message: string, user: { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } } }>, logsCount: { aggregate?: { count: number } | null }, vehicle: { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, code: string, color: string, name: string, weight: number } | null } };
+export type Repair_Request_With_LogsFragment = { id: any, created_at: any, updated_at?: any | null, scheduled_for?: any | null, description?: string | null, title: string, vehicle_status: { id: any, code: string, color: string, name: string, weight: number }, requests_logs: Array<{ id: any, created_at: any, updated_at?: any | null, message: string, user: { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, code: string, name: string } } }>, logsCount: { aggregate?: { count: number } | null }, vehicle: { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, code: string, color: string, name: string, weight: number } | null } };
 
-export type Request_LogFragment = { id: any, created_at: any, updated_at?: any | null, message: string, user: { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } } };
-
-export type GetUserRolesQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetUserRolesQuery = { user_roles: Array<{ id: any, code: string, name: string }> };
-
-export type RoleFragment = { id: any, code: string, name: string };
+export type Request_LogFragment = { id: any, created_at: any, updated_at?: any | null, message: string, user: { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, code: string, name: string } } };
 
 export type RegisterMutationVariables = Exact<{
   user: Users_Insert_Input;
 }>;
 
 
-export type RegisterMutation = { insert_users_one?: { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } } | null };
+export type RegisterMutation = { insert_users_one?: { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, code: string, name: string } } | null };
 
 export type LoginQueryVariables = Exact<{
   email: Scalars['String']['input'];
@@ -3580,7 +3578,7 @@ export type LoginQueryVariables = Exact<{
 }>;
 
 
-export type LoginQuery = { users: Array<{ id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } }> };
+export type LoginQuery = { users: Array<{ id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, code: string, name: string } }> };
 
 export type GetUsersQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -3590,18 +3588,22 @@ export type GetUsersQueryVariables = Exact<{
 }>;
 
 
-export type GetUsersQuery = { users: Array<{ id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } }>, users_aggregate: { aggregate?: { count: number } | null } };
+export type GetUsersQuery = { users: Array<{ id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, code: string, name: string } }>, users_aggregate: { aggregate?: { count: number } | null } };
 
 export type GetUserByIdQueryVariables = Exact<{
   id: Scalars['uuid']['input'];
 }>;
 
 
-export type GetUserByIdQuery = { users_by_pk?: { password: string, id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } } | null };
+export type GetUserByIdQuery = { users_by_pk?: { password: string, id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, code: string, name: string } } | null };
 
-export type Edit_UserFragment = { password: string, id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } };
+export type Edit_UserFragment = { password: string, id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, code: string, name: string } };
 
-export type UserFragment = { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, name: string, code: string } };
+export type UserFragment = { id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, code: string, name: string } };
+
+export type RoleFragment = { id: any, code: string, name: string };
+
+export type GenderFragment = { id: any, code: string, name: string };
 
 export type GetVehicleStatusesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3680,6 +3682,20 @@ export const Repair_RequestFragmentDoc = gql`
 }
     ${Vehicle_StatusFragmentDoc}
 ${VehicleFragmentDoc}`;
+export const GenderFragmentDoc = gql`
+    fragment gender on genders {
+  id
+  code
+  name
+}
+    `;
+export const RoleFragmentDoc = gql`
+    fragment role on user_roles {
+  id
+  code
+  name
+}
+    `;
 export const UserFragmentDoc = gql`
     fragment user on users {
   id
@@ -3690,17 +3706,14 @@ export const UserFragmentDoc = gql`
   last_name
   phone
   gender {
-    id
-    code
-    name
+    ...gender
   }
   user_role {
-    id
-    name
-    code
+    ...role
   }
 }
-    `;
+    ${GenderFragmentDoc}
+${RoleFragmentDoc}`;
 export const Request_LogFragmentDoc = gql`
     fragment request_log on requests_logs {
   id
@@ -3738,19 +3751,59 @@ export const Repair_Request_With_LogsFragmentDoc = gql`
     ${Vehicle_StatusFragmentDoc}
 ${Request_LogFragmentDoc}
 ${VehicleFragmentDoc}`;
-export const RoleFragmentDoc = gql`
-    fragment role on user_roles {
-  id
-  code
-  name
-}
-    `;
 export const Edit_UserFragmentDoc = gql`
     fragment edit_user on users {
   password
   ...user
 }
     ${UserFragmentDoc}`;
+export const GetEnumsDocument = gql`
+    query GetEnums {
+  vehicle_statuses(order_by: {weight: asc}) {
+    ...vehicle_status
+  }
+  user_roles {
+    ...role
+  }
+  genders {
+    ...gender
+  }
+}
+    ${Vehicle_StatusFragmentDoc}
+${RoleFragmentDoc}
+${GenderFragmentDoc}`;
+
+/**
+ * __useGetEnumsQuery__
+ *
+ * To run a query within a React component, call `useGetEnumsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetEnumsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetEnumsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetEnumsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetEnumsQuery, GetEnumsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<GetEnumsQuery, GetEnumsQueryVariables>(GetEnumsDocument, options);
+      }
+export function useGetEnumsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetEnumsQuery, GetEnumsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<GetEnumsQuery, GetEnumsQueryVariables>(GetEnumsDocument, options);
+        }
+export function useGetEnumsSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<GetEnumsQuery, GetEnumsQueryVariables>) {
+          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useSuspenseQuery<GetEnumsQuery, GetEnumsQueryVariables>(GetEnumsDocument, options);
+        }
+export type GetEnumsQueryHookResult = ReturnType<typeof useGetEnumsQuery>;
+export type GetEnumsLazyQueryHookResult = ReturnType<typeof useGetEnumsLazyQuery>;
+export type GetEnumsSuspenseQueryHookResult = ReturnType<typeof useGetEnumsSuspenseQuery>;
+export type GetEnumsQueryResult = ApolloReactCommon.QueryResult<GetEnumsQuery, GetEnumsQueryVariables>;
 export const GetRepairRequestsDocument = gql`
     query GetRepairRequests($limit: Int, $offset: Int, $condition: repair_requests_bool_exp! = {}, $orderBy: [repair_requests_order_by!] = {created_at: asc}) {
   repair_requests(
@@ -3844,45 +3897,6 @@ export type GetRepairRequestByIdQueryHookResult = ReturnType<typeof useGetRepair
 export type GetRepairRequestByIdLazyQueryHookResult = ReturnType<typeof useGetRepairRequestByIdLazyQuery>;
 export type GetRepairRequestByIdSuspenseQueryHookResult = ReturnType<typeof useGetRepairRequestByIdSuspenseQuery>;
 export type GetRepairRequestByIdQueryResult = ApolloReactCommon.QueryResult<GetRepairRequestByIdQuery, GetRepairRequestByIdQueryVariables>;
-export const GetUserRolesDocument = gql`
-    query GetUserRoles {
-  user_roles {
-    ...role
-  }
-}
-    ${RoleFragmentDoc}`;
-
-/**
- * __useGetUserRolesQuery__
- *
- * To run a query within a React component, call `useGetUserRolesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetUserRolesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetUserRolesQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetUserRolesQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetUserRolesQuery, GetUserRolesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useQuery<GetUserRolesQuery, GetUserRolesQueryVariables>(GetUserRolesDocument, options);
-      }
-export function useGetUserRolesLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetUserRolesQuery, GetUserRolesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useLazyQuery<GetUserRolesQuery, GetUserRolesQueryVariables>(GetUserRolesDocument, options);
-        }
-export function useGetUserRolesSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<GetUserRolesQuery, GetUserRolesQueryVariables>) {
-          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useSuspenseQuery<GetUserRolesQuery, GetUserRolesQueryVariables>(GetUserRolesDocument, options);
-        }
-export type GetUserRolesQueryHookResult = ReturnType<typeof useGetUserRolesQuery>;
-export type GetUserRolesLazyQueryHookResult = ReturnType<typeof useGetUserRolesLazyQuery>;
-export type GetUserRolesSuspenseQueryHookResult = ReturnType<typeof useGetUserRolesSuspenseQuery>;
-export type GetUserRolesQueryResult = ApolloReactCommon.QueryResult<GetUserRolesQuery, GetUserRolesQueryVariables>;
 export const RegisterDocument = gql`
     mutation Register($user: users_insert_input!) {
   insert_users_one(object: $user) {

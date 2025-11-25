@@ -7,7 +7,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import TableNavbar, { type TableNavbarProps } from '../common/tables/TableNavbar';
-import { Order_By, useGetVehiclesQuery, useGetVehicleStatusesQuery, type UserFragment, type VehicleFragment, type Vehicles_Bool_Exp } from '../../../../graphql/generated';
+import { Order_By, useGetEnumsQuery, useGetVehiclesQuery, type GenderFragment, type RoleFragment, type Vehicle_StatusFragment, type VehicleFragment, type Vehicles_Bool_Exp } from '../../../../graphql/generated';
 import TableRowContextMenu, { type RowContextFunctionType, type ROW_ACTIONS } from '../common/tables/RowContextMenu';
 import { fromIsoDate } from '../../../utils/dateUtils';
 import type { ColumnSettings, FilterFields } from '../common/tables/table-interfaces';
@@ -17,6 +17,7 @@ import { PathSegments } from '../../../routes/enums';
 import { buildHeaderRow, getFallbackTemplate } from '../common/tables/utils';
 import { TableHead } from '@mui/material';
 import { isNullOrUndefined } from 'is-what';
+import type { UserAuthorizationProps } from '../common/interfaces';
 
 /**
  * Defines the columns for the vehicles table.
@@ -32,14 +33,17 @@ const columns: ColumnSettings<VehicleFragment>[] = [
     { property: 'actions', label: 'actions', width: '60x', align: 'right' }
 ];
 
-export default function VehiclesList() {
-    // TODO replace this with global User state
-    const customerAsString = localStorage.getItem('customer');
-    let user: UserFragment | undefined;
+export default function VehiclesList({ user }: Readonly<UserAuthorizationProps>) { 
 
-    if (customerAsString) {
-        user = JSON.parse(customerAsString);
-        console.log(user);
+    const getEnums = useGetEnumsQuery();
+    let genders: GenderFragment[] = [];
+    let userRoles: RoleFragment[] = [];
+    let vehicleStatuses: Vehicle_StatusFragment[] = [];
+    if (getEnums.data) {
+        vehicleStatuses = getEnums.data.vehicle_statuses;
+        userRoles = getEnums.data.user_roles;
+        genders = getEnums.data.genders;
+        console.log(genders, userRoles, vehicleStatuses);
     }
 
     const userCondition: Vehicles_Bool_Exp = (isNullOrUndefined(user) || (user.user_role.code !== 'customer'))
@@ -47,10 +51,11 @@ export default function VehiclesList() {
         : { owner_id: { _eq: user.id } };
 
     const navigate = useNavigate();
-    const abortControllerRef = useRef<AbortController | null>(null);
-    const statuses = useGetVehicleStatusesQuery().data?.vehicle_statuses;
 
-    const vehicleStatuses: FilterFields[] = statuses?.map(e => ({ id: e.id, name: e.name, code: e.code })) ?? [];
+    const abortControllerRef = useRef<AbortController | null>(null);
+    // const statuses = useGetVehicleStatusesQuery().data?.vehicle_statuses;
+
+    const vehicleStatusesFilters: FilterFields[] = vehicleStatuses?.map(vs => ({ id: vs.id, name: vs.name, code: vs.code })) ?? [];
 
     const rowsPerPageOptions = [5, 10, 15];
     //const offset: number = this.paginator.pageIndex * this.paginator.pageSize;
@@ -70,7 +75,6 @@ export default function VehiclesList() {
                 signal: abortControllerRef.current?.signal,
             }
         }
-
     });
 
     console.log(data, loading, error);
@@ -91,7 +95,7 @@ export default function VehiclesList() {
     //Todo: error handling
 
     const handleChangePage = (event: unknown, newPage: number) => {
-        console.log(event, newPage)
+        console.log(event, newPage);
         setPage(newPage);
     };
 
@@ -130,7 +134,7 @@ export default function VehiclesList() {
     const navBarProps: TableNavbarProps = {
         label: 'Списък с автомобили',
         user,
-        options: vehicleStatuses,
+        options: vehicleStatusesFilters,
         error,
         loading,
         addClickedHandler,

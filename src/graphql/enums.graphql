@@ -1,0 +1,11 @@
+query GetEnums {
+  vehicle_statuses(order_by: {weight: asc}) {
+    ...vehicle_status
+  }
+  user_roles {
+    ...role
+  }
+  genders {
+    ...gender
+  }
+}

@@ -1,66 +1,71 @@
-query GetUserRoles {
-  user_roles {
-    ...role
-  }
-}
-
-fragment role on user_roles {
-  id
-  code
-  name
-}
-
-
 mutation Register($user: users_insert_input!) {
-  insert_users_one(object: $user) {
-    ...user
-  }
+	insert_users_one(object: $user) {
+		...user
+	}
 }
 
 query Login($email: String!, $password: String!) {
-  users(where: {email: {_eq: $email}, password: {_eq: $password}}) {
-    ...user
-  }
+	users(where: { email: { _eq: $email }, password: { _eq: $password } }) {
+		...user
+	}
 }
 
-query GetUsers($limit: Int, $offset: Int, $condition: users_bool_exp! = {}, $orderBy: [users_order_by!] = {created_at: desc}) {
-  users(where: $condition, limit: $limit, offset: $offset, order_by: $orderBy) {
-    ...user
-  }
-  users_aggregate(where: $condition) {
-    aggregate {
-      count
-    }
-  }
+query GetUsers(
+	$limit: Int
+	$offset: Int
+	$condition: users_bool_exp! = {}
+	$orderBy: [users_order_by!] = { created_at: desc }
+) {
+	users(
+		where: $condition
+		limit: $limit
+		offset: $offset
+		order_by: $orderBy
+	) {
+		...user
+	}
+	users_aggregate(where: $condition) {
+		aggregate {
+			count
+		}
+	}
 }
 
 query GetUserById($id: uuid!) {
-  users_by_pk(id: $id) {
-    ...edit_user
-  }
+	users_by_pk(id: $id) {
+		...edit_user
+	}
 }
 
 fragment edit_user on users {
-  password
-  ...user
+	password
+	...user
 }
 
 fragment user on users {
-  id
-  created_at
-  updated_at
-  email
-  first_name
-  last_name
-  phone
-  gender {
-    id
-    code
-    name
-  }
-  user_role {
-    id
-    name
-    code
-  }
+	id
+	created_at
+	updated_at
+	email
+	first_name
+	last_name
+	phone
+	gender {
+		...gender
+	}
+	user_role {
+		...role
+	}
+}
+
+fragment role on user_roles {
+	id
+	code
+	name
+}
+
+fragment gender on genders {
+	id
+	code
+	name
 }

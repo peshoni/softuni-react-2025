@@ -8,7 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import TableNavbar, { type TableNavbarProps } from '../common/tables/TableNavbar';
-import { Order_By, useGetUserRolesQuery, useGetUsersQuery, type RoleFragment, type UserFragment, type Users_Bool_Exp } from '../../../../graphql/generated';
+import { Order_By, useGetEnumsQuery, useGetUsersQuery, type GenderFragment, type RoleFragment, type UserFragment, type Users_Bool_Exp, type Vehicle_StatusFragment } from '../../../../graphql/generated';
 import TableRowContextMenu, { type ROW_ACTIONS, type RowContextFunctionType } from '../common/tables/RowContextMenu';
 import { fromIsoDate } from '../../../utils/dateUtils';
 import type { ColumnSettings, FilterFields } from '../common/tables/table-interfaces';
@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router';
 import { buildUrl } from '../../../routes/routes-util';
 import { PathSegments } from '../../../routes/enums';
 import { buildHeaderRow, getFallbackTemplate } from '../common/tables/utils';
+import type { UserAuthorizationProps } from '../common/interfaces';
 
 const columns: ColumnSettings<UserFragment>[] = [
   { property: 'created_at', label: 'Създаден', width: '80px', formatDate: (value) => fromIsoDate(value) },
@@ -26,18 +27,24 @@ const columns: ColumnSettings<UserFragment>[] = [
   { property: 'actions', label: 'actions', width: '60px', align: 'right' }
 ];
 
-export default function CustomersList() {
+export default function CustomersList({ user }: Readonly<UserAuthorizationProps>) {
   const navigate = useNavigate();
   const abortControllerRef = useRef<AbortController | null>(null);
-  const roles: RoleFragment[] = useGetUserRolesQuery().data?.user_roles ?? [];
-  let userRoles: FilterFields[] = Object.values(roles.map(e => ({ id: e.id, code: e.code, name: e.name })));
 
-  const customerAsString = localStorage.getItem('customer');
-  let user: UserFragment | undefined = undefined;
-
-  if (customerAsString) {
-    user = JSON.parse(customerAsString);
+  const getEnums = useGetEnumsQuery();
+  let genders: GenderFragment[] = [];
+  let userRoles: RoleFragment[] = [];
+  let vehicleStatuses: Vehicle_StatusFragment[] = [];
+  if (getEnums.data) {
+    vehicleStatuses = getEnums.data.vehicle_statuses;
+    userRoles = getEnums.data.user_roles;
+    genders = getEnums.data.genders;
+    console.log(genders, userRoles, vehicleStatuses);
   }
+
+  let allRoles: FilterFields[] = Object.values(userRoles.map(e => ({ id: e.id, code: e.code, name: e.name })));
+
+
 
   //const offset: number = this.paginator.pageIndex * this.paginator.pageSize;
   const rowsPerPageOptions = [5, 10, 15];
@@ -74,7 +81,7 @@ export default function CustomersList() {
   useEffect(() => { // Listens for the data changes 
     console.log('data changed');
     if (error) {
-      userRoles = [];
+      allRoles = [];
     }
   }, [error]);
 
@@ -113,7 +120,7 @@ export default function CustomersList() {
   const navBarProps: TableNavbarProps = {
     label: 'Списък с потребители',
     user,
-    options: userRoles,
+    options: allRoles,
     error,
     loading,
     addClickedHandler,
