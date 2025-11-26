@@ -1,5 +1,5 @@
 import './App.css';
-import { useEffect, useState, type JSX } from 'react';
+import { useEffect, useState, useMemo, type JSX, type SetStateAction, useContext } from 'react';
 import { type RoleFragment, type UserFragment } from './../graphql/generated';
 import CustomersList from './components/private/users/CustomersList';
 import VehiclesList from './components/private/vehicles/VehiclesList';
@@ -17,6 +17,8 @@ import GroupIcon from '@mui/icons-material/Group';
 import CommuteIcon from '@mui/icons-material/Commute';
 import CarRepairIcon from '@mui/icons-material/CarRepair';
 import { buildUrl } from './routes/routes-util';
+import UserContext from './components/private/contexts/UserContext';
+import { isNullOrUndefined } from 'is-what';
 
 export interface LoggedUserMenu {
   label: string;
@@ -31,6 +33,9 @@ function App() {
   const [menu, setMenu] = useState<LoggedUserMenu[]>([]);
   const location = useLocation();
 
+  const { user: authenticatedUser } = useContext(UserContext);
+  console.log('Authenticated user in App.tsx:', authenticatedUser);
+  // todo ^^^ use this
   useEffect(() => {
     const customerAsString = localStorage.getItem('customer');
     let user: UserFragment | undefined = undefined;
@@ -107,6 +112,23 @@ function App() {
 
   };
 
+  const loginHandler = (user: SetStateAction<UserFragment | undefined>) => {
+    setUser(user);
+  };
+
+  const logoutHandler = () => {
+    setUser(undefined);
+  };
+
+  // TODO : Read more about hooks: https://react.dev/reference/react/useMemo
+  const contextValue = useMemo(() => ({
+    user,
+    isAuthenticated: isNullOrUndefined(user) === false,
+    onLogin: loginHandler,
+    onLogout: logoutHandler,
+  }), [user]);
+
+
   return (
     <Routes>
       {/* Public area */}
@@ -115,12 +137,15 @@ function App() {
       <Route path={PathSegments.REGISTER} element={<RegisterForm />} />
 
       {/* Private area */}
-      <Route element={<AuthGuard user={user} menu={menu} />}>
-        {/* Add paths according to role */}
-        {routes.map(route => (
-          <Route key={route.path} path={route.path} element={route.element} />
-        ))}
-      </Route>
+
+      <UserContext.Provider value={contextValue}>
+        <Route element={<AuthGuard user={user} menu={menu} />}>
+          {/* Add paths according to role */}
+          {routes.map(route => (
+            <Route key={route.path} path={route.path} element={route.element} />
+          ))}
+        </Route>
+      </UserContext.Provider>
 
       <Route path='*' element={<div style={{ width: '100vw', height: '100vh', alignContent: 'center' }}>
         <h2>404 Not Found</h2> </div>} />
