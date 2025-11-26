@@ -1,5 +1,5 @@
 import { useParams } from "react-router";
-import { useGetEnumsQuery, useGetUserByIdLazyQuery, type Edit_UserFragment, type GenderFragment, type GetEnumsQuery, type RoleFragment, type Vehicle_StatusFragment } from "../../../../graphql/generated";
+import { useGetUserByIdLazyQuery, type Edit_UserFragment } from "../../../../graphql/generated";
 import DatasourceEmptyResult from "../common/tables/DataSourceEmptyResult";
 import { isNullOrUndefined } from "is-what";
 import DetailsHeader from "../common/forms/DetailsHeader";
@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 import PasswordInput from "../common/forms/PasswordInput";
 import type { FormControlError } from "../../public/LoginForm";
 import type { FilterFields } from "../common/tables/table-interfaces";
+import useEnums from "../hooks/useEnums";
 
 //#region Form Types 
 const omitUserProperties = ['id', 'created_at', 'updated_at', 'gender', 'user_role'] as const;
@@ -16,20 +17,12 @@ type FilteredUserProperties = Pick<Edit_UserFragment, typeof omitUserProperties[
 type FormUserProps = Omit<Edit_UserFragment, keyof FilteredUserProperties> & { role: string, genderCode: string; };
 //#endregion Form Types
 export default function CustomerDetails() {
+    const { genders, userRoles } = useEnums();
     const [errors /*, setErrors*/] = useState<FormControlError[]>([]);
     const params = useParams();
     const isCreateMode = isNullOrUndefined(params?.id);
     let user: Edit_UserFragment | undefined | null;
 
-    const getEnums = useGetEnumsQuery();
-    let genders: GenderFragment[] = [];
-    let userRoles: RoleFragment[] = [];
-    // let vehicleStatuses: Vehicle_StatusFragment[] = [];
-    if (getEnums.data) {
-        // vehicleStatuses = getEnums.data.vehicle_statuses;
-        userRoles = getEnums.data.user_roles;
-        genders = getEnums.data.genders;
-    }
 
     let gendersOptions: FilterFields[] = Object.values(genders.map(e => ({ id: e.id, code: e.code, name: e.name })));
     let rolesOptions: FilterFields[] = Object.values(userRoles.map(e => ({ id: e.id, code: e.code, name: e.name })));
@@ -80,7 +73,7 @@ export default function CustomerDetails() {
         // }
     };
 
-    const [performGetUser, { }] = useGetUserByIdLazyQuery();
+    const [performGetUser /*,{data,loading }*/] = useGetUserByIdLazyQuery();
 
     useEffect(() => {
         if (!isCreateMode) {
@@ -100,11 +93,6 @@ export default function CustomerDetails() {
             });
         }
     }, []);
-
-    useEffect(() => {
-        console.log(genders, userRoles);
-
-    }, [genders, userRoles]);
 
     useEffect(() => {
         // Create a new AbortController when the component mounts

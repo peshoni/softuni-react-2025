@@ -1,0 +1,1 @@
+export const rowsPerPageOptions: readonly number[] = [5, 10, 15]; 

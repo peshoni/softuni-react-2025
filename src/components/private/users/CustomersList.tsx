@@ -8,7 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import TableNavbar, { type TableNavbarProps } from '../common/tables/TableNavbar';
-import { Order_By, useGetEnumsQuery, useGetUsersQuery, type GenderFragment, type RoleFragment, type UserFragment, type Users_Bool_Exp, type Vehicle_StatusFragment } from '../../../../graphql/generated';
+import { Order_By, useGetUsersQuery, type RoleFragment, type UserFragment, type Users_Bool_Exp } from '../../../../graphql/generated';
 import TableRowContextMenu, { type ROW_ACTIONS, type RowContextFunctionType } from '../common/tables/RowContextMenu';
 import { fromIsoDate } from '../../../utils/dateUtils';
 import type { ColumnSettings, FilterFields } from '../common/tables/table-interfaces';
@@ -17,6 +17,8 @@ import { buildUrl } from '../../../routes/routes-util';
 import { PathSegments } from '../../../routes/enums';
 import { buildHeaderRow, getFallbackTemplate } from '../common/tables/utils';
 import type { UserAuthorizationProps } from '../common/interfaces';
+import useEnums from '../hooks/useEnums';
+import { rowsPerPageOptions } from '../common/constants';
 
 const columns: ColumnSettings<UserFragment>[] = [
   { property: 'created_at', label: 'Създаден', width: '80px', formatDate: (value) => fromIsoDate(value) },
@@ -31,23 +33,10 @@ export default function CustomersList({ user }: Readonly<UserAuthorizationProps>
   const navigate = useNavigate();
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  const getEnums = useGetEnumsQuery();
-  let genders: GenderFragment[] = [];
-  let userRoles: RoleFragment[] = [];
-  let vehicleStatuses: Vehicle_StatusFragment[] = [];
-  if (getEnums.data) {
-    vehicleStatuses = getEnums.data.vehicle_statuses;
-    userRoles = getEnums.data.user_roles;
-    genders = getEnums.data.genders;
-    console.log(genders, userRoles, vehicleStatuses);
-  }
+  const { userRoles } = useEnums();
 
-  let allRoles: FilterFields[] = Object.values(userRoles.map(e => ({ id: e.id, code: e.code, name: e.name })));
+  let allRoles: FilterFields[] = Object.values(userRoles.map(e => ({ id: e.id, code: e.code, name: e.name }))); 
 
-
-
-  //const offset: number = this.paginator.pageIndex * this.paginator.pageSize;
-  const rowsPerPageOptions = [5, 10, 15];
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
   const [condition, setCondition] = useState({});
