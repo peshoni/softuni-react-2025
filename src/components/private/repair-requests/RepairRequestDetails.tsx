@@ -5,14 +5,19 @@ import Log from './Log';
 import { isNullOrUndefined } from 'is-what';
 import DetailsHeader from '../common/forms/DetailsHeader';
 import DatasourceEmptyResult from '../common/tables/DataSourceEmptyResult';
+import UserContext from '../contexts/UserContext';
+import { useContext } from 'react';
+import { Paper } from '@mui/material';
 
 export default function RepairRequestDetails() {
-    let { id } = useParams<{ id: string; }>(); 
+    let { id } = useParams<{ id: string; }>();
+    const { user } = useContext(UserContext);
     console.log('RepairRequestDetails id=', id);
     const params = useParams();
     const isCreateMode = isNullOrUndefined(params?.id);
     let repairRequest: Repair_Request_With_LogsFragment | undefined | null;
     if (!isCreateMode) {
+        // todo FIX THIS 
         repairRequest = useGetRepairRequestByIdQuery({ variables: { id: params.id } }).data?.repair_requests_by_pk;
     }
     return (
@@ -22,12 +27,13 @@ export default function RepairRequestDetails() {
             {!repairRequest && <DatasourceEmptyResult />}
             {repairRequest &&
                 <div>
-
-                    <div>
+                    <Paper elevation={3} sx={{ padding: '10px', marginBottom: '20px' }}>
                         {JSON.stringify(repairRequest)}
-                    </div>
-                    <List sx={{ width: '100%', maxWidth: 1000, bgcolor: 'background.paper', border: '1px solid #bdbdbd' }}>
-                        {repairRequest?.requests_logs.map(l => <Log key={l.id} log={l as any} isFromCurrentUser={false} />)}
+                    </Paper>
+
+                    <List sx={{ width: '100%', /* maxWidth: 1000,*/ bgcolor: 'background.paper', border: '1px solid #bdbdbd' }}>
+
+                        {repairRequest?.requests_logs.map(l => <Log key={l.id} log={l as any} isFromCurrentUser={l.user.id === user?.id} />)}
                     </List>
                 </div>
             }

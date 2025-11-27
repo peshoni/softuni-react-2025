@@ -18,11 +18,11 @@ type FormUserProps = Omit<Edit_UserFragment, keyof FilteredUserProperties> & { r
 //#endregion Form Types
 export default function CustomerDetails() {
     const { genders, userRoles } = useEnums();
-    const [errors /*, setErrors*/] = useState<FormControlError[]>([]);
+    const [errors  , setErrors ] = useState<FormControlError[]>([]);
     const params = useParams();
     const isCreateMode = isNullOrUndefined(params?.id);
     let user: Edit_UserFragment | undefined | null;
-
+    const phoneRegexp: RegExp = /\+359[1-9]{3}\d{6}$/; // simple validation for the BG gsm numbers
 
     let gendersOptions: FilterFields[] = Object.values(genders.map(e => ({ id: e.id, code: e.code, name: e.name })));
     let rolesOptions: FilterFields[] = Object.values(userRoles.map(e => ({ id: e.id, code: e.code, name: e.name })));
@@ -32,13 +32,30 @@ export default function CustomerDetails() {
         last_name: '',
         email: '',
         password: '',
-        phone: '',
+        phone: '', // \+359[1-9]{3}\d{6}
         role: '',
         genderCode: ''
     });
 
     const handleChange = (e: { target: { name: any; value: any; }; }) => {
         console.log([e.target.name], e.target.value);
+        if (e.target.name === 'phone' && !phoneRegexp.test(e.target.value)) {
+            //             console.log( phoneRegexp.test(e.target.value))
+            // console.log('INVALID NUMBER : ' + e.target.value)
+            if (!errors.some(c=>c.controlName === e.target.name)){
+
+                errors.push({ controlName: e.target.name });
+            }
+        } else {
+            const index = errors.findIndex(c => c.controlName === e.target.name);
+            console.log(index);
+            if (index > -1) { // only splice array when item is found
+              
+               console.log( errors.splice(index, 1)); // 2nd parameter means remove one item only
+               console.log(errors)
+               setErrors(old => [...old.filter(c=>c.controlName === e.target.name)]);
+            }
+        }
 
         setFormData({
             ...formData,// clone form data and replace property with event origin
@@ -192,6 +209,7 @@ export default function CustomerDetails() {
                                 margin="normal"
                                 value={formData.phone}
                                 onChange={handleChange}
+                                error={errors.some(e => e.controlName === 'phone')}
                                 required
                                 sx={{ margin: '8px 0', width: '100%' }}
                             />

@@ -1,6 +1,6 @@
 import { useGetEnumsQuery, type GenderFragment, type RoleFragment, type Vehicle_StatusFragment } from "../../../../graphql/generated";
 /**
- *  Hook to fetch enumeration data such as genders, user roles, and vehicle statuses.   
+ *  Custom hook that uses a custom hook from Apollo to fetch enumeration data such as genders, user roles, and vehicle statuses.   
  * @returns  An object containing arrays of genders, user roles, and vehicle statuses.
  */
 export default function useEnums(): {

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -16,9 +16,9 @@ import { useNavigate } from 'react-router';
 import { buildUrl } from '../../../routes/routes-util';
 import { PathSegments } from '../../../routes/enums';
 import { buildHeaderRow, getFallbackTemplate } from '../common/tables/utils';
-import type { UserAuthorizationProps } from '../common/interfaces';
 import useEnums from '../hooks/useEnums';
 import { rowsPerPageOptions } from '../common/constants';
+import UserContext from '../contexts/UserContext';
 
 const columns: ColumnSettings<UserFragment>[] = [
   { property: 'created_at', label: 'Създаден', width: '80px', formatDate: (value) => fromIsoDate(value) },
@@ -29,13 +29,14 @@ const columns: ColumnSettings<UserFragment>[] = [
   { property: 'actions', label: 'actions', width: '60px', align: 'right' }
 ];
 
-export default function CustomersList({ user }: Readonly<UserAuthorizationProps>) {
+export default function CustomersList() {
   const navigate = useNavigate();
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const { userRoles } = useEnums();
+  const { user } = useContext(UserContext);
 
-  let allRoles: FilterFields[] = Object.values(userRoles.map(e => ({ id: e.id, code: e.code, name: e.name }))); 
+  let allRoles: FilterFields[] = Object.values(userRoles.map(e => ({ id: e.id, code: e.code, name: e.name })));
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
@@ -64,8 +65,6 @@ export default function CustomersList({ user }: Readonly<UserAuthorizationProps>
       abortControllerRef.current?.abort();
     };
   }, []);
-
-  console.log(data, loading, error);
 
   useEffect(() => { // Listens for the data changes 
     console.log('data changed');

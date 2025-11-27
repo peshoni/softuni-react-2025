@@ -1,18 +1,19 @@
-import { createContext, type SetStateAction } from "react";
+import { createContext } from "react";
 import type { UserFragment } from "../../../../graphql/generated";
+import type { LoggedUserMenu } from "../../../App";
 
 export interface UserContextProps {
     user: UserFragment | undefined;
-    isAuthenticated: boolean;
-    onLogin(user: SetStateAction<UserFragment | undefined>): void;
-    onLogout(user: SetStateAction<UserFragment | undefined>): void;
+    userMenu: LoggedUserMenu[],
+    onLogin(user: UserFragment | undefined): void;
+    onLogout(): void;
 }
 
 const UserContext = createContext<UserContextProps>({
     user: undefined,
-    isAuthenticated: false,
-    onLogin() { },
+    userMenu: [],
+    onLogin(_user: UserFragment) { },
     onLogout() { },
-})
+});
 
 export default UserContext;

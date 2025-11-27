@@ -12,5 +12,5 @@ export default function AuthGuard({ user, menu }: { readonly user: UserFragment 
     // page they originally tried to access.
     return isNullOrUndefined(user)
         ? <Navigate to={buildUrl(PathSegments.LOGIN)} />
-        : <ApplicationBar user={user} menu={menu} />;
+        : <ApplicationBar menu={menu} />;
 }

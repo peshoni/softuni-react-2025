@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -17,9 +17,9 @@ import { PathSegments } from '../../../routes/enums';
 import { buildHeaderRow, getFallbackTemplate } from '../common/tables/utils';
 import { TableHead } from '@mui/material';
 import { isNullOrUndefined } from 'is-what';
-import type { UserAuthorizationProps } from '../common/interfaces';
 import useEnums from '../hooks/useEnums';
 import { rowsPerPageOptions } from '../common/constants';
+import UserContext from '../contexts/UserContext';
 
 /**
  * Defines the columns for the vehicles table.
@@ -35,11 +35,15 @@ const columns: ColumnSettings<VehicleFragment>[] = [
     { property: 'actions', label: 'actions', width: '60x', align: 'right' }
 ];
 
-export default function VehiclesList({ user }: Readonly<UserAuthorizationProps>) {
+export default function VehiclesList() {
     /**
      * Fetches enumeration data such as user roles and vehicle statuses.
      */
     const { vehicleStatuses } = useEnums();
+    /**
+     * Retrieves the current user from the UserContext.
+     */
+    const { user } = useContext(UserContext);
     /**
      * Determines the user-specific condition for fetching vehicles.
      */

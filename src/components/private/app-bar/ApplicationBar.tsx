@@ -17,9 +17,9 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { Outlet, useNavigate } from 'react-router';
 import UserContextMenu from './UserContextMenu';
-import type { UserFragment } from '../../../../graphql/generated';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { buildUrl } from '../../../routes/routes-util';
+import UserContext from '../contexts/UserContext';
 import type { LoggedUserMenu } from '../../../App';
 
 const drawerWidth = 240;
@@ -88,11 +88,11 @@ interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
 }
 
-export default function ApplicationBar({ user, menu }: { readonly user?: UserFragment; readonly menu: LoggedUserMenu[] }) {
-  const navigate = useNavigate();
+export default function ApplicationBar({ menu }: { readonly menu: LoggedUserMenu[]; }) {
   const theme = useTheme();
+  const navigate = useNavigate();
+  const { user } = useContext(UserContext);
   const [open, setOpen] = useState(true);
-  // const [menus, setMenus] = React.useState<LoggedUserMenu[]>([]);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -143,27 +143,6 @@ export default function ApplicationBar({ user, menu }: { readonly user?: UserFra
 
   }, []);
 
-  // const buildMenuAccordingRole = (role: RoleFragment) => {
-  //   const users: LoggedUserMenu = { label: 'Users', icon: <GroupIcon />, path: 'users' };
-  //   const vehicles: LoggedUserMenu = { label: 'Vehicles', icon: <CommuteIcon />, path: 'vehicles' };
-  //   const repairRequests: LoggedUserMenu = { label: 'Repair requests', icon: <CarRepairIcon />, path: 'repair-requests' };
-
-  //   switch (role.code) {
-  //     case 'customer':
-  //       setMenus([users, vehicles, repairRequests]);
-  //       break;
-  //     case 'serviceSpecialist':
-  //       setMenus([users, vehicles, repairRequests]);
-  //       break;
-  //     case 'autoMechanic':
-  //       setMenus([vehicles, repairRequests]);
-  //       break;
-  //     default:
-  //       setMenus([]);
-  //       break;
-  //   }
-  // };
-
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -185,8 +164,8 @@ export default function ApplicationBar({ user, menu }: { readonly user?: UserFra
             Автосервиз
           </Typography>
 
-          {/* The context menu for an authorized user */}
-          {user && <UserContextMenu  {...user} />}
+          {/* The context menu for user settings */}
+          {user && <UserContextMenu />}
 
         </Toolbar>
       </AppBar>
@@ -227,7 +206,7 @@ export default function ApplicationBar({ user, menu }: { readonly user?: UserFra
         </List>
         <Divider />
       </Drawer>
-      <Main open={open}>
+      <Main open={open} sx={{ minWidth: '300px' }}>
 
         <Outlet />
 

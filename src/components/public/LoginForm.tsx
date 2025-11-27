@@ -1,4 +1,4 @@
-import { useState, type SetStateAction } from "react";
+import { useContext, useState  } from "react";
 import { Container, Box, Button, Typography, Paper, Link, Alert, type AlertColor, FormControl, InputLabel, OutlinedInput } from "@mui/material";
 import Grid from '@mui/material/Grid';
 import { motion } from "framer-motion";
@@ -7,18 +7,21 @@ import { PathSegments } from "../../routes/enums";
 import { useLoginLazyQuery, type UserFragment } from "../../../graphql/generated";
 import Snackbar, { type SnackbarCloseReason } from '@mui/material/Snackbar';
 import PasswordInput from "../private/common/forms/PasswordInput";
-import { buildUrl } from "../../routes/routes-util";
-import { buildMenuAccordingRole } from "../../App";
+import { buildUrl } from "../../routes/routes-util"; 
+import UserContext from "../private/contexts/UserContext";
 
 export interface FormControlError {
     controlName: string;
 }
 
-export default function LoginForm({ setUser }: { readonly setUser: (event: SetStateAction<UserFragment | undefined>) => void; }) {
-    const [performLogin, /* { called, loading, data }*/] = useLoginLazyQuery();
-    const [submitted, setSubmitted] = useState(false);
+export default function LoginForm( /*{ setUser }: { readonly setUser: (event: SetStateAction<UserFragment | undefined>) => void; } */) {
     const navigate = useNavigate();
-    const [errors, setErrors] = useState<FormControlError[]>([]);
+    const [performLogin, /* { called, loading, data }*/] = useLoginLazyQuery();
+
+    const [submitted, setSubmitted] = useState(false);
+    const [errors, setErrors] = useState<FormControlError[]>([]); 
+
+    const { userMenu, onLogin } = useContext(UserContext);
 
     const [formData, setFormData] = useState({
         email: '',
@@ -59,19 +62,12 @@ export default function LoginForm({ setUser }: { readonly setUser: (event: SetSt
         e.preventDefault();
         setSubmitted(true);
 
-        console.log(formData);
-        performLogin({ variables: { email: formData.email, password: formData.password } }).then((result) => {
+        performLogin({ variables: { email: formData.email, password: formData.password } }).then((result) => { 
+            let user: UserFragment | undefined = result.data?.users[0]; 
 
-            let user: UserFragment | undefined;
-            if (result.data?.users.length) {
-                user = result.data.users[0];
-            }
-
-            if (user) {
-                const allowedPaths = buildMenuAccordingRole(user.user_role);
-                console.log(allowedPaths);
+            if (user) { 
                 localStorage.setItem('customer', JSON.stringify(user));
-                setUser(user);
+                onLogin(user); 
                 const awaitTime: number = 1500;
 
                 setToastState({
@@ -82,10 +78,10 @@ export default function LoginForm({ setUser }: { readonly setUser: (event: SetSt
                 });
                 setTimeout(() => {
                     setSubmitted(false);
-                    navigate(buildUrl(allowedPaths[0].path));
+                    navigate(buildUrl(userMenu[0].path));
                 }, awaitTime);
             } else {
-                setUser(undefined);
+                onLogin(undefined);
                 setToastState({
                     open: true,
                     alertType: 'error',

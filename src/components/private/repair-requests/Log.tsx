@@ -1,22 +1,36 @@
-import { ListItem, ListItemAvatar, Avatar, ListItemText, Typography, TextareaAutosize, Divider } from "@mui/material";
+import { ListItem, ListItemAvatar, Avatar, ListItemText, Typography, TextareaAutosize, Divider, IconButton, useTheme } from "@mui/material";
 import type { Requests_Logs, Users } from "../../../../graphql/generated";
-
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 export default function Log({ log, isFromCurrentUser }: { readonly log: Requests_Logs; readonly isFromCurrentUser: boolean; }) {
     // TODO reverse only the current user logs
     // TODO - set/use editable flag
 
+    const theme = useTheme();
+
     const editable = true;
     const rowDirection: string = isFromCurrentUser ? 'row-reverse' : 'row';
-
+    const currentUserColor = isFromCurrentUser ? theme.palette.primary.main : theme.palette.grey[700];
     return (
         <>
-            <ListItem alignItems="flex-start" sx={{ display: 'flex', flexDirection: rowDirection }}>
-                <ListItemAvatar sx={{ display: 'flex', justifyContent: 'center' }}>
-                    <Avatar alt={`${log.user.first_name}`} src="/static/images/avatar/2.jpg" />
+            <ListItem alignItems="flex-start" sx={{ display: 'flex', gap: 1, flexDirection: rowDirection }}>
+
+                <ListItemAvatar sx={{ display: 'flex', alignItems: (isFromCurrentUser ? 'flex-end' : 'flex-start'), flexDirection: 'column' }}>
+
+                    <Avatar alt={`${log.user.first_name}`} src="/static/images/avatar/2.jpg" sx={{ backgroundColor: currentUserColor }} />
+
+                    {isFromCurrentUser &&
+                        <>
+                            <IconButton size="small" sx={{ color: theme.palette.primary.light }}  ><EditIcon />  </IconButton>
+                            <IconButton size="small" sx={{ color: theme.palette.warning.light }} ><DeleteIcon />  </IconButton>
+                        </>
+                    }
                 </ListItemAvatar>
 
                 <ListItemText
-                    primary={getUserPreview(log.user)}
+                    primary={(<Typography sx={{ color: currentUserColor, fontWeight: '700', fontSize: '18px' }} >
+                        {getUserPreview(log.user)}
+                    </ Typography>)}
                     secondary={
                         <>
                             {editable ? (

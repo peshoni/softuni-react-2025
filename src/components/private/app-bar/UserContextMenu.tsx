@@ -1,20 +1,20 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
-import type { UserFragment } from '../../../../graphql/generated';
 import { Grid } from '@mui/material';
 import { PathSegments } from '../../../routes/enums';
 import { useNavigate } from 'react-router';
 import { buildUrl } from '../../../routes/routes-util';
+import UserContext from '../contexts/UserContext';
 
 const menuHeight = 40;
 type ACTIONS = 'logout' | 'edit';
 
-export default function UserContextMenu({ id, first_name, last_name, user_role }: Readonly<UserFragment>) {
-
+export default function UserContextMenu() {
+    const { user, onLogout } = useContext(UserContext);
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -25,13 +25,17 @@ export default function UserContextMenu({ id, first_name, last_name, user_role }
 
     const handleClose = (actionType?: ACTIONS) => {
         setAnchorEl(null);
+
         switch (actionType) {
             case 'logout':
                 localStorage.clear();
+                onLogout();
                 navigate(buildUrl(PathSegments.LOGIN));
                 break;
             case 'edit':
-                navigate(buildUrl(PathSegments.CUSTOMERS, PathSegments.DETAILS, id));
+                if (user) {
+                    navigate(buildUrl(PathSegments.CUSTOMERS, PathSegments.DETAILS, user.id));
+                }
                 break;
             default:
                 break;
@@ -41,8 +45,8 @@ export default function UserContextMenu({ id, first_name, last_name, user_role }
     return (
         <>
             <Grid container rowSpacing={0} columnSpacing={0} columns={{ xs: 2, sm: 2, md: 2 }} sx={{ textAlign: 'right' }}>
-                <Grid size={2} fontSize={18}>{first_name} {last_name}</Grid>
-                <Grid size={2} fontSize={14}>({user_role.name})</Grid>
+                <Grid size={2} fontSize={18}>{user?.first_name} {user?.last_name}</Grid>
+                <Grid size={2} fontSize={14}>({user?.user_role.name})</Grid>
             </Grid>
 
             <IconButton

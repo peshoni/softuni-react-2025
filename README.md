@@ -82,7 +82,7 @@ export default defineConfig([
 ```
 
 
-
+# Apollo + Hasura + PostgreSQL
 
 CODEGEN: https://the-guild.dev/graphql/codegen/docs/guides/react-vue
 
