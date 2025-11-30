@@ -18,6 +18,7 @@ import CommuteIcon from '@mui/icons-material/Commute';
 import CarRepairIcon from '@mui/icons-material/CarRepair';
 import { buildUrl } from './routes/routes-util';
 import UserContext, { type UserContextProps } from './components/private/contexts/UserContext';
+import { MemoryService } from './components/private/common/MemoryService';
 
 export interface LoggedUserMenu {
   label: string;
@@ -26,9 +27,12 @@ export interface LoggedUserMenu {
 }
 
 function App() {
+  const a = MemoryService;; // to test singleton behavior of MemoryService
+  console. log(a);
   const location = useLocation();
   const navigate = useNavigate();
 
+  //#region User context properties
   const [user, setUser] = useState<UserFragment | undefined>(undefined);
   const [userMenu, setUserMenu] = useState<LoggedUserMenu[]>([]);
   const [routes, setRoutes] = useState<{ path: string, element: JSX.Element; }[]>([]);
@@ -39,6 +43,11 @@ function App() {
     const allowedPaths: LoggedUserMenu[] = buildMenuAccordingRole(role);
     setRoutes(buildRoutesAccordingToRole(role));
     setUserMenu(allowedPaths);
+
+    localStorage.setItem('customer', JSON.stringify(user));
+    console.log('User saved in localStorage from App.tsx');
+    console.log(user);
+
   };
 
   const logoutHandler = () => {
@@ -52,7 +61,7 @@ function App() {
     onLogin: loginHandler,
     onLogout: logoutHandler,
   }), [user]);
-
+  //#endregion User context properties
 
   useEffect(() => {
     const customerAsString = localStorage.getItem('customer');
@@ -62,10 +71,10 @@ function App() {
       if (user) {
         loginHandler(user);
       } else {
-        navigate(buildUrl(PathSegments.LOGIN));
+        navigate(buildUrl());
       }
     } else {
-      navigate(buildUrl(PathSegments.LOGIN));
+      navigate(buildUrl());
     }
 
   }, []);
@@ -73,8 +82,7 @@ function App() {
   useEffect(() => {
     if (user) {
       const desiredPath = location.pathname.replace('/', ''); // remove first slash
-      const deepLink = userMenu.find(m => m.path.startsWith(desiredPath)); // on page refresh or URL manually adding 
-
+      const deepLink = userMenu.find(m => m.path.startsWith(desiredPath)); // on page refresh or URL manually adding
 
       if (desiredPath.length === 0) {
         navigate(buildUrl(userMenu[0].path));
@@ -126,12 +134,11 @@ function App() {
   };
 
 
-
   return (
     <UserContext.Provider value={userContextValue}>
       <Routes>
         {/* Public area */}
-        <Route index element={<CarServiceLanding />} />
+        <Route path='/' element={<CarServiceLanding />} />
         <Route path={PathSegments.LOGIN} element={<LoginForm />} />
         <Route path={PathSegments.REGISTER} element={<RegisterForm />} />
 

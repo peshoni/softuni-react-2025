@@ -169,7 +169,7 @@ function processColumn(column: ColumnSettings<UserFragment>, entity: UserFragmen
       case 'user_role':
         return (value as RoleFragment).name;
       case 'actions':
-        return <TableRowContextMenu key={entity.id} id={entity.id} callback={contextCallback} />;
+        return <TableRowContextMenu key={entity.id} id={entity.id} allowedActions={['edit', 'preview', 'delete']} callback={contextCallback} />;
       default: return value;
     }
   };

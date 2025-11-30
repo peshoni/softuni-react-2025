@@ -1,7 +1,7 @@
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput } from "@mui/material";
-import { useState } from "react";
-import type { FormControlError } from "../../../public/LoginForm";
+import { useState } from "react"; 
+import type { FormControlError } from "../interfaces";
 
 export default function PasswordInput({ value, errors, changeCallback }: {
     readonly value: string,

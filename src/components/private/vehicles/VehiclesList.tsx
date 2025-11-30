@@ -20,6 +20,7 @@ import { isNullOrUndefined } from 'is-what';
 import useEnums from '../hooks/useEnums';
 import { rowsPerPageOptions } from '../common/constants';
 import UserContext from '../contexts/UserContext';
+import { MemoryService } from '../common/MemoryService';
 
 /**
  * Defines the columns for the vehicles table.
@@ -31,11 +32,13 @@ const columns: ColumnSettings<VehicleFragment>[] = [
     { property: 'year', label: 'year' },
     { property: 'make', label: 'Make' },
     { property: 'model', label: 'Model' },
-    { property: 'plate_number', label: 'plate' },
-    { property: 'actions', label: 'actions', width: '60x', align: 'right' }
+    { property: 'plate_number', label: 'Plate' },
+    { property: 'actions', label: 'Actions', width: '60x', align: 'right' }
 ];
 
 export default function VehiclesList() {
+    const a = MemoryService;; // to test singleton behavior of MemoryService
+    console.log(a);
     /**
      * Fetches enumeration data such as user roles and vehicle statuses.
      */
@@ -189,7 +192,7 @@ function processColumn(column: ColumnSettings<VehicleFragment>, entity: VehicleF
             case 'updated_at':
                 return column.formatDate?.(value);
             case 'actions':
-                return <TableRowContextMenu key={entity.id} id={entity.id} callback={contextCallback} />;
+                return <TableRowContextMenu key={entity.id} id={entity.id} allowedActions={['edit', 'preview', 'delete']} callback={contextCallback} />;
             default: return value;
         }
     };

@@ -15,7 +15,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { Outlet, useNavigate } from 'react-router';
+import { Outlet, useLocation, useNavigate } from 'react-router';
 import UserContextMenu from './UserContextMenu';
 import { useContext, useEffect, useState } from 'react';
 import { buildUrl } from '../../../routes/routes-util';
@@ -91,6 +91,7 @@ interface AppBarProps extends MuiAppBarProps {
 export default function ApplicationBar({ menu }: { readonly menu: LoggedUserMenu[]; }) {
   const theme = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useContext(UserContext);
   const [open, setOpen] = useState(true);
 
@@ -143,6 +144,12 @@ export default function ApplicationBar({ menu }: { readonly menu: LoggedUserMenu
 
   }, []);
 
+  function getBackgroundColor(path: string) {
+    const segment = location.pathname.split('/')[1];
+    const color = segment === path ? theme.palette.grey[200] : '';
+    return color;
+  }
+
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -170,6 +177,7 @@ export default function ApplicationBar({ menu }: { readonly menu: LoggedUserMenu
         </Toolbar>
       </AppBar>
 
+
       <Drawer
         sx={{
           width: drawerWidth,
@@ -193,16 +201,19 @@ export default function ApplicationBar({ menu }: { readonly menu: LoggedUserMenu
         </DrawerHeader>
         {/* <Divider /> */}
         <List>
-          {menu.map((option) => (
-            <ListItem key={option.label} disablePadding>
-              <ListItemButton onClick={() => handleMenuClick(option.path)}>
-                <ListItemIcon >
-                  {option.icon}
-                </ListItemIcon>
-                <ListItemText primary={option.label} />
-              </ListItemButton>
-            </ListItem>
-          ))}
+
+          {
+
+            menu.map((option) => (
+              <ListItem key={option.label} disablePadding sx={{ backgroundColor: getBackgroundColor(option.path) }}>
+                <ListItemButton onClick={() => handleMenuClick(option.path)}>
+                  <ListItemIcon >
+                    {option.icon}
+                  </ListItemIcon>
+                  <ListItemText primary={option.label} />
+                </ListItemButton>
+              </ListItem>
+            ))}
         </List>
         <Divider />
       </Drawer>

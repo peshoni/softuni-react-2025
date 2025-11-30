@@ -184,7 +184,7 @@ function processColumn(column: ColumnSettings<Repair_RequestFragment>, entity: R
             case "vehicle_status":
                 return (value as Vehicle_StatusFragment).name;
             case "actions":
-                return <TableRowContextMenu key={entity.id} id={entity.id} callback={contextCallback} />;
+                return <TableRowContextMenu key={entity.id} id={entity.id} allowedActions={['edit','preview','delete']} callback={contextCallback} />;
             default:
                 return value;
         }

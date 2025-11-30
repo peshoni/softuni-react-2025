@@ -7,18 +7,20 @@ import { useEffect, useState } from "react";
 import { Box, Paper, TextField, Button, FormControl, OutlinedInput, InputLabel, Grid, Select, MenuItem, FormHelperText } from "@mui/material";
 import { motion } from "framer-motion";
 import PasswordInput from "../common/forms/PasswordInput";
-import type { FormControlError } from "../../public/LoginForm";
 import type { FilterFields } from "../common/tables/table-interfaces";
 import useEnums from "../hooks/useEnums";
+import type { FormControlError } from "../common/interfaces";
+
+
 
 //#region Form Types 
 const omitUserProperties = ['id', 'created_at', 'updated_at', 'gender', 'user_role'] as const;
 type FilteredUserProperties = Pick<Edit_UserFragment, typeof omitUserProperties[number]>;
 type FormUserProps = Omit<Edit_UserFragment, keyof FilteredUserProperties> & { role: string, genderCode: string; };
 //#endregion Form Types
-export default function CustomerDetails() {
+export default function CustomerDetails({ mode }: { readonly mode?: string; }) {
     const { genders, userRoles } = useEnums();
-    const [errors  , setErrors ] = useState<FormControlError[]>([]);
+    const [errors, setErrors] = useState<FormControlError[]>([]);
     const params = useParams();
     const isCreateMode = isNullOrUndefined(params?.id);
     let user: Edit_UserFragment | undefined | null;
@@ -42,7 +44,7 @@ export default function CustomerDetails() {
         if (e.target.name === 'phone' && !phoneRegexp.test(e.target.value)) {
             //             console.log( phoneRegexp.test(e.target.value))
             // console.log('INVALID NUMBER : ' + e.target.value)
-            if (!errors.some(c=>c.controlName === e.target.name)){
+            if (!errors.some(c => c.controlName === e.target.name)) {
 
                 errors.push({ controlName: e.target.name });
             }
@@ -50,10 +52,10 @@ export default function CustomerDetails() {
             const index = errors.findIndex(c => c.controlName === e.target.name);
             console.log(index);
             if (index > -1) { // only splice array when item is found
-              
-               console.log( errors.splice(index, 1)); // 2nd parameter means remove one item only
-               console.log(errors)
-               setErrors(old => [...old.filter(c=>c.controlName === e.target.name)]);
+
+                console.log(errors.splice(index, 1)); // 2nd parameter means remove one item only
+                console.log(errors);
+                setErrors(old => old.filter(c => c.controlName === e.target.name));
             }
         }
 

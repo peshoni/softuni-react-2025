@@ -1,4 +1,4 @@
-import { useContext, useState  } from "react";
+import { useContext, useState } from "react";
 import { Container, Box, Button, Typography, Paper, Link, Alert, type AlertColor, FormControl, InputLabel, OutlinedInput } from "@mui/material";
 import Grid from '@mui/material/Grid';
 import { motion } from "framer-motion";
@@ -7,22 +7,21 @@ import { PathSegments } from "../../routes/enums";
 import { useLoginLazyQuery, type UserFragment } from "../../../graphql/generated";
 import Snackbar, { type SnackbarCloseReason } from '@mui/material/Snackbar';
 import PasswordInput from "../private/common/forms/PasswordInput";
-import { buildUrl } from "../../routes/routes-util"; 
+import { buildUrl } from "../../routes/routes-util";
 import UserContext from "../private/contexts/UserContext";
-
-export interface FormControlError {
-    controlName: string;
-}
+import type { FormControlError } from "../private/common/interfaces";
 
 export default function LoginForm( /*{ setUser }: { readonly setUser: (event: SetStateAction<UserFragment | undefined>) => void; } */) {
     const navigate = useNavigate();
     const [performLogin, /* { called, loading, data }*/] = useLoginLazyQuery();
 
     const [submitted, setSubmitted] = useState(false);
-    const [errors, setErrors] = useState<FormControlError[]>([]); 
+    const [errors, setErrors] = useState<FormControlError[]>([]);
 
     const { userMenu, onLogin } = useContext(UserContext);
-
+    // elenapavelova@service.bg / Mechanic!  
+    // ivanteodorov@service.bg / Service123!  
+    // mariyastoyanina@service.bg / UserPass!
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -36,7 +35,6 @@ export default function LoginForm( /*{ setUser }: { readonly setUser: (event: Se
             [e.target.name]: e.target.value,
         });
     };
-
 
     interface ToastState {
         open: boolean;
@@ -62,12 +60,12 @@ export default function LoginForm( /*{ setUser }: { readonly setUser: (event: Se
         e.preventDefault();
         setSubmitted(true);
 
-        performLogin({ variables: { email: formData.email, password: formData.password } }).then((result) => { 
-            let user: UserFragment | undefined = result.data?.users[0]; 
+        performLogin({ variables: { email: formData.email, password: formData.password } }).then((result) => {
+            let user: UserFragment | undefined = result.data?.users[0];
 
-            if (user) { 
+            if (user) {
                 localStorage.setItem('customer', JSON.stringify(user));
-                onLogin(user); 
+                onLogin(user);
                 const awaitTime: number = 1500;
 
                 setToastState({
@@ -105,7 +103,7 @@ export default function LoginForm( /*{ setUser }: { readonly setUser: (event: Se
             >
                 <Paper elevation={6} sx={{ p: 4, borderRadius: 3 }}>
                     <Typography variant="h5" align="center" gutterBottom>
-                        {"Login"}
+                        Вход
                     </Typography>
                     <Box component="form" onSubmit={handleSubmit} autoComplete="off">
 
@@ -150,7 +148,7 @@ export default function LoginForm( /*{ setUser }: { readonly setUser: (event: Se
                                 variant="body2"
                                 onClick={() => navigate('/' + PathSegments.REGISTER)}
                             >
-                                Don't have an account? Register
+                                Нямате акаунт? Регистрация
                             </Link>
                         </Grid>
                     </Grid>
