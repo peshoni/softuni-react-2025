@@ -71,7 +71,7 @@ export default function TableRowContextMenu({ id, allowedActions = ['preview'], 
       >
         {
           allowedActions.map(allowedAction =>
-            <MenuItem sx={[{ height: `${menuHeight}px` }]} onClick={() => handleClose('edit')} key={allowedAction}>
+            <MenuItem sx={[{ height: `${menuHeight}px` }]} onClick={() => handleClose(allowedAction)} key={allowedAction}>
               <IconButton size="medium" color="inherit">
                 {options.get(allowedAction)?.icon}
               </IconButton>

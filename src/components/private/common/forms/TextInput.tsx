@@ -1,10 +1,11 @@
 import { FormControl, InputLabel, OutlinedInput } from "@mui/material"; 
 import type { FormControlError } from "../interfaces";
 
-export default function TextInput({ value, propName, label, errors, changeCallback }: {
+export default function TextInput({ value, propName, label, disabled , errors, changeCallback }: {
     readonly value: string,
     readonly propName: string,
     readonly label: string;
+    readonly disabled:boolean;
     readonly errors: FormControlError[],
     readonly changeCallback: (e: { target: { name: any; value: any; }; }) => void;
 }) {
@@ -20,6 +21,7 @@ export default function TextInput({ value, propName, label, errors, changeCallba
                 label={label}
                 type='text'
                 value={value}
+                disabled={disabled}
                 required
                 onChange={changeCallback}
                 error={hasError}

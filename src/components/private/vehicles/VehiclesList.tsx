@@ -20,7 +20,6 @@ import { isNullOrUndefined } from 'is-what';
 import useEnums from '../hooks/useEnums';
 import { rowsPerPageOptions } from '../common/constants';
 import UserContext from '../contexts/UserContext';
-import { MemoryService } from '../common/MemoryService';
 
 /**
  * Defines the columns for the vehicles table.
@@ -37,8 +36,6 @@ const columns: ColumnSettings<VehicleFragment>[] = [
 ];
 
 export default function VehiclesList() {
-    const a = MemoryService;; // to test singleton behavior of MemoryService
-    console.log(a);
     /**
      * Fetches enumeration data such as user roles and vehicle statuses.
      */
@@ -56,6 +53,7 @@ export default function VehiclesList() {
 
     const navigate = useNavigate();
 
+    const [allowedActions, setAllowedActions] = useState<ROW_ACTIONS[]>([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
     const [condition, setCondition] = useState<Vehicles_Bool_Exp>({ _and: [userCondition] });
@@ -78,7 +76,7 @@ export default function VehiclesList() {
         }
     });
 
-    console.log(data, loading, error);
+    // console.log(data, loading, error);
 
     useEffect(() => {
         // Create a new AbortController when the component mounts
@@ -89,9 +87,25 @@ export default function VehiclesList() {
         };
     }, []);
 
-    // useEffect(() => { // Listens for the data changes
-    //     console.log('data changed', data);
-    // }, [data]); 
+    useEffect(() => {
+        /**
+         * Sets the allowed actions based on the user's role.
+         */
+        switch (user?.user_role.code) {
+            case 'customer':
+                setAllowedActions(['edit', 'preview', 'delete']);
+                break;
+            case 'serviceSpecialist':
+                setAllowedActions(['edit', 'preview']);
+                break;
+            case 'autoMechanic':
+                setAllowedActions(['preview']);
+                break;
+            default:
+                setAllowedActions([]);
+                break;
+        }
+    }, [user]);
 
     //Todo: error handling
 
@@ -124,10 +138,8 @@ export default function VehiclesList() {
         //setChildEvent(event);
     };
 
-    const rowContextMenuCallback: RowContextFunctionType = (action: ROW_ACTIONS, id: string) => {
-        if (action === 'edit') {
-            navigate(buildUrl(PathSegments.VEHICLES, PathSegments.DETAILS, id));
-        }
+    const rowContextMenuCallback: RowContextFunctionType = (action: ROW_ACTIONS, id: string) => { 
+        navigate(buildUrl(PathSegments.VEHICLES, PathSegments.DETAILS, id), { state: {  action } }); 
     };
 
     const isTableVisible: boolean = (Boolean(data?.vehicles_aggregate.aggregate?.count)) && (!error || !loading);
@@ -157,9 +169,12 @@ export default function VehiclesList() {
                             <TableBody>
                                 {data?.vehicles.map((vehicle, index) => {
                                     return (
-                                        <TableRow hover tabIndex={-1} key={vehicle.id} style={{ backgroundColor: index % 2 ? '#f7f8faff' : 'white' }}>
+                                        <TableRow hover
+                                            tabIndex={-1}
+                                            key={vehicle.id}
+                                            style={{ backgroundColor: index % 2 ? '#f7f8faff' : 'white' }}>
                                             {columns.map((column) => {
-                                                return processColumn(column, vehicle, rowContextMenuCallback);
+                                                return processColumn(column, vehicle, allowedActions, rowContextMenuCallback);
                                             })}
                                         </TableRow>
                                     );
@@ -181,10 +196,10 @@ export default function VehiclesList() {
                 getFallbackTemplate(error, loading)
             )}
         </Paper>
-    );
+    )
 }
 
-function processColumn(column: ColumnSettings<VehicleFragment>, entity: VehicleFragment, contextCallback: RowContextFunctionType) {
+function processColumn(column: ColumnSettings<VehicleFragment>, entity: VehicleFragment, allowedActions: ROW_ACTIONS[], contextCallback: RowContextFunctionType) {
     const value = entity[column.property as keyof VehicleFragment];
     const cellValue = () => {
         switch (column.property) {
@@ -192,7 +207,7 @@ function processColumn(column: ColumnSettings<VehicleFragment>, entity: VehicleF
             case 'updated_at':
                 return column.formatDate?.(value);
             case 'actions':
-                return <TableRowContextMenu key={entity.id} id={entity.id} allowedActions={['edit', 'preview', 'delete']} callback={contextCallback} />;
+                return <TableRowContextMenu key={entity.id} id={entity.id} allowedActions={allowedActions} callback={contextCallback} />;
             default: return value;
         }
     };

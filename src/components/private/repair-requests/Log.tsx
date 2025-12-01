@@ -2,12 +2,17 @@ import { ListItem, ListItemAvatar, Avatar, ListItemText, Typography, TextareaAut
 import type { Requests_Logs, Users } from "../../../../graphql/generated";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-export default function Log({ log, isFromCurrentUser }: { readonly log: Requests_Logs; readonly isFromCurrentUser: boolean; }) {
+import type { JSX } from "react";
+/**
+ * Stateless component to display a single log entry in the repair requests section.
+ * @param props { log: Requests_Logs; isFromCurrentUser: boolean }
+ * @returns {JSX.Element}     
+ */
+export default function Log({ log, isFromCurrentUser }: { readonly log: Requests_Logs; readonly isFromCurrentUser: boolean; }): JSX.Element {
     // TODO reverse only the current user logs
     // TODO - set/use editable flag
 
     const theme = useTheme();
-
     const editable = true;
     const rowDirection: string = isFromCurrentUser ? 'row-reverse' : 'row';
     const currentUserColor = isFromCurrentUser ? theme.palette.primary.main : theme.palette.grey[700];
@@ -21,7 +26,7 @@ export default function Log({ log, isFromCurrentUser }: { readonly log: Requests
 
                     {isFromCurrentUser &&
                         <>
-                            <IconButton size="small" sx={{ color: theme.palette.primary.light }}  ><EditIcon />  </IconButton>
+                            <IconButton size="small" sx={{ color: theme.palette.primary.light }} ><EditIcon />  </IconButton>
                             <IconButton size="small" sx={{ color: theme.palette.warning.light }} ><DeleteIcon />  </IconButton>
                         </>
                     }

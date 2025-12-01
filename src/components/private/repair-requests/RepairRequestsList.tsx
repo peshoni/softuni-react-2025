@@ -31,10 +31,13 @@ const columns: ColumnSettings<Repair_RequestFragment>[] = [
 
 export default function RepairRequestsList() {
     const navigate = useNavigate();
-    const { genders, userRoles, vehicleStatuses } = useEnums();
-    console.log(genders, userRoles, vehicleStatuses);
+    const { vehicleStatuses } = useEnums();
+
     let vehicleStatusesFilters: FilterFields[] = vehicleStatuses?.map(e => ({ id: e.id, name: e.name, code: e.code })) ?? [];
 
+    /**
+     * Retrieves the current user from the UserContext.
+     */
     const { user } = useContext(UserContext);
 
     let userCondition: Repair_Requests_Bool_Exp | null = {};
@@ -47,6 +50,7 @@ export default function RepairRequestsList() {
         }
     }
 
+    const [allowedActions, setAllowedActions] = useState<ROW_ACTIONS[]>([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
     const [condition, setCondition] = useState<Repair_Requests_Bool_Exp>(userCondition);
@@ -79,6 +83,28 @@ export default function RepairRequestsList() {
             abortControllerRef.current?.abort();
         };
     }, []);
+
+    useEffect(() => {
+        /**
+         * Sets the allowed actions based on the user's role.
+         */
+        switch (user?.user_role.code) {
+            case 'customer':
+                setAllowedActions(['edit', 'preview', 'delete']);
+                break;
+            case 'serviceSpecialist':
+                setAllowedActions(['edit', 'preview']);
+                break;
+            case 'autoMechanic':
+                setAllowedActions(['edit', 'preview']);
+                break;
+            default:
+                setAllowedActions([]);
+                break;
+        }
+
+    }, [user]);
+
 
     //TODo: error handling
 
@@ -114,9 +140,7 @@ export default function RepairRequestsList() {
     };
 
     const rowContextMenuCallback: RowContextFunctionType = (action: ROW_ACTIONS, id: string) => {
-        if (action === 'edit') {
-            navigate(buildUrl(PathSegments.REPAIR_REQUESTS, PathSegments.DETAILS, id));
-        }
+        navigate(buildUrl(PathSegments.REPAIR_REQUESTS, PathSegments.DETAILS, id), { state: { action } });
     };
 
     const isTableVisible: boolean = Boolean(data?.repair_requests_aggregate.aggregate?.count) && (!error || !loading);
@@ -148,7 +172,7 @@ export default function RepairRequestsList() {
                                     return (
                                         <TableRow hover tabIndex={-1} key={entity.id} style={{ backgroundColor: index % 2 ? '#f7f8faff' : 'white' }}>
                                             {columns.map((column) => {
-                                                return processColumn(column, entity, rowContextMenuCallback);
+                                                return processColumn(column, entity, allowedActions, rowContextMenuCallback);
                                             })}
                                         </TableRow>
                                     );
@@ -172,7 +196,7 @@ export default function RepairRequestsList() {
         </Paper>
     );
 }
-function processColumn(column: ColumnSettings<Repair_RequestFragment>, entity: Repair_RequestFragment, contextCallback: RowContextFunctionType) {
+function processColumn(column: ColumnSettings<Repair_RequestFragment>, entity: Repair_RequestFragment, allowedActions: ROW_ACTIONS[], contextCallback: RowContextFunctionType) {
     const value = entity[column.property as keyof Repair_RequestFragment];
     const cellValue = () => {
         switch (column.property) {
@@ -184,7 +208,7 @@ function processColumn(column: ColumnSettings<Repair_RequestFragment>, entity: R
             case "vehicle_status":
                 return (value as Vehicle_StatusFragment).name;
             case "actions":
-                return <TableRowContextMenu key={entity.id} id={entity.id} allowedActions={['edit','preview','delete']} callback={contextCallback} />;
+                return <TableRowContextMenu key={entity.id} id={entity.id} allowedActions={allowedActions} callback={contextCallback} />;
             default:
                 return value;
         }

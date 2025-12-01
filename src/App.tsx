@@ -18,7 +18,6 @@ import CommuteIcon from '@mui/icons-material/Commute';
 import CarRepairIcon from '@mui/icons-material/CarRepair';
 import { buildUrl } from './routes/routes-util';
 import UserContext, { type UserContextProps } from './components/private/contexts/UserContext';
-import { MemoryService } from './components/private/common/MemoryService';
 
 export interface LoggedUserMenu {
   label: string;
@@ -27,8 +26,6 @@ export interface LoggedUserMenu {
 }
 
 function App() {
-  const a = MemoryService;; // to test singleton behavior of MemoryService
-  console. log(a);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -47,13 +44,12 @@ function App() {
     localStorage.setItem('customer', JSON.stringify(user));
     console.log('User saved in localStorage from App.tsx');
     console.log(user);
-
   };
 
   const logoutHandler = () => {
     setUser(undefined);
   };
-
+  console.log(Object.keys(localStorage));
   // TODO : Read more about hooks: https://react.dev/reference/react/useMemo 
   const userContextValue: UserContextProps = useMemo(() => ({
     user,

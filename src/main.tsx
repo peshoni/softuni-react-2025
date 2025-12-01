@@ -6,15 +6,21 @@ import { ApolloProvider } from '@apollo/client/react';
 import client from "./apolloClient.tsx";
 import { StyledEngineProvider } from '@mui/material/styles';
 import { BrowserRouter } from 'react-router';
-import { StrictMode } from 'react';
+import { SnackbarProvider } from './components/private/contexts/ShackbarContext.tsx';
+
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
     <ApolloProvider client={client}>
       <StyledEngineProvider injectFirst>
-        <StrictMode>
+
+        <SnackbarProvider>
+
+          {/* <StrictMode> */}
           <App />
-        </StrictMode>
+          {/* </StrictMode> */}
+        </SnackbarProvider>
+
       </StyledEngineProvider>
     </ApolloProvider>
   </BrowserRouter>

@@ -41,6 +41,12 @@ fragment vehicle on vehicles {
   }
 }
 
+fragment fuel_type on fuel_types {
+  id
+  code
+  name
+}
+
 fragment vehicle_status on vehicle_statuses {
   id
   code

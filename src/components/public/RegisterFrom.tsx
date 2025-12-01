@@ -8,7 +8,7 @@ import PasswordInput from "../private/common/forms/PasswordInput";
 import { useRegisterMutation, type Edit_UserFragment, type Users_Insert_Input } from "../../../graphql/generated";
 import type { FilterFields } from "../private/common/tables/table-interfaces";
 import useEnums from "../private/hooks/useEnums";
-import TextInput from "../private/common/forms/StringInput";
+import TextInput from "../private/common/forms/TextInput";
 import type { FormControlError } from "../private/common/interfaces";
 import { isFullString } from "is-what";
 import UserContext from "../private/contexts/UserContext";
@@ -176,7 +176,8 @@ export default function RegisterForm() {
                                 propName={'first_name'}
                                 changeCallback={handleChange}
                                 errors={errors}
-                                label="Име" />
+                                label="Име" 
+                                disabled={false} />
                         </Grid>
 
                         <Grid size={1}>
@@ -186,7 +187,7 @@ export default function RegisterForm() {
                                 changeCallback={handleChange}
                                 errors={errors}
                                 propName={'last_name'}
-                                label="Фамилия" />
+                                label="Фамилия" disabled={false} />
                         </Grid>
 
                         <Grid size={1}>

@@ -11,15 +11,13 @@ import type { FilterFields } from "../common/tables/table-interfaces";
 import useEnums from "../hooks/useEnums";
 import type { FormControlError } from "../common/interfaces";
 
-
-
 //#region Form Types 
 const omitUserProperties = ['id', 'created_at', 'updated_at', 'gender', 'user_role'] as const;
 type FilteredUserProperties = Pick<Edit_UserFragment, typeof omitUserProperties[number]>;
 type FormUserProps = Omit<Edit_UserFragment, keyof FilteredUserProperties> & { role: string, genderCode: string; };
 //#endregion Form Types
 export default function CustomerDetails({ mode }: { readonly mode?: string; }) {
-    const { genders, userRoles } = useEnums();
+    const { genders, userRoles, } = useEnums();
     const [errors, setErrors] = useState<FormControlError[]>([]);
     const params = useParams();
     const isCreateMode = isNullOrUndefined(params?.id);
@@ -111,16 +109,9 @@ export default function CustomerDetails({ mode }: { readonly mode?: string; }) {
                 }
             });
         }
-    }, []);
-
-    useEffect(() => {
-        // Create a new AbortController when the component mounts
-        // abortControllerRef.current = new AbortController();
-        // Return a cleanup function to abort the request when the component unmounts 
 
         return () => {
-            console.log('UNLOAD');
-            // abortControllerRef.current?.abort();
+            console.log('UNLOAD'); 
         };
     }, []);
 

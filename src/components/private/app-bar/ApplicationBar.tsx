@@ -92,7 +92,7 @@ export default function ApplicationBar({ menu }: { readonly menu: LoggedUserMenu
   const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useContext(UserContext);
+  const { user, userMenu } = useContext(UserContext);
   const [open, setOpen] = useState(true);
 
   const handleDrawerOpen = () => {
@@ -202,18 +202,16 @@ export default function ApplicationBar({ menu }: { readonly menu: LoggedUserMenu
         {/* <Divider /> */}
         <List>
 
-          {
-
-            menu.map((option) => (
-              <ListItem key={option.label} disablePadding sx={{ backgroundColor: getBackgroundColor(option.path) }}>
-                <ListItemButton onClick={() => handleMenuClick(option.path)}>
-                  <ListItemIcon >
-                    {option.icon}
-                  </ListItemIcon>
-                  <ListItemText primary={option.label} />
-                </ListItemButton>
-              </ListItem>
-            ))}
+          {userMenu.map((option) => (
+            <ListItem key={option.label} disablePadding sx={{ backgroundColor: getBackgroundColor(option.path) }}>
+              <ListItemButton onClick={() => handleMenuClick(option.path)}>
+                <ListItemIcon >
+                  {option.icon}
+                </ListItemIcon>
+                <ListItemText primary={option.label} />
+              </ListItemButton>
+            </ListItem>
+          ))}
         </List>
         <Divider />
       </Drawer>
@@ -223,6 +221,6 @@ export default function ApplicationBar({ menu }: { readonly menu: LoggedUserMenu
 
       </Main>
     </Box>
-  );
+  )
 }
 

@@ -1,23 +1,23 @@
 import { useContext, useState } from "react";
-import { Container, Box, Button, Typography, Paper, Link, Alert, type AlertColor, FormControl, InputLabel, OutlinedInput } from "@mui/material";
+import { Container, Box, Button, Typography, Paper, Link, FormControl, InputLabel, OutlinedInput } from "@mui/material";
 import Grid from '@mui/material/Grid';
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router";
 import { PathSegments } from "../../routes/enums";
 import { useLoginLazyQuery, type UserFragment } from "../../../graphql/generated";
-import Snackbar, { type SnackbarCloseReason } from '@mui/material/Snackbar';
 import PasswordInput from "../private/common/forms/PasswordInput";
 import { buildUrl } from "../../routes/routes-util";
 import UserContext from "../private/contexts/UserContext";
 import type { FormControlError } from "../private/common/interfaces";
+import { useToast } from "../private/contexts/ShackbarContext";
 
 export default function LoginForm( /*{ setUser }: { readonly setUser: (event: SetStateAction<UserFragment | undefined>) => void; } */) {
+    const { showSnackbar } = useToast();
     const navigate = useNavigate();
     const [performLogin, /* { called, loading, data }*/] = useLoginLazyQuery();
 
     const [submitted, setSubmitted] = useState(false);
     const [errors, setErrors] = useState<FormControlError[]>([]);
-
     const { userMenu, onLogin } = useContext(UserContext);
     // elenapavelova@service.bg / Mechanic!  
     // ivanteodorov@service.bg / Service123!  
@@ -36,25 +36,6 @@ export default function LoginForm( /*{ setUser }: { readonly setUser: (event: Se
         });
     };
 
-    interface ToastState {
-        open: boolean;
-        alertType?: AlertColor;//= "error" | "success" | "info" | "warning"
-        message?: string;
-        duration?: number;
-    }
-
-    const [{ open, alertType, message, duration }, setToastState] = useState<ToastState>({
-        open: false
-    });
-
-    const handleCloseToastMessage = (event?: React.SyntheticEvent | Event, reason?: SnackbarCloseReason,) => {
-        console.log(event);
-        if (reason === 'clickaway') {
-            return;
-        }
-        setToastState({ open: false, alertType: undefined, message: '', duration });
-    };
-
     const handleSubmit = (e: { preventDefault: () => void; }) => {
         setErrors([]);
         e.preventDefault();
@@ -66,26 +47,18 @@ export default function LoginForm( /*{ setUser }: { readonly setUser: (event: Se
             if (user) {
                 localStorage.setItem('customer', JSON.stringify(user));
                 onLogin(user);
-                const awaitTime: number = 1500;
+                const awaitTime: number = 2000;
 
-                setToastState({
-                    open: true,
-                    alertType: 'success',
-                    message: 'Login was successfully',
-                    duration: awaitTime
-                });
+                showSnackbar('Login was successfully', 'success', awaitTime);
                 setTimeout(() => {
                     setSubmitted(false);
+
                     navigate(buildUrl(userMenu[0].path));
                 }, awaitTime);
             } else {
                 onLogin(undefined);
-                setToastState({
-                    open: true,
-                    alertType: 'error',
-                    message: 'User with this email wasn\'t found',
-                    duration: 4000
-                });
+
+                showSnackbar('User with this email wasn\'t found', 'error', 4000);
                 setErrors([{ controlName: 'email' }]);
                 setSubmitted(false);
             }
@@ -154,18 +127,6 @@ export default function LoginForm( /*{ setUser }: { readonly setUser: (event: Se
                     </Grid>
                 </Paper>
             </Box>
-
-            <Snackbar
-                open={open}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-                autoHideDuration={duration ?? 5000}
-                onClose={handleCloseToastMessage}
-                sx={{ minWidth: '300px' }}
-            >
-                <Alert severity={alertType} sx={{ width: '100%' }}>
-                    {message}
-                </Alert>
-            </Snackbar>
         </Container>
     );
 }

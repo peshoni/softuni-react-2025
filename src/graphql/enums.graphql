@@ -8,4 +8,7 @@ query GetEnums {
   genders {
     ...gender
   }
+  fuel_types {
+    ...fuel_type
+  }
 }

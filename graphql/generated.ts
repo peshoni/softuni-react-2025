@@ -3540,7 +3540,7 @@ export type Vehicles_Variance_Order_By = {
 export type GetEnumsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetEnumsQuery = { vehicle_statuses: Array<{ id: any, code: string, color: string, name: string, weight: number }>, user_roles: Array<{ id: any, code: string, name: string }>, genders: Array<{ id: any, code: string, name: string }> };
+export type GetEnumsQuery = { vehicle_statuses: Array<{ id: any, code: string, color: string, name: string, weight: number }>, user_roles: Array<{ id: any, code: string, name: string }>, genders: Array<{ id: any, code: string, name: string }>, fuel_types: Array<{ id: any, code: string, name: string }> };
 
 export type GetRepairRequestsQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -3628,6 +3628,8 @@ export type GetVehicleByIdQueryVariables = Exact<{
 export type GetVehicleByIdQuery = { vehicles_by_pk?: { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, code: string, color: string, name: string, weight: number } | null } | null };
 
 export type VehicleFragment = { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, code: string, color: string, name: string, weight: number } | null };
+
+export type Fuel_TypeFragment = { id: any, code: string, name: string };
 
 export type Vehicle_StatusFragment = { id: any, code: string, color: string, name: string, weight: number };
 
@@ -3757,6 +3759,13 @@ export const Edit_UserFragmentDoc = gql`
   ...user
 }
     ${UserFragmentDoc}`;
+export const Fuel_TypeFragmentDoc = gql`
+    fragment fuel_type on fuel_types {
+  id
+  code
+  name
+}
+    `;
 export const GetEnumsDocument = gql`
     query GetEnums {
   vehicle_statuses(order_by: {weight: asc}) {
@@ -3768,10 +3777,14 @@ export const GetEnumsDocument = gql`
   genders {
     ...gender
   }
+  fuel_types {
+    ...fuel_type
+  }
 }
     ${Vehicle_StatusFragmentDoc}
 ${RoleFragmentDoc}
-${GenderFragmentDoc}`;
+${GenderFragmentDoc}
+${Fuel_TypeFragmentDoc}`;
 
 /**
  * __useGetEnumsQuery__
