@@ -7,20 +7,19 @@ import client from "./apolloClient.tsx";
 import { StyledEngineProvider } from '@mui/material/styles';
 import { BrowserRouter } from 'react-router';
 import { SnackbarProvider } from './components/private/contexts/ShackbarContext.tsx';
-
+import { UserProvider } from './components/private/contexts/UserProvider.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
     <ApolloProvider client={client}>
       <StyledEngineProvider injectFirst>
-
         <SnackbarProvider>
-
-          {/* <StrictMode> */}
-          <App />
-          {/* </StrictMode> */}
+          <UserProvider>
+            {/* <StrictMode> */}
+            <App />
+            {/* </StrictMode> */}
+          </UserProvider>
         </SnackbarProvider>
-
       </StyledEngineProvider>
     </ApolloProvider>
   </BrowserRouter>

@@ -88,7 +88,7 @@ interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
 }
 
-export default function ApplicationBar({ menu }: { readonly menu: LoggedUserMenu[]; }) {
+export default function ApplicationBar() {
   const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();

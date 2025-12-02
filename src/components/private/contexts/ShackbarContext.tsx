@@ -1,12 +1,4 @@
-import {
-    createContext,
-    useCallback,
-    useContext,
-    useMemo,
-    useState,
-    type ReactNode,
-} from "react";
-
+import { createContext, useCallback, useContext, useMemo, useState, type ReactNode, } from "react";
 import Snackbar, { type SnackbarCloseReason } from '@mui/material/Snackbar';
 import { Alert } from "@mui/material";
 
@@ -36,7 +28,6 @@ export const SnackbarProvider = ({ children }: { children: ReactNode; }) => {
         },
         []
     );
-
     //   const userContextValue: UserContextProps = useMemo(() => ({
     //     user,
     //     userMenu,
@@ -55,7 +46,7 @@ export const SnackbarProvider = ({ children }: { children: ReactNode; }) => {
     return (
 
         <SnackbarContext.Provider value={contextValue}>
-        {/* <SnackbarContext.Provider value={{ showSnackbar }}> */}
+            {/* <SnackbarContext.Provider value={{ showSnackbar }}> */}
             {children};
             {toast &&  //<Toast message={toast.message} type={toast.type}  
 

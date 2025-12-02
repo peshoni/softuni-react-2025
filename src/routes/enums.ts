@@ -7,4 +7,4 @@ export enum PathSegments {
     DETAILS = 'details',
     REPAIR_REQUESTS = 'repair-requests',
     ID = ':id'
-}
+} 
