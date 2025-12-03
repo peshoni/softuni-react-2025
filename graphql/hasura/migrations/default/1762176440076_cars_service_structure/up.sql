@@ -65,7 +65,7 @@ CREATE TABLE public.users (
 
 CREATE TABLE public.vehicles (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    owner_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+    owner_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
     fuel_type_id UUID REFERENCES public.fuel_types(id),
     status_id UUID REFERENCES public.vehicle_statuses(id),
     make VARCHAR(100) NOT NULL,

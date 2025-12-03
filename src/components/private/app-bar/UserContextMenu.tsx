@@ -14,12 +14,11 @@ const menuHeight = 40;
 type ACTIONS = 'logout' | 'edit';
 
 export default function UserContextMenu() {
-    const { user, onLogout } = useContext(UserContext);
+    const { userSettings, onLogout } = useContext(UserContext);
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
     const openUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-        console.log(event);
         setAnchorEl(event.currentTarget);
     };
 
@@ -33,8 +32,8 @@ export default function UserContextMenu() {
                 navigate(buildUrl(PathSegments.LOGIN));
                 break;
             case 'edit':
-                if (user) {
-                    navigate(buildUrl(PathSegments.CUSTOMERS, PathSegments.DETAILS, user.id));
+                if (userSettings?.user) {
+                    navigate(buildUrl(PathSegments.CUSTOMERS, PathSegments.DETAILS, userSettings.user.id));
                 }
                 break;
             default:
@@ -43,10 +42,10 @@ export default function UserContextMenu() {
     };
 
     return (
-        <>
+        userSettings?.user && <>
             <Grid container rowSpacing={0} columnSpacing={0} columns={{ xs: 2, sm: 2, md: 2 }} sx={{ textAlign: 'right' }}>
-                <Grid size={2} fontSize={18}>{user?.first_name} {user?.last_name}</Grid>
-                <Grid size={2} fontSize={14}>({user?.user_role.name})</Grid>
+                <Grid size={2} fontSize={18}>{userSettings.user?.first_name} {userSettings.user?.last_name}</Grid>
+                <Grid size={2} fontSize={14}>({userSettings.user?.user_role.name})</Grid>
             </Grid>
 
             <IconButton

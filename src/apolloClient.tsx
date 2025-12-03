@@ -12,8 +12,7 @@ const client = new Apollo.ApolloClient({
     },
     query: {
       fetchPolicy: 'network-only',
-      errorPolicy: 'all',
-
+      errorPolicy: 'all', 
     },
     watchQuery: {
       fetchPolicy: 'network-only',

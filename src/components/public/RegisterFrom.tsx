@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { Container, Box, TextField, Button, Typography, Paper, Link, FormControl, FormHelperText, InputLabel, MenuItem, OutlinedInput, Select, type FormControlProps, } from "@mui/material";
+import { Container, Box, TextField, Button, Typography, Paper, Link, FormControl, FormHelperText, InputLabel, MenuItem, OutlinedInput, Select } from "@mui/material";
 import Grid from '@mui/material/Grid';
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router";
@@ -28,11 +28,9 @@ export default function RegisterForm() {
 
     const [errors, setErrors] = useState<FormControlError[]>([]);
     const [touchedFields, setTouchedFields] = useState<Set<keyof FormUserProps>>(new Set<keyof FormUserProps>());
-
+    console.log(touchedFields);
     const [registerUser] = useRegisterMutation();
-    const { onLogin, userMenu } = useContext(UserContext);
-
-    // console.error(touchedFields.size);
+    const { userSettings, onLogin } = useContext(UserContext);
 
     const [formData, setFormData] = useState<FormUserProps>({
         first_name: '',
@@ -97,10 +95,7 @@ export default function RegisterForm() {
     };
 
     const handleSubmit = (e: { preventDefault: () => void; }) => {
-
         e.preventDefault();
-
-        //console.log(formData);
 
         const userInput: Users_Insert_Input = {
             first_name: formData.first_name,
@@ -138,9 +133,8 @@ export default function RegisterForm() {
                 console.log('Регистрацията премина успешно.');
                 onLogin(user);
                 setTimeout(() => {
-                    navigate(buildUrl(userMenu[0].path));
+                    navigate(buildUrl(userSettings?.userMenu[0].path ?? ''));
                 }, 1000);
-                // navigate('/' + PathSegments.LOGIN); 
             }
         });
     };
@@ -176,7 +170,7 @@ export default function RegisterForm() {
                                 propName={'first_name'}
                                 changeCallback={handleChange}
                                 errors={errors}
-                                label="Име" 
+                                label="Име"
                                 disabled={false} />
                         </Grid>
 

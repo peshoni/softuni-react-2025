@@ -16,7 +16,7 @@ interface TableRowContext {
 }
 
 export default function TableRowContextMenu({ id, allowedActions = ['preview'], callback }: Readonly<TableRowContext>) {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null); 
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const options: Map<ROW_ACTIONS, { label: string, icon: JSX.Element; }> =
     new Map([
       ['edit', { label: 'редакция', icon: <EditIcon /> }],
@@ -30,17 +30,9 @@ export default function TableRowContextMenu({ id, allowedActions = ['preview'], 
 
   const handleClose = (actionType?: ROW_ACTIONS) => {
     setAnchorEl(null);
-    switch (actionType) {
-      case 'edit':
-        callback('edit', id);
-        break;
-      case 'preview':
-        callback('preview', id);
-        break;
-      default:
-
-        break;
-    }
+    if (actionType) {
+      callback(actionType, id);
+    } 
   };
 
   return (

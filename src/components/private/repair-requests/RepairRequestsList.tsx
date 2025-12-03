@@ -38,14 +38,14 @@ export default function RepairRequestsList() {
     /**
      * Retrieves the current user from the UserContext.
      */
-    const { user } = useContext(UserContext);
+    const { userSettings } = useContext(UserContext);
 
     let userCondition: Repair_Requests_Bool_Exp | null = {};
     const abortControllerRef = useRef<AbortController | null>(null);
 
-    if (user) {
-        if (user.user_role.code === 'autoMechanic') {
-            userCondition = { _and: [{ vehicle_status: { code: { _eq: 'under-repair' } } }, { automechanic_id: { _eq: user.id } }] };
+    if (userSettings?.user) {
+        if (userSettings.user.user_role.code === 'autoMechanic') {
+            userCondition = { _and: [{ vehicle_status: { code: { _eq: 'under-repair' } } }, { automechanic_id: { _eq: userSettings.user.id } }] };
             vehicleStatusesFilters = [];
         }
     }
@@ -88,7 +88,7 @@ export default function RepairRequestsList() {
         /**
          * Sets the allowed actions based on the user's role.
          */
-        switch (user?.user_role.code) {
+        switch (userSettings?.user?.user_role.code) {
             case 'customer':
                 setAllowedActions(['edit', 'preview', 'delete']);
                 break;
@@ -103,7 +103,7 @@ export default function RepairRequestsList() {
                 break;
         }
 
-    }, [user]);
+    }, [userSettings]);
 
 
     //TODo: error handling
@@ -146,7 +146,7 @@ export default function RepairRequestsList() {
     const isTableVisible: boolean = Boolean(data?.repair_requests_aggregate.aggregate?.count) && (!error || !loading);
     const navBarProps: TableNavbarProps = {
         label: "Заявки за ремонт",
-        user,
+        user: userSettings?.user,
         options: vehicleStatusesFilters,
         error,
         loading,

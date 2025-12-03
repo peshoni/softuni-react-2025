@@ -17,10 +17,9 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { Outlet, useLocation, useNavigate } from 'react-router';
 import UserContextMenu from './UserContextMenu';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { buildUrl } from '../../../routes/routes-util';
 import UserContext from '../contexts/UserContext';
-import type { LoggedUserMenu } from '../../../App';
 
 const drawerWidth = 240;
 
@@ -92,7 +91,7 @@ export default function ApplicationBar() {
   const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, userMenu } = useContext(UserContext);
+  const { userSettings } = useContext(UserContext);
   const [open, setOpen] = useState(true);
 
   const handleDrawerOpen = () => {
@@ -107,42 +106,6 @@ export default function ApplicationBar() {
     navigate(buildUrl(value));
   };
 
-  useEffect(() => {
-    // console.log('MOUNT...');
-    // console.log(user);
-    // if (user) {
-    //   const role: RoleFragment = user?.user_role;
-    //   buildMenuAccordingRole(role);
-    // }
-
-    //   if (!isNullOrUndefined(user)) {
-
-    //     navigate('/vehicles');
-    //   }
-    //   // mutate({
-    //   //   variables: {
-    //   //     user: {
-    //   //       name: 'Pepe',
-    //   //       surname: 'Ivanov',
-    //   //       family: 'Ivanov',
-    //   //       gender: 'male',
-    //   //       email: 'aaa@aaa.bg',
-    //   //       password: 'aaaaa',
-    //   //       role: 'customer'
-    //   //     }
-    //   //   }
-    //   // }).then((res) => {
-    //   //   setUser(res.data?.insert_users_one as UserFragment);
-    //   //   console.log(res);
-    //   // }).catch(e => {
-    //   //   if (e instanceof ApolloError) {
-    //   //     console.log(e);
-    //   //     // setIsServerOffline(true);
-    //   //   }
-    //   // });
-    //   // console.log(data, loading, error ); 
-
-  }, []);
 
   function getBackgroundColor(path: string) {
     const segment = location.pathname.split('/')[1];
@@ -172,7 +135,7 @@ export default function ApplicationBar() {
           </Typography>
 
           {/* The context menu for user settings */}
-          {user && <UserContextMenu />}
+          {userSettings && <UserContextMenu />}
 
         </Toolbar>
       </AppBar>
@@ -202,7 +165,7 @@ export default function ApplicationBar() {
         {/* <Divider /> */}
         <List>
 
-          {userMenu.map((option) => (
+          {userSettings?.userMenu.map((option) => (
             <ListItem key={option.label} disablePadding sx={{ backgroundColor: getBackgroundColor(option.path) }}>
               <ListItemButton onClick={() => handleMenuClick(option.path)}>
                 <ListItemIcon >

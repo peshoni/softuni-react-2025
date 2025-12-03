@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useReducer, useRef, useState } from 'react';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -7,7 +7,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import TableNavbar, { type TableNavbarProps } from '../common/tables/TableNavbar';
-import { Order_By, useGetVehiclesQuery, type VehicleFragment, type Vehicles_Bool_Exp } from '../../../../graphql/generated';
+import { Order_By, useDetachVehicleMutation, useGetVehiclesQuery, type VehicleFragment, type Vehicles_Bool_Exp } from '../../../../graphql/generated';
 import TableRowContextMenu, { type RowContextFunctionType, type ROW_ACTIONS } from '../common/tables/RowContextMenu';
 import { fromIsoDate } from '../../../utils/dateUtils';
 import type { ColumnSettings, FilterFields } from '../common/tables/table-interfaces';
@@ -20,6 +20,8 @@ import { isNullOrUndefined } from 'is-what';
 import useEnums from '../hooks/useEnums';
 import { rowsPerPageOptions } from '../common/constants';
 import UserContext from '../contexts/UserContext';
+import { useConfirmationDialog, type ConfirmationDialogOptions } from '../providers/ConfirmationDialog';
+import { arrayReducer } from '../../../examples/ArrayReducer';
 
 /**
  * Defines the columns for the vehicles table.
@@ -36,6 +38,11 @@ const columns: ColumnSettings<VehicleFragment>[] = [
 ];
 
 export default function VehiclesList() {
+    const navigate = useNavigate();
+    /**
+     * Confirm deletion dialog
+     */
+    const { confirm } = useConfirmationDialog();
     /**
      * Fetches enumeration data such as user roles and vehicle statuses.
      */
@@ -43,15 +50,14 @@ export default function VehiclesList() {
     /**
      * Retrieves the current user from the UserContext.
      */
-    const { user } = useContext(UserContext);
+    const { userSettings } = useContext(UserContext);
     /**
      * Determines the user-specific condition for fetching vehicles.
      */
-    const userCondition: Vehicles_Bool_Exp = (isNullOrUndefined(user) || (user.user_role.code !== 'customer'))
+    const userCondition: Vehicles_Bool_Exp = (isNullOrUndefined(userSettings) || (userSettings.user?.user_role.code !== 'customer'))
         ? {}
-        : { owner_id: { _eq: user.id } };
+        : { owner_id: { _eq: userSettings.user.id } };
 
-    const navigate = useNavigate();
 
     const [allowedActions, setAllowedActions] = useState<ROW_ACTIONS[]>([]);
     const [page, setPage] = useState(0);
@@ -61,6 +67,7 @@ export default function VehiclesList() {
     const abortControllerRef = useRef<AbortController | null>(null);
     const vehicleStatusesFilters: FilterFields[] = vehicleStatuses?.map(vs => ({ id: vs.id, name: vs.name, code: vs.code })) ?? [];
 
+    const [detachVehicleMutation] = useDetachVehicleMutation();
 
     const { data, loading, error } = useGetVehiclesQuery({
         variables: {
@@ -76,7 +83,7 @@ export default function VehiclesList() {
         }
     });
 
-    // console.log(data, loading, error);
+    const [vehicles, dispatch] = useReducer(arrayReducer<VehicleFragment>, []);
 
     useEffect(() => {
         // Create a new AbortController when the component mounts
@@ -88,10 +95,15 @@ export default function VehiclesList() {
     }, []);
 
     useEffect(() => {
+        dispatch({ type: 'load', payload: data?.vehicles ?? [] });
+    }, [data]);
+
+
+    useEffect(() => {
         /**
          * Sets the allowed actions based on the user's role.
          */
-        switch (user?.user_role.code) {
+        switch (userSettings?.user?.user_role.code) {
             case 'customer':
                 setAllowedActions(['edit', 'preview', 'delete']);
                 break;
@@ -105,7 +117,7 @@ export default function VehiclesList() {
                 setAllowedActions([]);
                 break;
         }
-    }, [user]);
+    }, [userSettings]);
 
     //Todo: error handling
 
@@ -138,15 +150,41 @@ export default function VehiclesList() {
         //setChildEvent(event);
     };
 
-    const rowContextMenuCallback: RowContextFunctionType = (action: ROW_ACTIONS, id: string) => { 
-        navigate(buildUrl(PathSegments.VEHICLES, PathSegments.DETAILS, id), { state: {  action } }); 
+    const rowContextMenuCallback: RowContextFunctionType = async (action: ROW_ACTIONS, id: string) => {
+
+        console.log(action);
+        // user-id ca50b248-d2fb-4eaa-8919-143330afddd1
+        if (action === 'delete') {
+            const vehicle = data?.vehicles.find(v => v.id === id);
+            console.log(vehicle);
+
+            const options: ConfirmationDialogOptions = {
+                title: 'Изтриване на данни за автомобил',
+                message: `При потвърждение, ще бъдат изтрити данните за автомобил ${vehicle?.plate_number} от вашите данни. Сигурни ли сте?`
+            };
+
+            const result = await confirm(options);
+
+            if (result === 'confirmed') {
+                detachVehicleMutation({ variables: { vehicleId: id } }).then(
+                    (result) => {
+                        if (result.data?.update_vehicles_by_pk) {
+                            dispatch({ type: 'delete', payload: [result.data.update_vehicles_by_pk as VehicleFragment] });
+                        }
+                    }
+                );
+            }
+
+        } else {
+            navigate(buildUrl(PathSegments.VEHICLES, PathSegments.DETAILS, id), { state: { action } });
+        }
     };
 
     const isTableVisible: boolean = (Boolean(data?.vehicles_aggregate.aggregate?.count)) && (!error || !loading);
 
     const navBarProps: TableNavbarProps = {
         label: 'Списък с автомобили',
-        user,
+        user: userSettings?.user,
         options: vehicleStatusesFilters,
         error,
         loading,
@@ -167,7 +205,7 @@ export default function VehiclesList() {
                             </TableHead>
 
                             <TableBody>
-                                {data?.vehicles.map((vehicle, index) => {
+                                {vehicles.map((vehicle, index) => {
                                     return (
                                         <TableRow hover
                                             tabIndex={-1}
@@ -185,7 +223,7 @@ export default function VehiclesList() {
                     <TablePagination
                         rowsPerPageOptions={rowsPerPageOptions}
                         component="div"
-                        count={data?.vehicles_aggregate.aggregate?.count ?? 0}
+                        count={vehicles.length ?? 0}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}
@@ -196,7 +234,7 @@ export default function VehiclesList() {
                 getFallbackTemplate(error, loading)
             )}
         </Paper>
-    )
+    );
 }
 
 function processColumn(column: ColumnSettings<VehicleFragment>, entity: VehicleFragment, allowedActions: ROW_ACTIONS[], contextCallback: RowContextFunctionType) {

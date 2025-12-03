@@ -11,7 +11,7 @@ import { Paper } from '@mui/material';
 
 export default function RepairRequestDetails() {
     let { id } = useParams<{ id: string; }>();
-    const { user } = useContext(UserContext);
+    const { userSettings } = useContext(UserContext);
     console.log('RepairRequestDetails id=', id);
     const params = useParams();
     const isCreateMode = isNullOrUndefined(params?.id);
@@ -33,7 +33,7 @@ export default function RepairRequestDetails() {
 
                     <List sx={{ width: '100%', /* maxWidth: 1000,*/ bgcolor: 'background.paper', border: '1px solid #bdbdbd' }}>
 
-                        {repairRequest?.requests_logs.map(l => <Log key={l.id} log={l as any} isFromCurrentUser={l.user.id === user?.id} />)}
+                        {repairRequest?.requests_logs.map(l => <Log key={l.id} log={l as any} isFromCurrentUser={l.user.id === userSettings?.user?.id} />)}
                     </List>
                 </div>
             }

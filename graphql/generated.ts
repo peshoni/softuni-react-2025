@@ -3098,7 +3098,7 @@ export type Vehicles = {
   id: Scalars['uuid']['output'];
   make: Scalars['String']['output'];
   model: Scalars['String']['output'];
-  owner_id: Scalars['uuid']['output'];
+  owner_id?: Maybe<Scalars['uuid']['output']>;
   plate_number: Scalars['String']['output'];
   /** An array relationship */
   repair_requests: Array<Repair_Requests>;
@@ -3107,7 +3107,7 @@ export type Vehicles = {
   status_id?: Maybe<Scalars['uuid']['output']>;
   updated_at?: Maybe<Scalars['timestamp']['output']>;
   /** An object relationship */
-  user: Users;
+  user?: Maybe<Users>;
   /** An object relationship */
   vehicle_status?: Maybe<Vehicle_Statuses>;
   vin: Scalars['String']['output'];
@@ -3626,6 +3626,13 @@ export type GetVehicleByIdQueryVariables = Exact<{
 
 
 export type GetVehicleByIdQuery = { vehicles_by_pk?: { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, code: string, color: string, name: string, weight: number } | null } | null };
+
+export type DetachVehicleMutationVariables = Exact<{
+  vehicleId: Scalars['uuid']['input'];
+}>;
+
+
+export type DetachVehicleMutation = { update_vehicles_by_pk?: { id: any } | null };
 
 export type VehicleFragment = { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number: string, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, code: string, color: string, name: string, weight: number } | null };
 
@@ -4199,3 +4206,36 @@ export type GetVehicleByIdQueryHookResult = ReturnType<typeof useGetVehicleByIdQ
 export type GetVehicleByIdLazyQueryHookResult = ReturnType<typeof useGetVehicleByIdLazyQuery>;
 export type GetVehicleByIdSuspenseQueryHookResult = ReturnType<typeof useGetVehicleByIdSuspenseQuery>;
 export type GetVehicleByIdQueryResult = ApolloReactCommon.QueryResult<GetVehicleByIdQuery, GetVehicleByIdQueryVariables>;
+export const DetachVehicleDocument = gql`
+    mutation DetachVehicle($vehicleId: uuid!) {
+  update_vehicles_by_pk(pk_columns: {id: $vehicleId}, _set: {owner_id: null}) {
+    id
+  }
+}
+    `;
+export type DetachVehicleMutationFn = ApolloReactCommon.MutationFunction<DetachVehicleMutation, DetachVehicleMutationVariables>;
+
+/**
+ * __useDetachVehicleMutation__
+ *
+ * To run a mutation, you first call `useDetachVehicleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDetachVehicleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [detachVehicleMutation, { data, loading, error }] = useDetachVehicleMutation({
+ *   variables: {
+ *      vehicleId: // value for 'vehicleId'
+ *   },
+ * });
+ */
+export function useDetachVehicleMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<DetachVehicleMutation, DetachVehicleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<DetachVehicleMutation, DetachVehicleMutationVariables>(DetachVehicleDocument, options);
+      }
+export type DetachVehicleMutationHookResult = ReturnType<typeof useDetachVehicleMutation>;
+export type DetachVehicleMutationResult = ApolloReactCommon.MutationResult<DetachVehicleMutation>;
+export type DetachVehicleMutationOptions = ApolloReactCommon.BaseMutationOptions<DetachVehicleMutation, DetachVehicleMutationVariables>;

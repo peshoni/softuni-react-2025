@@ -6,19 +6,21 @@ import { useNavigate } from "react-router";
 import { PathSegments } from "../../routes/enums";
 import { useLoginLazyQuery, type UserFragment } from "../../../graphql/generated";
 import PasswordInput from "../private/common/forms/PasswordInput";
-import { buildUrl } from "../../routes/routes-util";
 import UserContext from "../private/contexts/UserContext";
 import type { FormControlError } from "../private/common/interfaces";
 import { useToast } from "../private/contexts/ShackbarContext";
+import { buildUrl } from "../../routes/routes-util";
 
 export default function LoginForm( /*{ setUser }: { readonly setUser: (event: SetStateAction<UserFragment | undefined>) => void; } */) {
     const { showSnackbar } = useToast();
     const navigate = useNavigate();
-    const [performLogin, /* { called, loading, data }*/] = useLoginLazyQuery();
+    const [performLogin /* { called, loading, data }*/] = useLoginLazyQuery();
 
     const [submitted, setSubmitted] = useState(false);
     const [errors, setErrors] = useState<FormControlError[]>([]);
-    const { userMenu, onLogin } = useContext(UserContext);
+
+    const { onLogin } = useContext(UserContext);
+
     // elenapavelova@service.bg / Mechanic!  
     // ivanteodorov@service.bg / Service123!  
     // mariyastoyanina@service.bg / UserPass!
@@ -45,19 +47,18 @@ export default function LoginForm( /*{ setUser }: { readonly setUser: (event: Se
             let user: UserFragment | undefined = result.data?.users[0];
 
             if (user) {
-                localStorage.setItem('customer', JSON.stringify(user));
-                onLogin(user);
                 const awaitTime: number = 2000;
+                const settings = onLogin(user);
 
                 showSnackbar('Login was successfully', 'success', awaitTime);
                 setTimeout(() => {
                     setSubmitted(false);
-
-                    navigate(buildUrl(userMenu[0].path));
+                    if (settings) {
+                        navigate(buildUrl(settings.userMenu[0].path));
+                    }
                 }, awaitTime);
             } else {
                 onLogin(undefined);
-
                 showSnackbar('User with this email wasn\'t found', 'error', 4000);
                 setErrors([{ controlName: 'email' }]);
                 setSubmitted(false);

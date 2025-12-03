@@ -1,8 +1,13 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
 // https://vite.dev/config/
 export default defineConfig({
+  build: {
+    minify: false,
+    sourcemap: true,
+    chunkSizeWarningLimit: 1600,
+  },
   plugins: [react()],
   customLogger: {
     info: (msg) => {
@@ -23,12 +28,9 @@ export default defineConfig({
     error: (msg) => {
       console.error(msg);
     },
-    clearScreen : () => {},
-    hasErrorLogged : () => false,
+    clearScreen: () => { },
+    hasErrorLogged: () => false,
     hasWarned: false,
   },
-  build: {
-    sourcemap: true,
-    chunkSizeWarningLimit: 1600,
-  },
-})
+
+});

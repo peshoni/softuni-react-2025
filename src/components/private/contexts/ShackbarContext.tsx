@@ -28,11 +28,7 @@ export const SnackbarProvider = ({ children }: { children: ReactNode; }) => {
         },
         []
     );
-    //   const userContextValue: UserContextProps = useMemo(() => ({
-    //     user,
-    //     userMenu,
-    //     onLogin: loginHandler,
-    //     onLogout: logoutHandler,
+
     const handleCloseToastMessage = (event?: React.SyntheticEvent | Event, reason?: SnackbarCloseReason,) => {
         console.log(event);
         if (reason === 'clickaway') {
@@ -46,22 +42,20 @@ export const SnackbarProvider = ({ children }: { children: ReactNode; }) => {
     return (
 
         <SnackbarContext.Provider value={contextValue}>
-            {/* <SnackbarContext.Provider value={{ showSnackbar }}> */}
-            {children};
-            {toast &&  //<Toast message={toast.message} type={toast.type}  
 
-                <Snackbar
-                    open={true}
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-                    autoHideDuration={toast.duration || 3000}
-                    onClose={handleCloseToastMessage}
-                    sx={{ minWidth: '300px' }}
-                >
-                    <Alert severity={toast.type} sx={{ width: '100%' }}>
-                        {toast.message}
-                    </Alert>
-                </Snackbar>
+            {children}
 
+            {toast && <Snackbar
+                open={true}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                autoHideDuration={toast.duration || 3000}
+                onClose={handleCloseToastMessage}
+                sx={{ minWidth: '300px' }}
+            >
+                <Alert severity={toast.type} sx={{ width: '100%' }}>
+                    {toast.message}
+                </Alert>
+            </Snackbar>
             }
         </SnackbarContext.Provider>
     );

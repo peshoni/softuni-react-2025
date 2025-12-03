@@ -1,7 +1,7 @@
 import { useMemo, useState, type JSX, type ReactNode } from "react";
 import type { RoleFragment, UserFragment } from "../../../../graphql/generated";
 import { type LoggedUserMenu } from "../../../App";
-import type { UserContextProps } from "./UserContext";
+import type { UserContextProps, UserSettings } from "./UserContext";
 import UserContext from "./UserContext";
 import { buildUrl } from "../../../routes/routes-util";
 import RepairRequestDetails from "../repair-requests/RepairRequestDetails";
@@ -16,31 +16,34 @@ import CarRepairIcon from '@mui/icons-material/CarRepair';
 import { PathSegments } from "../../../routes/enums";
 
 export function UserProvider({ children }: Readonly<{ children: ReactNode; }>) {
-    const [routes, setRoutes] = useState<{ path: string, element: JSX.Element; }[]>([]);
-    const [userMenu, setUserMenu] = useState<LoggedUserMenu[]>([]);
-    const [user, setUser] = useState<UserFragment | undefined>();
 
-    const loginHandler = (user: UserFragment) => {
-        setUser(user);
-        const role: RoleFragment = user.user_role;
-        const allowedPaths: LoggedUserMenu[] = buildMenuAccordingRole(role);
-        setRoutes(buildRoutesAccordingToRole(role));
-        setUserMenu(allowedPaths);
+    const [userSettings, setUserSettings] = useState<UserSettings | undefined>();
 
-        localStorage.setItem('customer', JSON.stringify(user));
+    const loginHandler = (user: UserFragment | undefined): UserSettings | undefined => {
+        let settings: UserSettings | undefined;
+        if (user) {
+            const role: RoleFragment = user.user_role;
+            const allowedPaths: LoggedUserMenu[] = buildMenuAccordingRole(role);
+            settings = {
+                user: user,
+                routes: buildRoutesAccordingToRole(user.user_role),
+                userMenu: allowedPaths
+            };
+            setUserSettings(settings);
+            localStorage.setItem('customer', JSON.stringify(user));
+        }
+        return settings;
     };
 
     const logoutHandler = () => {
-        setUser(undefined);
+        setUserSettings(undefined);
     };
 
     const userContextValue: UserContextProps = useMemo(() => ({
-        user,
-        userMenu,
-        routes,
+        userSettings: userSettings,
         onLogin: loginHandler,
         onLogout: logoutHandler,
-    }), [user]);
+    }), [userSettings]);
 
     return (
         <UserContext.Provider value={userContextValue}>

@@ -37,7 +37,7 @@ export default function CustomersList() {
     /**
      * Retrieves the current user from the UserContext.
      */
-    const { user } = useContext(UserContext);
+    const { userSettings } = useContext(UserContext);
 
     let allRoles: FilterFields[] = Object.values(userRoles.map(e => ({ id: e.id, code: e.code, name: e.name })));
 
@@ -80,8 +80,8 @@ export default function CustomersList() {
     useEffect(() => {
         /**
          * Sets the allowed actions based on the user's role.
-         */ 
-        switch (user?.user_role.code) {
+         */
+        switch (userSettings?.user?.user_role.code) {
             case 'customer':
                 setAllowedActions(['preview']);
                 break;
@@ -96,7 +96,7 @@ export default function CustomersList() {
                 break;
         }
 
-    }, [user]);
+    }, [userSettings]);
 
     const handleChangePage = (event: unknown, newPage: number) => {
         console.log(event, newPage);
@@ -122,15 +122,15 @@ export default function CustomersList() {
         //setChildEvent(event);
     };
 
-    const rowContextMenuCallback: RowContextFunctionType = (action: ROW_ACTIONS, id: string) => { 
-         navigate(buildUrl(PathSegments.CUSTOMERS, PathSegments.DETAILS, id), { state: {  action } });
+    const rowContextMenuCallback: RowContextFunctionType = (action: ROW_ACTIONS, id: string) => {
+        navigate(buildUrl(PathSegments.CUSTOMERS, PathSegments.DETAILS, id), { state: { action } });
     };
 
     const isTableVisible: boolean = (Boolean(data?.users_aggregate.aggregate?.count)) && (!error || !loading);
 
     const navBarProps: TableNavbarProps = {
         label: 'Списък с потребители',
-        user,
+        user: userSettings?.user,
         options: allRoles,
         error,
         loading,

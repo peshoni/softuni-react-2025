@@ -4,16 +4,16 @@ networks:
     ipam:
       driver: default
 services:
-  ###
-  # softuni-frontend:
-  #   container_name: softuni-cars-app
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   networks:
-  #     - "softuni-react-net"
-  #   ports:
-  #     - "5173:80"
+  ### React app
+  softuni-frontend:
+    container_name: softuni-car-service-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - "softuni-react-net"
+    ports:
+      - "5173:80"
   ###
   postgres:
     image: postgres:17.2

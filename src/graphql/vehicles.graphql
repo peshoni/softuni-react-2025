@@ -1,4 +1,3 @@
-
 query GetVehicleStatuses {
   vehicle_statuses(order_by: {weight: asc}) {
     ...vehicle_status
@@ -19,6 +18,12 @@ query GetVehicles($limit: Int, $offset: Int, $condition: vehicles_bool_exp! = {}
 query GetVehicleById($id: uuid!) {
   vehicles_by_pk(id: $id) {
     ...vehicle
+  }
+}
+
+mutation DetachVehicle($vehicleId: uuid!) {
+  update_vehicles_by_pk(pk_columns: {id: $vehicleId}, _set: {owner_id: null}) {
+    id
   }
 }
 

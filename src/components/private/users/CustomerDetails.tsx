@@ -17,6 +17,7 @@ type FilteredUserProperties = Pick<Edit_UserFragment, typeof omitUserProperties[
 type FormUserProps = Omit<Edit_UserFragment, keyof FilteredUserProperties> & { role: string, genderCode: string; };
 //#endregion Form Types
 export default function CustomerDetails({ mode }: { readonly mode?: string; }) {
+    console.log(mode)
     const { genders, userRoles, } = useEnums();
     const [errors, setErrors] = useState<FormControlError[]>([]);
     const params = useParams();
@@ -111,7 +112,7 @@ export default function CustomerDetails({ mode }: { readonly mode?: string; }) {
         }
 
         return () => {
-            console.log('UNLOAD'); 
+            console.log('UNLOAD');
         };
     }, []);
 
