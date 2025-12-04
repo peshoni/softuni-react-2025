@@ -91,15 +91,15 @@ CODEGEN: https://the-guild.dev/graphql/codegen/docs/guides/react-vue
 <!-- 
 # docker compose down
 # docker compose up --build -d
-docker compose --env-file .env up --build -d 
+ 
 
 cd .\graphql\
 npx hasura migrate apply --database-name "default" 
 npx hasura metadata apply
 npx hasura seed apply --database-name "default"
 
-npx hasura migrate apply --database-name "default" --admin-secret ""
-npx hasura console --admin-secret "softuniReactAdminSecret"
+ 
+ 
 
 npx hasura migrate squash --skip-update-check --database-name="default" --delete-source --name "vehicles_and_repair_requests_tables" --from 1762179464569 
 npx hasura migrate apply --database-name "default"

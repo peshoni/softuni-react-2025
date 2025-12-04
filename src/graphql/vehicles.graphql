@@ -1,3 +1,9 @@
+mutation UpsertVehicle($vehicle: vehicles_insert_input!) {
+  insert_vehicles_one(object: $vehicle, on_conflict: {constraint:vehicles_pkey , update_columns: [make, model, year, fuel_type_id]}) {
+    id
+  }
+}
+
 query GetVehicleStatuses {
   vehicle_statuses(order_by: {weight: asc}) {
     ...vehicle_status

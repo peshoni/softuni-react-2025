@@ -5,15 +5,17 @@ networks:
       driver: default
 services:
   ### React app
-  softuni-frontend:
-    container_name: softuni-car-service-app
-    build:
-      context: .
-      dockerfile: Dockerfile
-    networks:
-      - "softuni-react-net"
-    ports:
-      - "5173:80"
+  # softuni-frontend:
+  #   container_name: softuni-car-service-app
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   networks:
+  #     - "softuni-react-net"
+  #   depends_on:
+  #     - "graphql-engine"
+  #   ports:
+  #     - "5173:80"
   ###
   postgres:
     image: postgres:17.2
