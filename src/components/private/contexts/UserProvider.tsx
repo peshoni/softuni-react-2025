@@ -73,19 +73,22 @@ const buildMenuAccordingRole = (role: RoleFragment): LoggedUserMenu[] => {
     }
 };
 
-const buildRoutesAccordingToRole = (role: RoleFragment): { path: string, element: JSX.Element; }[] => {
+const buildRoutesAccordingToRole = (role: RoleFragment): { path: string, element: JSX.Element; }[] => { 
     const routes: { path: string, element: JSX.Element; }[] = [];
 
-    const customersList = { path: PathSegments.CUSTOMERS, element: <CustomersList /> };
+    const customersList = { path: PathSegments.CUSTOMERS, element: <CustomersList /> }; 
     const customerDetails = { path: buildUrl(PathSegments.CUSTOMERS, PathSegments.DETAILS, ':id'), element: <CustomerDetails /> };
+
     const vehiclesList = { path: PathSegments.VEHICLES, element: <VehiclesList /> };
+    const vehicleCreate = { path: buildUrl(PathSegments.VEHICLES, PathSegments.DETAILS), element: <VehicleDetails /> };
     const vehicleDetails = { path: buildUrl(PathSegments.VEHICLES, PathSegments.DETAILS, ':id'), element: <VehicleDetails /> };
+
     const repairRequestsList = { path: PathSegments.REPAIR_REQUESTS, element: <RepairRequestsList /> };
     const repairRequestDetails = { path: buildUrl(PathSegments.REPAIR_REQUESTS, PathSegments.DETAILS, ':id'), element: <RepairRequestDetails /> };
 
     switch (role.code) {
         case 'customer':
-            return [vehiclesList, vehicleDetails, repairRequestsList, repairRequestDetails];
+            return [vehiclesList,vehicleCreate, vehicleDetails, repairRequestsList, repairRequestDetails];
         case 'serviceSpecialist':
             return [customersList, customerDetails, vehiclesList, vehicleDetails, repairRequestsList, repairRequestDetails];
         case 'autoMechanic':

@@ -8,11 +8,11 @@ import { useLoginLazyQuery, type UserFragment } from "../../../graphql/generated
 import PasswordInput from "../private/common/forms/PasswordInput";
 import UserContext from "../private/contexts/UserContext";
 import type { FormControlError } from "../private/common/interfaces";
-import { useToast } from "../private/contexts/ShackbarContext";
+import { useSnackbar } from "../private/contexts/ShackbarContext";
 import { buildUrl } from "../../routes/routes-util";
 
 export default function LoginForm( /*{ setUser }: { readonly setUser: (event: SetStateAction<UserFragment | undefined>) => void; } */) {
-    const { showSnackbar } = useToast();
+    const { showSnackbar } = useSnackbar();
     const navigate = useNavigate();
     const [performLogin /* { called, loading, data }*/] = useLoginLazyQuery();
 
@@ -23,14 +23,19 @@ export default function LoginForm( /*{ setUser }: { readonly setUser: (event: Se
 
     // elenapavelova@service.bg / Mechanic!  
     // ivanteodorov@service.bg / Service123!  
-    // mariyastoyanina@service.bg / UserPass!
+    // mariyastoyanina@service.bg / UserPass!   id: "ca50b248-d2fb-4eaa-8919-143330afddd1"
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     });
 
     const handleChange = (e: { target: { name: any; value: any; }; }) => {
-        console.log([e.target.name], e.target.value);
+        const controlName = e.target.name;
+        const value = e.target.value;
+        console.log(controlName, value);
+        if(errors.some(er => er.controlName === controlName)) {
+            setErrors(errors.filter(er => er.controlName !== controlName));
+        }
         console.log(errors);
         setFormData({
             ...formData,
@@ -59,8 +64,8 @@ export default function LoginForm( /*{ setUser }: { readonly setUser: (event: Se
                 }, awaitTime);
             } else {
                 onLogin(undefined);
-                showSnackbar('User with this email wasn\'t found', 'error', 4000);
-                setErrors([{ controlName: 'email' }]);
+                showSnackbar('User wasn\'t found', 'error', 4000);
+                setErrors([{ controlName: 'email' }, { controlName: 'password' }]);
                 setSubmitted(false);
             }
         });

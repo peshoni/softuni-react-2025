@@ -1,0 +1,14 @@
+.created-at {
+    /* background-color: rgb(255, 255, 255); */
+    font-weight: lighter;
+    border-bottom: 1px solid lightGray;
+    display: flex;
+    flex-direction: column;
+
+    &.right {
+        text-align: right;
+    }
+    &.left {
+        text-align: left;
+    }
+}

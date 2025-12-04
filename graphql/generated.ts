@@ -3605,6 +3605,13 @@ export type RoleFragment = { id: any, code: string, name: string };
 
 export type GenderFragment = { id: any, code: string, name: string };
 
+export type UpsertVehicleMutationVariables = Exact<{
+  vehicle: Vehicles_Insert_Input;
+}>;
+
+
+export type UpsertVehicleMutation = { insert_vehicles_one?: { id: any } | null };
+
 export type GetVehicleStatusesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -4079,6 +4086,42 @@ export type GetUserByIdQueryHookResult = ReturnType<typeof useGetUserByIdQuery>;
 export type GetUserByIdLazyQueryHookResult = ReturnType<typeof useGetUserByIdLazyQuery>;
 export type GetUserByIdSuspenseQueryHookResult = ReturnType<typeof useGetUserByIdSuspenseQuery>;
 export type GetUserByIdQueryResult = ApolloReactCommon.QueryResult<GetUserByIdQuery, GetUserByIdQueryVariables>;
+export const UpsertVehicleDocument = gql`
+    mutation UpsertVehicle($vehicle: vehicles_insert_input!) {
+  insert_vehicles_one(
+    object: $vehicle
+    on_conflict: {constraint: vehicles_vin_key, update_columns: [make, model, plate_number, year, fuel_type_id]}
+  ) {
+    id
+  }
+}
+    `;
+export type UpsertVehicleMutationFn = ApolloReactCommon.MutationFunction<UpsertVehicleMutation, UpsertVehicleMutationVariables>;
+
+/**
+ * __useUpsertVehicleMutation__
+ *
+ * To run a mutation, you first call `useUpsertVehicleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpsertVehicleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [upsertVehicleMutation, { data, loading, error }] = useUpsertVehicleMutation({
+ *   variables: {
+ *      vehicle: // value for 'vehicle'
+ *   },
+ * });
+ */
+export function useUpsertVehicleMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<UpsertVehicleMutation, UpsertVehicleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<UpsertVehicleMutation, UpsertVehicleMutationVariables>(UpsertVehicleDocument, options);
+      }
+export type UpsertVehicleMutationHookResult = ReturnType<typeof useUpsertVehicleMutation>;
+export type UpsertVehicleMutationResult = ApolloReactCommon.MutationResult<UpsertVehicleMutation>;
+export type UpsertVehicleMutationOptions = ApolloReactCommon.BaseMutationOptions<UpsertVehicleMutation, UpsertVehicleMutationVariables>;
 export const GetVehicleStatusesDocument = gql`
     query GetVehicleStatuses {
   vehicle_statuses(order_by: {weight: asc}) {

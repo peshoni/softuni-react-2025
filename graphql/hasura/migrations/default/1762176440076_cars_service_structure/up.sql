@@ -71,7 +71,7 @@ CREATE TABLE public.vehicles (
     make VARCHAR(100) NOT NULL,
     model VARCHAR(100) NOT NULL,
     vin VARCHAR(20) UNIQUE NOT NULL,
-    plate_number VARCHAR(20) UNIQUE NOT NULL,
+    plate_number VARCHAR(20),
     year INTEGER CHECK (year >= 1900 AND year <= EXTRACT(YEAR FROM now())::INTEGER),
     created_at TIMESTAMP NOT NULL DEFAULT now(),
     updated_at TIMESTAMP

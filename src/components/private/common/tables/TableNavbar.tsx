@@ -86,6 +86,11 @@ function checkAddButtonVisibility(user: UserFragment | undefined) {
             return false;
         }
 
+        if (user.user_role.code === 'serviceSpecialist') {
+            return false;
+        }
+
+
         return true;
     } else {
         return false;

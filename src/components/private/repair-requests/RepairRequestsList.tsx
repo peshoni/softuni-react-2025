@@ -7,7 +7,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TableNavbar, { type TableNavbarProps } from "../common/tables/TableNavbar";
-import { Order_By, useGetRepairRequestsQuery, type Repair_RequestFragment, type Repair_Requests_Bool_Exp, type Vehicle_StatusFragment, } from "../../../../graphql/generated";
+import { Order_By, useGetRepairRequestsQuery, type Repair_RequestFragment, type Repair_Requests_Bool_Exp, type Vehicle_StatusFragment, type VehicleFragment, } from "../../../../graphql/generated";
 import TableRowContextMenu, { type ROW_ACTIONS, type RowContextFunctionType } from "../common/tables/RowContextMenu";
 import { fromIsoDate } from "../../../utils/dateUtils";
 import type { ColumnSettings, FilterFields } from "../common/tables/table-interfaces";
@@ -23,6 +23,7 @@ import UserContext from "../contexts/UserContext";
 const columns: ColumnSettings<Repair_RequestFragment>[] = [
     { property: "created_at", label: "създаден", width: "80px", formatDate: (value) => fromIsoDate(value), },
     { property: "updated_at", label: "променен", width: "100px", formatDate: (value) => fromIsoDate(value), },
+    { property: "vehicle", label: "автомобил" },
     { property: "title", label: "описание" },
     { property: "vehicle_status", label: "статус" },
     { property: "logsCount", label: "бележки" },
@@ -47,6 +48,14 @@ export default function RepairRequestsList() {
         if (userSettings.user.user_role.code === 'autoMechanic') {
             userCondition = { _and: [{ vehicle_status: { code: { _eq: 'under-repair' } } }, { automechanic_id: { _eq: userSettings.user.id } }] };
             vehicleStatusesFilters = [];
+        }
+
+        if (userSettings.user.user_role.code === 'customer') {
+            userCondition = {
+                _and: [
+                    { customer_id: { _eq: userSettings.user.id } },
+                ]
+            };
         }
     }
 
@@ -119,7 +128,7 @@ export default function RepairRequestsList() {
     };
 
     const filterSelectedHandler = (selectedFilter: FilterFields) => {
-        console.log(selectedFilter);
+        // console.log(selectedFilter);
         const criteria: string | null = selectedFilter.id;
 
         const filterCondition: Repair_Requests_Bool_Exp = criteria ? { status_id: { _eq: criteria } } : {};
@@ -203,6 +212,8 @@ function processColumn(column: ColumnSettings<Repair_RequestFragment>, entity: R
             case "created_at":
             case "updated_at":
                 return column.formatDate?.(value);
+            case 'vehicle':
+                return (value as VehicleFragment).plate_number;
             case "logsCount":
                 return (value as { aggregate?: { count: number; }; }).aggregate?.count;
             case "vehicle_status":

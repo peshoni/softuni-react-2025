@@ -61,10 +61,10 @@ export const SnackbarProvider = ({ children }: { children: ReactNode; }) => {
     );
 };
 
-export const useToast = (): SnackbarContextType => {
+export const useSnackbar = (): SnackbarContextType => {
     const ctx = useContext(SnackbarContext);
     if (!ctx) {
-        throw new Error("useToast must be used inside ToastProvider");
+        throw new Error("useSnackbar must be used inside SnackbarProvider");
     }
     return ctx;
 };

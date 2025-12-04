@@ -1,25 +1,36 @@
 import { isNullOrUndefined } from "is-what";
-import { useLocation, useParams } from "react-router";
-import { useGetVehicleByIdLazyQuery, type VehicleFragment } from "../../../../graphql/generated";
+import { useLocation, useNavigate, useParams } from "react-router";
+import { useGetVehicleByIdLazyQuery, useUpsertVehicleMutation, type VehicleFragment, type Vehicles_Insert_Input } from "../../../../graphql/generated";
 import DetailsHeader from "../common/forms/DetailsHeader";
 import DatasourceEmptyResult from "../common/tables/DataSourceEmptyResult";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Paper, Grid, FormControl, InputLabel, OutlinedInput, Select, MenuItem, FormHelperText, Button } from "@mui/material";
 import type { FormControlError } from "../common/interfaces";
 import TextInput from "../common/forms/TextInput";
 import useEnums from "../hooks/useEnums";
 import type { FilterFields } from "../common/tables/table-interfaces";
+import UserContext from "../contexts/UserContext";
+import { useSnackbar } from "../contexts/ShackbarContext";
+import { buildUrl } from "../../../routes/routes-util";
+import { PathSegments } from "../../../routes/enums";
 
 //#region Form Types 
 const omitVehicleProperties = ['id', 'created_at', 'updated_at', 'fuel_type', 'vehicle_status'] as const;
 type FilteredProperties = Pick<VehicleFragment, typeof omitVehicleProperties[number]>;
-type FormVehicleProps = Omit<VehicleFragment, keyof FilteredProperties> & { fuel: string, status: string; };
+type FormVehicleProps = Omit<VehicleFragment, keyof FilteredProperties> & { fuel: string; /*, status: string;*/ };
 //#endregion Form Types
 
 export default function VehicleDetails() {
     const { fuelTypes, vehicleStatuses } = useEnums();
     const location = useLocation();
+    const navigate = useNavigate();
+    const { showSnackbar } = useSnackbar();
     console.log(location.state);
+
+    /**
+     * Retrieves the current user from the UserContext.
+     */
+    const { userSettings } = useContext(UserContext);
 
     const isFormDisabled = location.state?.action === 'preview';
 
@@ -28,6 +39,7 @@ export default function VehicleDetails() {
 
     const [errors, setErrors] = useState<FormControlError[]>([]);
     const [getVehicle] = useGetVehicleByIdLazyQuery();
+    const [upsertVehicleMutation] = useUpsertVehicleMutation();
     // const aaaaa = useGetVehicleByIdSuspenseQuery
     const params = useParams();
 
@@ -40,12 +52,12 @@ export default function VehicleDetails() {
         model: '',
         plate_number: '',
         vin: '',
-        year: 0,
-        fuel: '',
-        status: ''
+        year: 1980,
+        fuel: ''
     });
 
-    const isCreateMode = isNullOrUndefined(params?.id);
+    const isCreateMode = isNullOrUndefined(params) || isNullOrUndefined(params?.id);
+
     let vehicle: VehicleFragment | undefined | null;
 
     const handleChange = (e: { target: { name: any; value: any; }; }) => {
@@ -54,13 +66,11 @@ export default function VehicleDetails() {
         const fieldName = e.target.name;
         let fieldValue = e.target.value;
         if (fieldName === 'year') {
-
-
-            console.log(fieldValue);
-            // console.log('INVALID NUMBER : ' + e.target.value)
-            if (!errors.some(c => c.controlName === fieldName)) {
-
+            fieldValue = Number(fieldValue);
+            if ((fieldValue < 1980 || fieldValue > 2025) && !errors.some(c => c.controlName === fieldName)) {
                 errors.push({ controlName: fieldName });
+            } else if (fieldValue >= 1980 && fieldValue < 2025) {
+                setErrors(err => err.filter(e => e.controlName !== fieldName));
             }
         } else {
             const index = errors.findIndex(c => c.controlName === fieldName);
@@ -87,7 +97,32 @@ export default function VehicleDetails() {
         //   return;
         // }
         // Simulate login/register action
-        alert('Submit');
+
+        const input: Vehicles_Insert_Input = {
+            make: formData.make,
+            model: formData.model,
+            plate_number: formData.plate_number,
+            vin: formData.vin,
+            year: formData.year,
+            fuel_type_id: fuelTypes.find(t => t.code === formData.fuel)?.id,
+            owner_id: userSettings?.user?.id
+        };
+
+        upsertVehicleMutation({ variables: { vehicle: input } })
+            .then((result) => {
+                console.log(result);
+                const awaitTime: number = 2000;
+                showSnackbar('Промяната на данни беше успешна', 'success', awaitTime);
+                setTimeout(() => {
+                    // setSubmitted(false);
+
+                    navigate(buildUrl(PathSegments.VEHICLES));
+
+                }, awaitTime);
+            }
+            ).catch((err) => {
+                console.log(err);
+            });
     };
 
     const handleSelectChange = (event: any) => {
@@ -119,8 +154,8 @@ export default function VehicleDetails() {
                             model: vehicle.model,
                             plate_number: vehicle.plate_number,
                             vin: vehicle.vin,
-                            status: vehicle.vehicle_status?.code ?? '',
                             fuel: vehicle.fuel_type?.code ?? ''
+                            // status: vehicle.vehicle_status?.code ?? '',
                         }
                     );
                 }
@@ -132,10 +167,11 @@ export default function VehicleDetails() {
 
     return (
         <>
+            {JSON.stringify(userSettings?.user)}
             <DetailsHeader isCreateMode={isCreateMode} />
             {!formData && <DatasourceEmptyResult />}
             {formData &&
-                <Paper elevation={1} sx={{ p: 4, borderRadius: 1 }}>
+                <Paper elevation={1} sx={{ p: 4, borderRadius: 1, marginTop: 1 }}>
                     <Grid
                         component="form"
                         container
@@ -143,10 +179,7 @@ export default function VehicleDetails() {
                         columns={{ xs: 3, md: 6, lg: 9 }}
                         columnSpacing={2}
                         rowGap={1}
-
                         onSubmit={handleSubmit} >
-
-                        {/* <Box component="form" onSubmit={handleSubmit} autoComplete="off"> */}
 
                         <Grid size={3}>
                             <FormControl sx={{ margin: '8px 0', width: '100%' }} variant="outlined">
@@ -156,6 +189,7 @@ export default function VehicleDetails() {
                                     id="yearId"
                                     name='year'
                                     type='number'
+                                    inputProps={{ inputprops: { min: 1980, max: 2025 } }}
                                     label='Year'
                                     disabled={isFormDisabled}
                                     value={formData.year}
@@ -204,36 +238,38 @@ export default function VehicleDetails() {
                                 key='vin'
                                 value={formData['vin']}
                                 propName={'vin'}
-                                disabled={isFormDisabled}
+                                disabled={isFormDisabled || !isCreateMode}
                                 changeCallback={handleChange}
                                 errors={errors}
-                                label="vin" />
+                                label="ВИН номер" />
                         </Grid>
 
                         <Grid size={3}>
                             <FormControl sx={{ margin: '8px 0', width: '100%' }} variant="outlined">
-                                <InputLabel id="tableFilterOne">fuel</InputLabel>
+                                <InputLabel id="tableFilterOne">Гориво</InputLabel>
                                 <Select
                                     labelId="tableFilterOne"
                                     label="fuel"
                                     name="fuel"
-
                                     disabled={isFormDisabled}
                                     value={formData.fuel}
                                     onChange={handleSelectChange}
                                     sx={{ textAlign: 'start' }}
                                 >
-                                    {fuelTypesFilters.map(element => <MenuItem
-                                        value={element.code} key={element.id}>{element.name}
-                                    </MenuItem>)}
+                                    {fuelTypesFilters.map(element =>
+                                        <MenuItem
+                                            value={element.code} key={element.id}>{element.name}
+                                        </MenuItem>
+                                    )}
                                 </Select>
                                 <FormHelperText>Select option</FormHelperText>
                             </FormControl>
                         </Grid>
 
-                        <Grid size={3}>
+                        {/* 
+                        {!isCreateMode && <Grid size={3}>
                             <FormControl sx={{ margin: '8px 0', width: '100%' }} variant="outlined">
-                                <InputLabel id="tableFilterOne">status</InputLabel>
+                                <InputLabel id="tableFilterOne">Статус</InputLabel>
                                 <Select
                                     labelId="roleSelect"
                                     label="status"
@@ -250,33 +286,32 @@ export default function VehicleDetails() {
                                 <FormHelperText>Select option</FormHelperText>
                             </FormControl>
                         </Grid>
+                        } */}
 
-
+                        {/* Actions */}
                         <Grid size={{ xs: 3, md: 6, lg: 9 }} container justifyContent="flex-end" >
                             <Grid size={{ xs: 3, md: 3, lg: 2 }}>
 
-                                {!isFormDisabled &&
-                                    <Button
-                                        type="submit"
-                                        fullWidth
-                                        variant="contained"
-                                        size="large"
-                                        sx={{ mt: 2, borderRadius: 2 }}
-                                    >
-                                        Запази
-                                    </Button>
+                                {!isFormDisabled && <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    size="large"
+                                    sx={{ mt: 2, borderRadius: 2 }}
+                                >
+                                    Запази
+                                </Button>
                                 }
-                                {isFormDisabled &&
-                                    <Button
-                                        type="button"
-                                        fullWidth
-                                        variant="contained"
-                                        size="large"
-                                        sx={{ mt: 2, borderRadius: 2 }}
-                                        onClick={() => history.back()}
-                                    >
-                                        Назад
-                                    </Button>
+                                {isFormDisabled && <Button
+                                    type="button"
+                                    fullWidth
+                                    variant="contained"
+                                    size="large"
+                                    sx={{ mt: 2, borderRadius: 2 }}
+                                    onClick={() => history.back()}
+                                >
+                                    Назад
+                                </Button>
                                 }
                             </Grid>
                         </Grid>
@@ -284,5 +319,5 @@ export default function VehicleDetails() {
                 </Paper>
             }
         </>
-    )
+    );
 }

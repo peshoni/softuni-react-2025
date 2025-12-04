@@ -65,7 +65,10 @@ export default function VehiclesList() {
     const [condition, setCondition] = useState<Vehicles_Bool_Exp>({ _and: [userCondition] });
 
     const abortControllerRef = useRef<AbortController | null>(null);
-    const vehicleStatusesFilters: FilterFields[] = vehicleStatuses?.map(vs => ({ id: vs.id, name: vs.name, code: vs.code })) ?? [];
+    let vehicleStatusesFilters: FilterFields[] = [];
+    if (userSettings && userSettings?.user?.user_role.code !== 'customer') {
+        vehicleStatusesFilters = vehicleStatuses?.map(vs => ({ id: vs.id, name: vs.name, code: vs.code })) ?? [];
+    }
 
     const [detachVehicleMutation] = useDetachVehicleMutation();
 
@@ -74,7 +77,7 @@ export default function VehiclesList() {
             limit: rowsPerPage,
             offset: page * rowsPerPage,
             condition: condition,
-            orderBy: { created_at: Order_By.asc }
+            orderBy: { created_at: Order_By.desc }
         },
         context: {
             fetchOptions: {
@@ -97,7 +100,6 @@ export default function VehiclesList() {
     useEffect(() => {
         dispatch({ type: 'load', payload: data?.vehicles ?? [] });
     }, [data]);
-
 
     useEffect(() => {
         /**
@@ -147,6 +149,10 @@ export default function VehiclesList() {
     const addClickedHandler = () => {
         console.log('child -> parent: add click');
         console.log('Open add user details');
+        // TODO check roles here for service specialist and customer
+
+        navigate(buildUrl(PathSegments.VEHICLES, PathSegments.DETAILS));
+
         //setChildEvent(event);
     };
 
