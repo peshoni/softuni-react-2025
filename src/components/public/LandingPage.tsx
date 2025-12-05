@@ -19,7 +19,7 @@ import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturing";
 import { useNavigate } from "react-router";
 
-export default function CarServiceLanding() {
+export default function LandingPage() {
   const navigate = useNavigate();
 
   const aboutSettings: {
@@ -64,10 +64,10 @@ export default function CarServiceLanding() {
 
           <Box display="flex" gap={2}>
             <Button variant="outlined" color="primary" onClick={() => handleButtonClick('login')}>
-              login
+              вход
             </Button>
             <Button variant="contained" color="primary" onClick={() => handleButtonClick('register')}>
-              register
+              регистрация
             </Button>
           </Box>
         </Toolbar>

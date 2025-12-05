@@ -34,9 +34,14 @@ export default defineConfig({
   },
 
   test: {
-    globals: true,
     environment: 'jsdom',
-    // setupFiles: './src/setupTests.ts',
+    globals: false, // inject: it, should, expect... in global scope if true
+    setupFiles: [
+      './src/tests/setupTests.js',
+    ],
+    coverage: {
+      provider: 'istanbul'
+    }
   },
 
 });

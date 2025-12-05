@@ -1,7 +1,7 @@
-import { test, it, expect, assert, beforeEach, afterEach } from 'vitest';
-import { render, screen, cleanup, getByRole } from "@testing-library/react";
+import { it, expect, afterEach } from 'vitest';
+import { render, screen, cleanup } from "@testing-library/react";
 import Log from './Log';
-import type { Repair_RequestFragment, Requests_Logs, Users } from '../../../../graphql/generated';
+import type { Requests_Logs, Users } from '../../../../graphql/generated';
 // import { create } from "framer-motion/m";
 // import { createRoot } from "react-dom/client";
 // import { act } from "react";
