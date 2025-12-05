@@ -2,80 +2,128 @@ import './Log.css';
 import { ListItemAvatar, Avatar, Typography, IconButton, useTheme, TextField, Box, Tooltip } from "@mui/material";
 import type { Requests_Logs, Users } from "../../../../graphql/generated";
 import DeleteIcon from '@mui/icons-material/Delete';
-import type { JSX } from "react";
+import { useEffect, useState, type JSX } from "react";
 import UpdateIcon from '@mui/icons-material/Update';
 import { fromIsoDate } from "../../../utils/dateUtils";
+import UndoIcon from '@mui/icons-material/Undo';
+
+export type COMMENT_ACTIONS = 'delete' | 'update' | 'undo';
 /**
  * Stateless component to display a single log entry in the repair requests section.
  * @param props { log: Requests_Logs; isFromCurrentUser: boolean }
  * @returns {JSX.Element}     
  */
-export default function Log({ log, isFromCurrentUser }: { readonly log: Requests_Logs; readonly isFromCurrentUser: boolean; }): JSX.Element {
-    // TODO reverse only the current user logs
-    // TODO - set/use editable flag
-
+export default function Log({ log, isEditable, callBack }: {
+    readonly log: Requests_Logs;
+    readonly isEditable: boolean;
+    readonly callBack: (action: COMMENT_ACTIONS, entity: Requests_Logs) => void
+}): JSX.Element {
     const theme = useTheme();
-    const editable = isFromCurrentUser;
-    const rowDirection: string = isFromCurrentUser ? 'row-reverse' : 'row';
-    const currentUserColor = isFromCurrentUser ? theme.palette.primary.main : theme.palette.grey[700];
+    const [message, setMessage] = useState<string>(log.message || '');
+    const [updatedMessage, setUpdatedMessage] = useState<string>(log.message || '');
+    // Controllers variables
+    const rowDirection: string = isEditable ? 'row-reverse' : 'row';
+    const currentUserColor = isEditable ? theme.palette.primary.main : theme.palette.grey[700];
+    const undoDisabled: boolean = updatedMessage === log.message;
+    const updateDisabled: boolean = updatedMessage === log.message;
+    const deleteDisabled: boolean = message !== log.message;
 
-    const handleRowAction = (action: string, id: string) => {
-        console.log(`Action: ${action} on log id: ${log.id}`);
+    useEffect(() => {
+        setMessage(log.message || '');
+        setUpdatedMessage(log.message || '');
+    }, [log.message]);
+
+    /**
+     * Handles actions performed on the log entry.
+     * @param action {COMMENT_ACTIONS} - The action to perform ('delete', 'update', 'undo').
+     */
+    const handleRowAction = (action: COMMENT_ACTIONS) => {
+        if (action === 'undo') {
+            // Reset message to original and do nothing else
+            setMessage(log.message || '');
+            setUpdatedMessage(log.message || '');
+        } else if (action === 'update') {
+            //Handle update action and notify parent 
+            callBack('update', { ...log, message: updatedMessage });
+        } else if (action === 'delete') {
+            // Handle delete action 
+            callBack('delete', { ...log });
+        }
     }
+
+    const handleMessageChange = (e: { target: { name: string; value: string; }; }) => {
+        setMessage(e.target.value);
+        setUpdatedMessage(e.target.value);
+    };
 
     return (
         <Box sx={{ display: 'flex', flexDirection: rowDirection, border: '1px solid lightGray', margin: 1, padding: 1 }}>
-            <ListItemAvatar sx={{ display: 'flex', alignItems: (isFromCurrentUser ? 'flex-end' : 'flex-start'), flexDirection: 'column' }}>
+            <ListItemAvatar sx={{ display: 'flex', alignItems: (isEditable ? 'flex-end' : 'flex-start'), flexDirection: 'column' }}>
                 <Avatar alt={`${log.user.first_name}`} src="/static/images/avatar/2.jpg" sx={{ backgroundColor: currentUserColor }} />
-                {isFromCurrentUser &&
+                {isEditable &&
                     <>
-                        <Tooltip title="Промени" disableInteractive>
-                            {/* disabled={true}  */}
-                            <IconButton
-                                size="small"
-                                sx={{ color: theme.palette.primary.main }}
-                                onClick={() => handleRowAction('update', log.id)}  >
-                                <UpdateIcon />
-                            </IconButton>
+                        <Tooltip title="Премахни промените" disableInteractive>
+                            <span>
+                                <IconButton
+                                    size="small"
+                                    disabled={undoDisabled}
+                                    sx={{ color: theme.palette.primary.main }}
+                                    onClick={() => !undoDisabled && handleRowAction('undo')}  >
+                                    <UndoIcon />
+                                </IconButton>
+                            </span>
                         </Tooltip>
-                        {/* <IconButton size="small" sx={{ color: theme.palette.primary.light }} ><EditIcon />  </IconButton> */}
+                        <Tooltip title="Промени" disableInteractive>
+                            <span>
+                                <IconButton
+                                    size="small"
+                                    disabled={updateDisabled}
+                                    sx={{ color: theme.palette.primary.main }}
+                                    onClick={() => !updateDisabled && handleRowAction('update')}  >
+                                    <UpdateIcon />
+                                </IconButton>
+                            </span>
+                        </Tooltip>
                         <Tooltip title="Изтрий" disableInteractive>
-                            <IconButton
-                                size="small"
-                                sx={{ color: theme.palette.warning.light }}
-                                onClick={() => handleRowAction('update', log.id)}>
-                                <DeleteIcon />
-                            </IconButton>
+                            <span>
+                                <IconButton
+                                    size="small"
+                                    sx={{ color: theme.palette.warning.light }}
+                                    disabled={deleteDisabled}
+                                    onClick={() => handleRowAction('delete')}>
+                                    <DeleteIcon />
+                                </IconButton>
+                            </span>
                         </Tooltip>
                     </>
                 }
             </ListItemAvatar>
 
             <Box sx={{ display: 'flex', gap: 1, flexDirection: 'column', width: '100%' }}>
-                <Typography sx={{ color: currentUserColor, fontWeight: '700', fontSize: '18px', textAlign: isFromCurrentUser ? 'right' : 'left', borderBottom: '1px solid lightGray' }} >
+                <Typography sx={{ color: currentUserColor, fontWeight: '700', fontSize: '18px', textAlign: isEditable ? 'right' : 'left', borderBottom: '1px solid lightGray' }} >
                     {getUserPreview(log.user)}
                 </ Typography>
-                <Typography className={"created-at " + (isFromCurrentUser ? 'right' : 'left')} sx={{ color: currentUserColor }}>
+                <Typography className={"created-at " + (isEditable ? 'right' : 'left')} sx={{ color: currentUserColor }}>
                     {log.created_at && <span>създаден: {fromIsoDate(log.created_at)}</span>}
                     {log.updated_at && <span>променен: {fromIsoDate(log.updated_at)}</span>}
                 </ Typography>
 
-                {editable ? (
+                {isEditable ? (
                     <TextField
                         key={log.id}
                         style={{ width: '100%', maxWidth: '100%' }}
                         variant='outlined'
-                        disabled={!isFromCurrentUser}
+                        disabled={!isEditable}
                         multiline
-                        // onChange={handleChange} 
+                        onChange={handleMessageChange}
                         // minRows={5}
-                        defaultValue={log.message}
+                        value={message}
                     />
 
                 ) : (<Typography
                     component="span"
                     variant="body2"
-                    sx={{ color: 'text.primary.dark', fontSize: 18, textAlign: isFromCurrentUser ? 'right' : 'left' }}
+                    sx={{ color: 'text.primary.dark', fontSize: 18, textAlign: isEditable ? 'right' : 'left' }}
                 >
                     {log.message}
                 </Typography>)}

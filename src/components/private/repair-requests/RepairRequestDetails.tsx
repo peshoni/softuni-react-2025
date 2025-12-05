@@ -1,20 +1,27 @@
-import { useLocation, useParams } from 'react-router'; 
-import { useGetRepairRequestByIdLazyQuery, type Repair_Request_With_LogsFragment, type Repair_RequestFragment } from '../../../../graphql/generated';
-import Log from './Log';
+import { useLocation, useParams } from 'react-router';
+import { useGetRepairRequestByIdLazyQuery, type Repair_Request_With_LogsFragment, type Repair_RequestFragment, type Requests_Logs } from '../../../../graphql/generated';
+import Log, { type COMMENT_ACTIONS } from './Log';
 import { isNullOrUndefined } from 'is-what';
 import DetailsHeader from '../common/forms/DetailsHeader';
 import DatasourceEmptyResult from '../common/tables/DataSourceEmptyResult';
 import UserContext from '../contexts/UserContext';
 import { useContext, useEffect, useState } from 'react';
-import { Box, FormControl, Grid, InputLabel, OutlinedInput, Paper, TextField } from '@mui/material';
+import { Box, FormControl, Grid, InputLabel, OutlinedInput, Paper, TextField, Typography, styled } from '@mui/material';
 import type { FormControlError } from '../common/interfaces';
-
+import AddCommentIcon from '@mui/icons-material/AddComment';
 
 //#region Form Types 
 const omitRepairRequestProperties = ['id', 'created_at', 'updated_at', 'logsCount', 'vehicle', 'vehicle_status'] as const;
 type FilteredProperties = Pick<Repair_RequestFragment, typeof omitRepairRequestProperties[number]>;
 type FormRepairRequestProps = Omit<Repair_RequestFragment, keyof FilteredProperties> & { logsCount: number; status: string; };
 //#endregion Form Types
+
+
+
+const MyInputLabel = styled(InputLabel)(() => ({
+    backgroundColor: 'white',
+    paddingRight: '8px'
+}));
 
 export default function RepairRequestDetails() {
     let { id } = useParams<{ id: string; }>();
@@ -35,27 +42,24 @@ export default function RepairRequestDetails() {
 
                 getRepairRequest({ variables: { id: params.id } })
                     .then((result) => {
-                        const res: Repair_Request_With_LogsFragment = result.data?.repair_requests_by_pk as Repair_Request_With_LogsFragment;
-                        if (res) {
-                            setRepairRequests(res);
+                        const repairRequestWithLogs: Repair_Request_With_LogsFragment = result.data?.repair_requests_by_pk as Repair_Request_With_LogsFragment;
+                        if (repairRequestWithLogs) {
+                            setRepairRequests(repairRequestWithLogs);
                             setFormData({
-                                title: res.title,
-                                description: res.description,
-                                status: res.vehicle_status.code,
-                                logsCount: res.logsCount.aggregate?.count ?? 0,
-                                scheduled_for: res.scheduled_for
+                                title: repairRequestWithLogs.title,
+                                description: repairRequestWithLogs.description,
+                                status: repairRequestWithLogs.vehicle_status.code,
+                                logsCount: repairRequestWithLogs.logsCount.aggregate?.count ?? 0,
+                                scheduled_for: repairRequestWithLogs.scheduled_for
                             });
-                            console.log(res);
+                            console.log(repairRequestWithLogs);
                         }
                     })
                     .catch((err) => {
                         console.log(err);
                     }
                     );
-                //  repairRequest = useGetRepairRequestByIdQuery({ variables: { id: params.id } }).data?.repair_requests_by_pk;
             }
-
-            //     // vehicle = useGetVehicleByIdQuery({ variables: { id: params.id } }).data?.vehicles_by_pk;
         }
     }, []);
 
@@ -98,14 +102,21 @@ export default function RepairRequestDetails() {
         });
     };
 
-    const handleRowInteraction = (action: string, entity: object) => {
-        console.log(`Action: ${action} on log id: ${entity as any}.id`);
+    const handleLogInteraction = (action: COMMENT_ACTIONS, entity: Requests_Logs) => {
+        if (action === 'update') {
+            // Here you would typically call an API or update state to persist the changes
+            console.log(`Updated log message to: ${entity as any}.message`);
+        } else if (action === 'delete') {
+            // Handle delete action
+            console.log(`Deleted log with id: ${entity as any} `);
+        }
     }
 
     const handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         console.log(formData);
     };
+
     return (
         <>
             <DetailsHeader isCreateMode={isCreateMode} />
@@ -127,7 +138,11 @@ export default function RepairRequestDetails() {
                             <Grid size={3}>
 
                                 <FormControl sx={{ margin: '8px 0', width: '100%' }} variant="outlined">
-                                    <InputLabel htmlFor="titleId" error={errors.some(e => e.controlName === 'title')} >Заглавие</InputLabel>
+                                    <MyInputLabel
+                                        htmlFor="titleId"
+                                        error={errors.some(e => e.controlName === 'title')}
+
+                                    >Заглавие</MyInputLabel>
                                     <OutlinedInput
                                         id="titleId"
                                         name='title'
@@ -155,8 +170,7 @@ export default function RepairRequestDetails() {
                                         label="Multiline"
                                         variant='outlined'
                                         name='description'
-                                        disabled={false}        // contentEditable={true}
-
+                                        disabled={isFormDisabled}
                                         multiline
                                         onChange={handleChange}
                                         minRows={5}
@@ -164,11 +178,22 @@ export default function RepairRequestDetails() {
                                     />
                                 </FormControl>
                             </Grid>
-                        </Grid> 
+                        </Grid>
                     </Paper>
-
+                    <Box sx={{ height: '24px' }}></Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, marginBottom: '8px' }}>
+                        <Typography variant='h6' sx={{ fontWeight: 700 }}>Логове на заявката за ремонт</Typography>
+                        <AddCommentIcon color='primary' />
+                    </Box>
                     <Box sx={{ width: '100%', bgcolor: 'background.paper', border: '1px solid #bdbdbd' }}>
-                        {repairRequest?.requests_logs.map(l => <Log key={l.id} log={l as any} isFromCurrentUser={l.user.id === userSettings?.user?.id} />)}
+                        {repairRequest?.requests_logs.map(l =>
+                            <Log
+                                key={l.id}
+                                log={l as any}
+                                isEditable={l.user.id === userSettings?.user?.id}
+                                callBack={handleLogInteraction}
+                            />
+                        )}
                     </Box>
                 </div>
             }
