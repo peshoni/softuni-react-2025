@@ -1,7 +1,7 @@
 import { Paper, Grid, Tooltip, IconButton } from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 /**
- * 
+ * Stateless component for Details Header
  * @param param0 Determines label of the Header
  * @returns react element
  */

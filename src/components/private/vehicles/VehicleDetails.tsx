@@ -225,7 +225,7 @@ export default function VehicleDetails() {
                         <Grid size={3}>
                             <TextInput
                                 key='plate_number'
-                                value={formData['plate_number']}
+                                value={formData['plate_number']?? ''}
                                 propName={'plate_number'}
                                 changeCallback={handleChange}
                                 disabled={isFormDisabled}

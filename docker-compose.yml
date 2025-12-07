@@ -4,19 +4,19 @@ networks:
     ipam:
       driver: default
 services:
-  ### React app
-  # softuni-frontend:
-  #   container_name: softuni-car-service-app
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   networks:
-  #     - "softuni-react-net"
-  #   depends_on:
-  #     - "graphql-engine"
-  #   ports:
-  #     - "5173:80"
-  ###
+  ## React app
+  softuni-frontend:
+    container_name: softuni-car-service-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - "softuni-react-net"
+    depends_on:
+      - "graphql-engine"
+    ports:
+      - "5173:80"
+  ##
   postgres:
     image: postgres:17.2
     container_name: softuni_postgres
@@ -27,7 +27,7 @@ services:
       - "5439:5432"
     restart: always
     volumes: # mounted in this directory, see below
-      - ./graphql/volumes/postgres/db_data:/var/lib/postgresql/data
+      - ./graphql/db_data:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: postgrespassword
   ###

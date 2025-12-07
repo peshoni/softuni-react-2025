@@ -11,7 +11,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 export type COMMENT_ACTIONS = 'create' | 'delete' | 'update' | 'undo' | 'none';
 /**
- * Stateless component to display a single log entry in the repair requests section.
+ * A component to display a single log entry in the repair requests section.
  * @param props { log: Requests_Logs; isFromCurrentUser: boolean }
  * @returns {JSX.Element}     
  */

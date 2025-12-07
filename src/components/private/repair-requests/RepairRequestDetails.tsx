@@ -71,7 +71,7 @@ export default function RepairRequestDetails() {
 
     const isFormDisabled = location.state?.action === 'preview' || isNullOrUndefined(location.state?.action);
 
-    const [errors, setErrors] = useState<FormControlError[]>([]);
+    const [errors/*, setErrors*/] = useState<FormControlError[]>([]);
     const [formData, setFormData] = useState<FormRepairRequestProps>({
         title: '',
         description: '',

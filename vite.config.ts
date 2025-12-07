@@ -4,8 +4,8 @@ import react from '@vitejs/plugin-react';
 // https://vite.dev/config/
 export default defineConfig({
   build: {
-    minify: false,
-    sourcemap: true,
+    minify: true,
+    sourcemap: false,
     chunkSizeWarningLimit: 1600,
   },
   plugins: [react() ],

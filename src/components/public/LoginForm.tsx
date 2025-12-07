@@ -25,8 +25,8 @@ export default function LoginForm( /*{ setUser }: { readonly setUser: (event: Se
     // ivanteodorov@service.bg / Service123!  
     // mariyastoyanina@service.bg / UserPass!   id: "ca50b248-d2fb-4eaa-8919-143330afddd1"
     const [formData, setFormData] = useState({
-        email: 'ivanteodorov@service.bg',
-        password: 'Service123!',
+        email: '',
+        password: '',
     });
 
     const handleChange = (e: { target: { name: any; value: any; }; }) => {
