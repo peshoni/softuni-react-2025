@@ -6,9 +6,9 @@ import { useNavigate } from "react-router";
 import { PathSegments } from "../../routes/enums";
 import { useLoginLazyQuery, type UserFragment } from "../../../graphql/generated";
 import PasswordInput from "../private/common/forms/PasswordInput";
-import UserContext from "../private/contexts/UserContext";
+import UserContext from "../private/providers/UserContext";
 import type { FormControlError } from "../private/common/interfaces";
-import { useSnackbar } from "../private/contexts/ShackbarContext";
+import { useSnackbar } from "../private/providers/ShackbarContext";
 import { buildUrl } from "../../routes/routes-util";
 
 export default function LoginForm( /*{ setUser }: { readonly setUser: (event: SetStateAction<UserFragment | undefined>) => void; } */) {
@@ -25,15 +25,15 @@ export default function LoginForm( /*{ setUser }: { readonly setUser: (event: Se
     // ivanteodorov@service.bg / Service123!  
     // mariyastoyanina@service.bg / UserPass!   id: "ca50b248-d2fb-4eaa-8919-143330afddd1"
     const [formData, setFormData] = useState({
-        email: '',
-        password: '',
+        email: 'ivanteodorov@service.bg',
+        password: 'Service123!',
     });
 
     const handleChange = (e: { target: { name: any; value: any; }; }) => {
         const controlName = e.target.name;
         const value = e.target.value;
         console.log(controlName, value);
-        if(errors.some(er => er.controlName === controlName)) {
+        if (errors.some(er => er.controlName === controlName)) {
             setErrors(errors.filter(er => er.controlName !== controlName));
         }
         console.log(errors);

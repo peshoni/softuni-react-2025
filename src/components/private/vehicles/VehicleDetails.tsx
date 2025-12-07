@@ -9,8 +9,8 @@ import type { FormControlError } from "../common/interfaces";
 import TextInput from "../common/forms/TextInput";
 import useEnums from "../hooks/useEnums";
 import type { FilterFields } from "../common/tables/table-interfaces";
-import UserContext from "../contexts/UserContext";
-import { useSnackbar } from "../contexts/ShackbarContext";
+import UserContext from "../providers/UserContext";
+import { useSnackbar } from "../providers/ShackbarContext";
 import { buildUrl } from "../../../routes/routes-util";
 import { PathSegments } from "../../../routes/enums";
 
@@ -36,6 +36,7 @@ export default function VehicleDetails() {
 
     const fuelTypesFilters: FilterFields[] = fuelTypes?.map(vs => ({ id: vs.id, name: vs.name, code: vs.code })) ?? [];
     const vehicleStatusesFilters: FilterFields[] = vehicleStatuses?.map(vs => ({ id: vs.id, name: vs.name, code: vs.code })) ?? [];
+    console.log(vehicleStatusesFilters)
 
     const [errors, setErrors] = useState<FormControlError[]>([]);
     const [getVehicle] = useGetVehicleByIdLazyQuery();
@@ -43,9 +44,7 @@ export default function VehicleDetails() {
     // const aaaaa = useGetVehicleByIdSuspenseQuery
     const params = useParams();
 
-    // console.log('------------------------------------------------'); 
-    // const user: object = memoryService.get(MemoryKeys.USER);
-    // console.log(user);
+
 
     const [formData, setFormData] = useState<FormVehicleProps>({
         make: '',

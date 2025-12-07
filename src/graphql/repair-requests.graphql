@@ -15,6 +15,20 @@ query GetRepairRequestById ($id:uuid!) {
     ...repair_request_with_logs
   }
 }
+
+mutation UpsertRepairRequestLog($object: requests_logs_insert_input!) {
+  insert_requests_logs_one(object: $object, on_conflict: {constraint: requests_logs_pkey, update_columns: [message]}) {
+    ...request_log
+  }
+}
+
+mutation DeleteRepairRequestLog($id: uuid!) {
+  delete_requests_logs_by_pk(id: $id) {
+    ...request_log
+  }
+}
+
+
 # Fragments
 fragment repair_request on repair_requests {
   id

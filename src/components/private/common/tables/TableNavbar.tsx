@@ -3,6 +3,8 @@ import { Box, Button, FormControl, FormHelperText, Grid, InputLabel, LinearProgr
 import { useState } from "react";
 import type { FilterFields } from "./table-interfaces";
 import type { UserFragment } from "../../../../../graphql/generated";
+import { useLocation } from "react-router";
+import type { PathSegments } from "../../../../routes/enums";
 
 export interface TableNavbarProps {
     readonly options: FilterFields[];
@@ -15,9 +17,11 @@ export interface TableNavbarProps {
 }
 
 export default function TableNavbar({ options, label, user, error, loading, filterSelectedHandler, addClickedHandler }: TableNavbarProps) {
+    const location = useLocation();
+    const segment: PathSegments = location.pathname.split('/')[1] as PathSegments;
     const innerOptions: FilterFields[] = error ? [] : [{ id: '', code: 'all', name: 'Всички' }, ...options];
     const [selected, setSelected] = useState(innerOptions[0]?.code ?? '');
-    const isAddButtonVisible = checkAddButtonVisibility(user);
+    const isAddButtonVisible = checkAddButtonVisibility(user, segment);
 
     const handleSelectChange = (event: any) => {
         const selectedOptionCode = event.target.value;
@@ -80,7 +84,8 @@ export default function TableNavbar({ options, label, user, error, loading, filt
     );
 }
 
-function checkAddButtonVisibility(user: UserFragment | undefined) {
+function checkAddButtonVisibility(user: UserFragment | undefined, segment: PathSegments): boolean {
+    console.log(segment)
     if (user) {
         if (user.user_role.code === 'autoMechanic') {
             return false;

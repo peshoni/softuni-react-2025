@@ -1,10 +1,10 @@
-import type { CodegenConfig } from '@graphql-codegen/cli'; 
+import type { CodegenConfig } from '@graphql-codegen/cli';
 const config: CodegenConfig = {
     overwrite: true,
     schema: [{
         'http://127.0.0.1:8080/v1/graphql': {
             // "headers": {
-            //     "x-hasura-admin-secret": 'softuniReactAdminSecret'
+            //     "x-hasura-admin-secret":  
             // }
         }
     }],
@@ -56,8 +56,5 @@ const config: CodegenConfig = {
 
     }
 };
-
-//           preset: 'client',
-//, 'typescript-react-apollo', 'typescript-operations'
 
 export default config;

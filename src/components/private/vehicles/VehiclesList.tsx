@@ -19,7 +19,7 @@ import { TableHead } from '@mui/material';
 import { isNullOrUndefined } from 'is-what';
 import useEnums from '../hooks/useEnums';
 import { rowsPerPageOptions } from '../common/constants';
-import UserContext from '../contexts/UserContext';
+import UserContext from '../providers/UserContext';
 import { useConfirmationDialog, type ConfirmationDialogOptions } from '../providers/ConfirmationDialog';
 import { arrayReducer } from '../../../examples/ArrayReducer';
 

@@ -4,7 +4,7 @@ import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, B
 /**
  * The result of the confirmation dialog.
  */
-export type ConfirmationDialogResult = "confirmed" | "canceled" | "closed";
+export type ConfirmationDialogResult = 'confirmed' | 'canceled' | 'closed';
 
 export interface ConfirmationDialogOptions {
     title?: string;

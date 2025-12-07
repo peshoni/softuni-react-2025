@@ -3,7 +3,7 @@ import { Navigate } from "react-router";
 import { buildUrl } from "../routes-util";
 import { PathSegments } from "../enums";
 import ApplicationBar from "../../components/private/app-bar/ApplicationBar";
-import type { UserSettings } from "../../components/private/contexts/UserContext";
+import type { UserSettings } from "../../components/private/providers/UserContext";
 
 export default function AuthGuard({ userSettings }: { readonly userSettings: UserSettings | undefined; }) {
     // If the user is not logged in, redirect to the login page.

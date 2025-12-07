@@ -14,7 +14,7 @@ export default function useEnums(): {
     let userRoles: RoleFragment[] = [];
     let vehicleStatuses: Vehicle_StatusFragment[] = [];
     let fuelTypes: Fuel_TypeFragment[] = [];
-    
+
     if (getEnums.data) {
         genders = getEnums.data.genders;
         vehicleStatuses = getEnums.data.vehicle_statuses;

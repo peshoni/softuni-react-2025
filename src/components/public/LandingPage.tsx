@@ -1,5 +1,4 @@
 
-// npm install @mui/material @mui/icons-material @emotion/react @emotion/styled framer-motion
 import { type JSX } from "react";
 import { motion } from "framer-motion";
 import {

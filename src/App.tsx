@@ -8,7 +8,7 @@ import LoginForm from './components/public/LoginForm';
 import RegisterForm from './components/public/RegisterFrom';
 import AuthGuard from './routes/guards/AuthGuard';
 import { buildUrl } from './routes/routes-util';
-import { useUserContext } from './components/private/contexts/UserContext';
+import { useUserContext } from './components/private/providers/UserContext';
 import { ConfirmationDialogProvider } from './components/private/providers/ConfirmationDialog';
 
 export interface LoggedUserMenu {

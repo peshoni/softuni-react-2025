@@ -15,13 +15,27 @@ export default defineConfig([
       reactHooks.configs['recommended-latest'],
       reactRefresh.configs.vite,
     ],
-    exceptions: [ 
-      { files: ['/graphql/generated.ts' ] 
+    exceptions: [
+      {
+        files: ['/graphql/generated.ts']
       },
     ],
+
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
+      // parser: parser,
+      // parserOptions: {
+      //   ecmaFeatures: { jsx: true },
+      //   sourceType: 'module',
+      //   project: ['./tsconfig.json'],
+      // },
+
     },
-  },
+    // rules: {
+    //   "no-unused-vars": "warn",
+    //   "no-undef": "warn",
+    // },
+  }
+
 ])

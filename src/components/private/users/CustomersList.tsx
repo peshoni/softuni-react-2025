@@ -18,7 +18,7 @@ import { PathSegments } from '../../../routes/enums';
 import { buildHeaderRow, getFallbackTemplate } from '../common/tables/utils';
 import useEnums from '../hooks/useEnums';
 import { rowsPerPageOptions } from '../common/constants';
-import UserContext from '../contexts/UserContext';
+import UserContext from '../providers/UserContext';
 
 const columns: ColumnSettings<UserFragment>[] = [
     { property: 'created_at', label: 'Създаден', width: '80px', formatDate: (value) => fromIsoDate(value) },

@@ -8,7 +8,7 @@ import { Grid } from '@mui/material';
 import { PathSegments } from '../../../routes/enums';
 import { useNavigate } from 'react-router';
 import { buildUrl } from '../../../routes/routes-util';
-import UserContext from '../contexts/UserContext';
+import UserContext from '../providers/UserContext';
 
 const menuHeight = 40;
 type ACTIONS = 'logout' | 'edit';
@@ -26,8 +26,7 @@ export default function UserContextMenu() {
         setAnchorEl(null);
 
         switch (actionType) {
-            case 'logout':
-                localStorage.clear();
+            case 'logout': 
                 onLogout();
                 navigate(buildUrl(PathSegments.LOGIN));
                 break;

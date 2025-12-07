@@ -18,7 +18,7 @@ import { buildHeaderRow, getFallbackTemplate as getTableFallbackElement } from "
 import { TableHead } from "@mui/material";
 import useEnums from "../hooks/useEnums";
 import { rowsPerPageOptions } from "../common/constants";
-import UserContext from "../contexts/UserContext";
+import UserContext from "../providers/UserContext";
 
 const columns: ColumnSettings<Repair_RequestFragment>[] = [
     { property: "created_at", label: "създаден", width: "80px", formatDate: (value) => fromIsoDate(value), },
@@ -78,15 +78,10 @@ export default function RepairRequestsList() {
             },
         },
     });
-    console.log(data, loading, error);
 
-    // useEffect(() => { // Listens for the data changes
-    //     console.log('data changed', data);
-    // }, [data]);
     useEffect(() => {
         // Create a new AbortController when the component mounts
         abortControllerRef.current = new AbortController();
-
         // Return a cleanup function to abort the request when the component unmounts
         return () => {
             abortControllerRef.current?.abort();

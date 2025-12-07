@@ -19,7 +19,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router';
 import UserContextMenu from './UserContextMenu';
 import { useContext, useState } from 'react';
 import { buildUrl } from '../../../routes/routes-util';
-import UserContext from '../contexts/UserContext';
+import UserContext from '../providers/UserContext';
 
 const drawerWidth = 240;
 
@@ -55,7 +55,6 @@ const AppBar = styled(MuiAppBar, {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
-  //todo  remove this..
   boxShadow: '0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);',
   variants: [
     {
