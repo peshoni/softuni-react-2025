@@ -10,6 +10,7 @@ import PasswordInput from "../common/forms/PasswordInput";
 import type { FilterFields } from "../common/tables/table-interfaces";
 import useEnums from "../hooks/useEnums";
 import type { FormControlError } from "../common/interfaces";
+import { PathSegments } from "../../../routes/enums";
 
 //#region Form Types 
 const omitUserProperties = ['id', 'created_at', 'updated_at', 'gender', 'user_role'] as const;
@@ -118,7 +119,7 @@ export default function CustomerDetails({ mode }: { readonly mode?: string; }) {
 
     return (
         <>
-            <DetailsHeader isCreateMode={isCreateMode} />
+            <DetailsHeader isCreateMode={isCreateMode} parentSegment={PathSegments.CUSTOMERS} />
 
             {!formData && <DatasourceEmptyResult />}
 

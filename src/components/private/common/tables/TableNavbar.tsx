@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { FilterFields } from "./table-interfaces";
 import type { UserFragment } from "../../../../../graphql/generated";
 import { useLocation } from "react-router";
-import type { PathSegments } from "../../../../routes/enums";
+import { PathSegments } from "../../../../routes/enums";
 
 export interface TableNavbarProps {
     readonly options: FilterFields[];
@@ -25,8 +25,7 @@ export default function TableNavbar({ options, label, user, error, loading, filt
 
     const handleSelectChange = (event: any) => {
         const selectedOptionCode = event.target.value;
-        console.log(event);
-        // const selectedOptionCode: string = innerOptions.find(e=>e.code === code);
+
         const selectedFilter: FilterFields | undefined = innerOptions.find(o => o.code === selectedOptionCode);
         if (selectedFilter) {
             setSelected(selectedFilter.code);
@@ -84,21 +83,18 @@ export default function TableNavbar({ options, label, user, error, loading, filt
     );
 }
 
-function checkAddButtonVisibility(user: UserFragment | undefined, segment: PathSegments): boolean {
-    console.log(segment)
-    if (user) {
-        if (user.user_role.code === 'autoMechanic') {
+// Determines visibility of the add  button 
+function checkAddButtonVisibility(user: UserFragment | undefined, segment: PathSegments): boolean { 
+    switch (user?.user_role.code) {
+        case 'customer':
+            if (segment === PathSegments.VEHICLES) {
+                return true;
+            };
             return false;
-        }
-
-        if (user.user_role.code === 'serviceSpecialist') {
+        case 'serviceSpecialist':
+        case 'autoMechanic':
+        default:
             return false;
-        }
-
-
-        return true;
-    } else {
-        return false;
     }
 }
 

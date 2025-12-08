@@ -27,14 +27,14 @@ import { arrayReducer } from '../../../examples/ArrayReducer';
  * Defines the columns for the vehicles table.
  */
 const columns: ColumnSettings<VehicleFragment>[] = [
-    { property: 'created_at', label: 'Created', width: '80px', formatDate: (value) => fromIsoDate(value) },
-    { property: 'updated_at', label: 'Updated', width: '80px', formatDate: (value) => fromIsoDate(value) },
+    { property: 'created_at', label: 'създаден', width: '80px', formatDate: (value) => fromIsoDate(value) },
+    { property: 'updated_at', label: 'променен', width: '80px', formatDate: (value) => fromIsoDate(value) },
     { property: 'vin', label: 'VIN' },
-    { property: 'year', label: 'year' },
-    { property: 'make', label: 'Make' },
-    { property: 'model', label: 'Model' },
-    { property: 'plate_number', label: 'Plate' },
-    { property: 'actions', label: 'Actions', width: '60x', align: 'right' }
+    { property: 'year', label: 'година' },
+    { property: 'make', label: 'производител' },
+    { property: 'model', label: 'модел' },
+    { property: 'plate_number', label: 'рег.номер' },
+    { property: 'actions', label: 'още', width: '60x', align: 'right' }
 ];
 
 export default function VehiclesList() {
@@ -107,7 +107,7 @@ export default function VehiclesList() {
          */
         switch (userSettings?.user?.user_role.code) {
             case 'customer':
-                setAllowedActions(['edit', 'preview', 'delete']);
+                setAllowedActions(['edit', 'preview', 'delete','repair']);
                 break;
             case 'serviceSpecialist':
                 setAllowedActions(['edit', 'preview']);
@@ -123,8 +123,7 @@ export default function VehiclesList() {
 
     //Todo: error handling
 
-    const handleChangePage = (event: unknown, newPage: number) => {
-        console.log(event, newPage);
+    const handleChangePage = (_event: unknown, newPage: number) => { 
         setPage(newPage);
     };
 
@@ -136,7 +135,7 @@ export default function VehiclesList() {
     const filterSelectedHandler = (selectedFilter: FilterFields) => {
         const criteria: string | null = selectedFilter.id;
         const filterCondition: Vehicles_Bool_Exp = criteria ? { status_id: { _eq: criteria } } : {};
-        console.log(condition._and);
+
         if (userCondition) {
             setCondition({ _and: [userCondition, filterCondition] });
         } else {
@@ -146,14 +145,8 @@ export default function VehiclesList() {
         setPage(0);
     };
 
-    const addClickedHandler = () => {
-        console.log('child -> parent: add click');
-        console.log('Open add user details');
-        // TODO check roles here for service specialist and customer
-
+    const addClickedHandler = () => { 
         navigate(buildUrl(PathSegments.VEHICLES, PathSegments.DETAILS));
-
-        //setChildEvent(event);
     };
 
     const rowContextMenuCallback: RowContextFunctionType = async (action: ROW_ACTIONS, id: string) => {
@@ -181,7 +174,11 @@ export default function VehiclesList() {
                 );
             }
 
-        } else {
+        } else if(action === 'repair'){
+            // alert('add')
+            console.log('vehicle: '+id)
+             navigate(buildUrl(PathSegments.REPAIR_REQUESTS, PathSegments.DETAILS ), { state: { action , vehicleId: id} });
+        }else{
             navigate(buildUrl(PathSegments.VEHICLES, PathSegments.DETAILS, id), { state: { action } });
         }
     };

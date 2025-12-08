@@ -15,7 +15,7 @@ import { useNavigate } from "react-router";
 import { PathSegments } from "../../../routes/enums";
 import { buildUrl } from "../../../routes/routes-util";
 import { buildHeaderRow, getFallbackTemplate as getTableFallbackElement } from "../common/tables/utils";
-import { TableHead } from "@mui/material";
+import { Box, TableHead } from "@mui/material";
 import useEnums from "../hooks/useEnums";
 import { rowsPerPageOptions } from "../common/constants";
 import UserContext from "../providers/UserContext";
@@ -113,7 +113,6 @@ export default function RepairRequestsList() {
     //TODo: error handling
 
     const handleChangePage = (event: unknown, newPage: number) => {
-        console.log(event, newPage);
         setPage(newPage);
     };
 
@@ -123,13 +122,12 @@ export default function RepairRequestsList() {
     };
 
     const filterSelectedHandler = (selectedFilter: FilterFields) => {
-        // console.log(selectedFilter);
+
         const criteria: string | null = selectedFilter.id;
 
         const filterCondition: Repair_Requests_Bool_Exp = criteria ? { status_id: { _eq: criteria } } : {};
         if (userCondition) {
             filterCondition._and = filterCondition._and ? [...(filterCondition._and), userCondition] : [userCondition];
-            // setCondition(userCondition);
         }
         //else {
         setCondition(filterCondition);
@@ -138,9 +136,6 @@ export default function RepairRequestsList() {
     };
 
     const addClickedHandler = () => {
-        console.log("child -> parent: add click");
-        console.log("Open add user details");
-        //setChildEvent(event);
     };
 
     const rowContextMenuCallback: RowContextFunctionType = (action: ROW_ACTIONS, id: string) => {
@@ -208,7 +203,12 @@ function processColumn(column: ColumnSettings<Repair_RequestFragment>, entity: R
             case "updated_at":
                 return column.formatDate?.(value);
             case 'vehicle':
-                return (value as VehicleFragment).plate_number;
+                return (
+                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                        <span>{(value as VehicleFragment).plate_number}</span>
+                        <span> {(value as VehicleFragment).make}</span>
+                    </Box>
+                );
             case "logsCount":
                 return (value as { aggregate?: { count: number; }; }).aggregate?.count;
             case "vehicle_status":

@@ -29,8 +29,7 @@ export const SnackbarProvider = ({ children }: { children: ReactNode; }) => {
         []
     );
 
-    const handleCloseToastMessage = (event?: React.SyntheticEvent | Event, reason?: SnackbarCloseReason,) => {
-        console.log(event);
+    const handleCloseToastMessage = (_event?: React.SyntheticEvent | Event, reason?: SnackbarCloseReason,) => { 
         if (reason === 'clickaway') {
             return;
         }

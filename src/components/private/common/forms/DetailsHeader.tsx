@@ -1,18 +1,21 @@
 import { Paper, Grid, Tooltip, IconButton } from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { useNavigate } from "react-router";
+import { buildUrl } from "../../../../routes/routes-util";
 /**
  * Stateless component for Details Header
  * @param param0 Determines label of the Header
  * @returns react element
  */
-export default function DetailsHeader({ isCreateMode }: { readonly isCreateMode: boolean; }) {
+export default function DetailsHeader({ isCreateMode, parentSegment}: { readonly isCreateMode: boolean; readonly parentSegment:string}) {
+    const navigate = useNavigate();
     return (
         <Paper elevation={1} sx={{ p: 2, borderRadius: 1, fontSize: '18px', fontWeight: 500, width: '100%' }}>
             <Grid size={{ xs: 2, sm: 2, md: 2 }}
                 sx={{ display: 'flex', width: '100%' }}>
                 <Tooltip title="Go back" disableInteractive>
                     <IconButton
-                        size="large" sx={{ width: '60px' }} onClick={() => history.back()}>
+                        size="large" sx={{ width: '60px' }} onClick={() => navigate(buildUrl(parentSegment)  )}>
                         <ArrowBackIcon />
                     </IconButton>
                 </Tooltip>

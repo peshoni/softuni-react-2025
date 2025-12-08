@@ -1,6 +1,12 @@
-mutation UpsertVehicle($vehicle: vehicles_insert_input!) {
-  insert_vehicles_one(object: $vehicle, on_conflict: {constraint:vehicles_pkey , update_columns: [make, model, year, fuel_type_id]}) {
-    id
+mutation InsertVehicle($vehicle: vehicles_insert_input!) {
+  insert_vehicles_one(object: $vehicle) {
+    ...vehicle
+  }
+}
+
+mutation UpdateVehicle($id: uuid!, $input: vehicles_set_input!) {
+  update_vehicles_by_pk(pk_columns: {id: $id}, _set: $input) {
+    ...vehicle
   }
 }
 

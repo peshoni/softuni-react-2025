@@ -55,7 +55,7 @@ it("should have heading", async () => {
                 name: 'User'
             }
         } as Users
-    } as Requests_Logs} isParentDisabled={false} isFromCurrentUser={false} isCreateMode={false} callBack={() => { }} />);
+    } as Requests_Logs} isPreview={false} isFromCurrentUser={false} isCreateMode={false} callBack={() => { }} />);
     // screen.debug();
     const a = screen.getByAltText('Test');
     //  const test = document.getElementById("test");

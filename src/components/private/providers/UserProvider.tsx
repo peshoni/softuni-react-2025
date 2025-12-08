@@ -85,11 +85,12 @@ const buildRoutesAccordingToRole = (role: RoleFragment): { path: string, element
     const vehicleDetails = { path: buildUrl(PathSegments.VEHICLES, PathSegments.DETAILS, ':id'), element: <VehicleDetails /> };
 
     const repairRequestsList = { path: PathSegments.REPAIR_REQUESTS, element: <RepairRequestsList /> };
+    const repairRequestCreate = { path: buildUrl(PathSegments.REPAIR_REQUESTS, PathSegments.DETAILS), element: <RepairRequestDetails /> };
     const repairRequestDetails = { path: buildUrl(PathSegments.REPAIR_REQUESTS, PathSegments.DETAILS, ':id'), element: <RepairRequestDetails /> };
 
     switch (role.code) {
         case 'customer':
-            return [vehiclesList, vehicleCreate, vehicleDetails, repairRequestsList, repairRequestDetails];
+            return [vehiclesList, vehicleCreate, vehicleDetails, repairRequestsList, repairRequestCreate, repairRequestDetails];
         case 'serviceSpecialist':
             return [customersList, customerDetails, vehiclesList, vehicleDetails, repairRequestsList, repairRequestDetails];
         case 'autoMechanic':

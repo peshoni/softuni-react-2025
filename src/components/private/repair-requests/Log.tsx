@@ -15,12 +15,12 @@ export type COMMENT_ACTIONS = 'create' | 'delete' | 'update' | 'undo' | 'none';
  * @param props { log: Requests_Logs; isFromCurrentUser: boolean }
  * @returns {JSX.Element}     
  */
-export default function Log({ log, isFromCurrentUser, isParentDisabled, callBack, isCreateMode = false }: {
+export default function Log({ log, isFromCurrentUser, isPreview, callBack, isCreateMode = false }: {
     readonly log: Requests_Logs;
     readonly isFromCurrentUser: boolean;
-    readonly isParentDisabled: boolean;
+    readonly isPreview: boolean;
     readonly isCreateMode?: boolean;
-    readonly callBack: (action: COMMENT_ACTIONS, entity: Requests_Logs) => void
+    readonly callBack: (action: COMMENT_ACTIONS, entity: Requests_Logs) => void;
 }): JSX.Element {
     const theme = useTheme();
     const [message, setMessage] = useState<string>(log.message || '');
@@ -54,12 +54,15 @@ export default function Log({ log, isFromCurrentUser, isParentDisabled, callBack
             callBack('delete', { ...log });
         } else if (action === 'create') {
             // Handle create action 
+            if (updatedMessage.trim().length === 0) {
+                return;
+            }
             callBack('create', { ...log, message: message });
         } else if (action === 'none') {
             // Handle none action - used to close the create log form without action
             callBack('none', { ...log });
         }
-    }
+    };
 
     const handleMessageChange = (e: { target: { name: string; value: string; }; }) => {
         setMessage(e.target.value);
@@ -75,7 +78,7 @@ export default function Log({ log, isFromCurrentUser, isParentDisabled, callBack
                         key={log.id}
                         style={{ width: '100%', maxWidth: '100%' }}
                         variant='outlined'
-                        disabled={isParentDisabled}
+                        disabled={isPreview}
                         multiline
                         onChange={handleMessageChange}
                         // minRows={5}
@@ -87,6 +90,7 @@ export default function Log({ log, isFromCurrentUser, isParentDisabled, callBack
                                 <IconButton
                                     size="small"
                                     sx={{ color: theme.palette.primary.main }}
+                                    disabled={updatedMessage.trim().length === 0}
                                     onClick={() => handleRowAction('create')}>
                                     <AddIcon />
                                 </IconButton>
@@ -111,7 +115,7 @@ export default function Log({ log, isFromCurrentUser, isParentDisabled, callBack
 
                     <ListItemAvatar sx={{ display: 'flex', alignItems: (isFromCurrentUser ? 'flex-end' : 'flex-start'), flexDirection: 'column' }}>
                         <Avatar alt={`${log.user.first_name}`} src="/static/images/avatar/2.jpg" sx={{ backgroundColor: currentUserColor }} />
-                        {(isFromCurrentUser && !isParentDisabled) &&
+                        {(isFromCurrentUser && !isPreview) &&
                             <>
                                 <Tooltip title="Премахни промените" disableInteractive>
                                     <span>
@@ -119,7 +123,7 @@ export default function Log({ log, isFromCurrentUser, isParentDisabled, callBack
                                             size="small"
                                             disabled={undoDisabled}
                                             sx={{ color: theme.palette.primary.main }}
-                                            onClick={() => !undoDisabled && handleRowAction('undo')}  >
+                                            onClick={() => !undoDisabled && handleRowAction('undo')}>
                                             <UndoIcon />
                                         </IconButton>
                                     </span>
@@ -130,7 +134,7 @@ export default function Log({ log, isFromCurrentUser, isParentDisabled, callBack
                                             size="small"
                                             disabled={updateDisabled}
                                             sx={{ color: theme.palette.primary.main }}
-                                            onClick={() => !updateDisabled && handleRowAction('update')}  >
+                                            onClick={() => !updateDisabled && handleRowAction('update')}>
                                             <UpdateIcon />
                                         </IconButton>
                                     </span>
@@ -165,7 +169,7 @@ export default function Log({ log, isFromCurrentUser, isParentDisabled, callBack
                                 key={log.id}
                                 style={{ width: '100%', maxWidth: '100%' }}
                                 variant='outlined'
-                                disabled={isParentDisabled}
+                                disabled={isPreview}
                                 multiline
                                 onChange={handleMessageChange}
                                 // minRows={5}

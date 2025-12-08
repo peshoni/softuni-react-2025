@@ -1,6 +1,6 @@
 import { isNullOrUndefined } from "is-what";
 import { useLocation, useNavigate, useParams } from "react-router";
-import { useGetVehicleByIdLazyQuery, useUpsertVehicleMutation, type VehicleFragment, type Vehicles_Insert_Input } from "../../../../graphql/generated";
+import { useGetVehicleByIdLazyQuery, useInsertVehicleMutation, useUpdateVehicleMutation, type VehicleFragment, type Vehicles_Insert_Input } from "../../../../graphql/generated";
 import DetailsHeader from "../common/forms/DetailsHeader";
 import DatasourceEmptyResult from "../common/tables/DataSourceEmptyResult";
 import { useContext, useEffect, useState } from "react";
@@ -21,30 +21,26 @@ type FormVehicleProps = Omit<VehicleFragment, keyof FilteredProperties> & { fuel
 //#endregion Form Types
 
 export default function VehicleDetails() {
-    const { fuelTypes, vehicleStatuses } = useEnums();
+    const parentSegment = PathSegments.VEHICLES;
     const location = useLocation();
     const navigate = useNavigate();
+    const { fuelTypes /*, vehicleStatuses*/ } = useEnums();
     const { showSnackbar } = useSnackbar();
-    console.log(location.state);
-
+    const [id, setId] = useState(undefined);
     /**
      * Retrieves the current user from the UserContext.
      */
     const { userSettings } = useContext(UserContext);
 
-    const isFormDisabled = location.state?.action === 'preview';
-
     const fuelTypesFilters: FilterFields[] = fuelTypes?.map(vs => ({ id: vs.id, name: vs.name, code: vs.code })) ?? [];
-    const vehicleStatusesFilters: FilterFields[] = vehicleStatuses?.map(vs => ({ id: vs.id, name: vs.name, code: vs.code })) ?? [];
-    console.log(vehicleStatusesFilters)
+    // const vehicleStatusesFilters: FilterFields[] = vehicleStatuses?.map(vs => ({ id: vs.id, name: vs.name, code: vs.code })) ?? []; 
 
     const [errors, setErrors] = useState<FormControlError[]>([]);
     const [getVehicle] = useGetVehicleByIdLazyQuery();
-    const [upsertVehicleMutation] = useUpsertVehicleMutation();
-    // const aaaaa = useGetVehicleByIdSuspenseQuery
+    const [insertVehicleMutation] = useInsertVehicleMutation();
+    const [updateVehicleMutation] = useUpdateVehicleMutation();
+
     const params = useParams();
-
-
 
     const [formData, setFormData] = useState<FormVehicleProps>({
         make: '',
@@ -55,13 +51,12 @@ export default function VehicleDetails() {
         fuel: ''
     });
 
+    const isFormDisabled = location.state?.action === 'preview';
     const isCreateMode = isNullOrUndefined(params) || isNullOrUndefined(params?.id);
 
     let vehicle: VehicleFragment | undefined | null;
 
     const handleChange = (e: { target: { name: any; value: any; }; }) => {
-        console.log([e.target.name], e.target.value);
-
         const fieldName = e.target.name;
         let fieldValue = e.target.value;
         if (fieldName === 'year') {
@@ -73,9 +68,8 @@ export default function VehicleDetails() {
             }
         } else {
             const index = errors.findIndex(c => c.controlName === fieldName);
-            console.log(index);
-            if (index > -1) { // only splice array when item is found
 
+            if (index > -1) { // only splice array when item is found 
                 console.log(errors.splice(index, 1)); // 2nd parameter means remove one item only
                 console.log(errors);
                 setErrors(old => old.filter(c => c.controlName === fieldName));
@@ -90,12 +84,6 @@ export default function VehicleDetails() {
 
     const handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
-        console.log(formData);
-        // if (!isLogin && formData.password !== formData.confirmPassword) {
-        //   setErrors([{ controlName: 'confirmPassword', message: 'Passwords do not match' }]);
-        //   return;
-        // }
-        // Simulate login/register action
 
         const input: Vehicles_Insert_Input = {
             make: formData.make,
@@ -107,21 +95,44 @@ export default function VehicleDetails() {
             owner_id: userSettings?.user?.id
         };
 
-        upsertVehicleMutation({ variables: { vehicle: input } })
-            .then((result) => {
-                console.log(result);
-                const awaitTime: number = 2000;
-                showSnackbar('Промяната на данни беше успешна', 'success', awaitTime);
-                setTimeout(() => {
-                    // setSubmitted(false);
+        const awaitTime: number = 2000;
+        if (id) {
+            updateVehicleMutation({ variables: { id: id, input: input } })
+                .then((_result) => {
+                    showSnackbar('Промяната на данни беше успешна', 'success', awaitTime);
+                    setTimeout(() => {
+                        navigate(buildUrl(parentSegment));
+                    }, awaitTime);
+                }
+                ).catch((err) => {
+                    console.log(err);
+                });
+        } else {
+            insertVehicleMutation({ variables: { vehicle: input } })
+                .then((_result) => {
+                    showSnackbar('Добавянето на ново превозно средство беше успешно', 'success', awaitTime);
+                    setTimeout(() => {
+                        navigate(buildUrl(parentSegment));
+                    }, awaitTime);
+                }
+                ).catch((err) => {
+                    console.log(err);
+                });
+        }
+        // console.log(response)
 
-                    navigate(buildUrl(PathSegments.VEHICLES));
-
-                }, awaitTime);
-            }
-            ).catch((err) => {
-                console.log(err);
-            });
+        // insertVehicleMutation({ variables: { vehicle: input } })
+        //     .then((result) => {
+        //         console.log(result);
+        //         const awaitTime: number = 2000;
+        //         showSnackbar('Промяната на данни беше успешна', 'success', awaitTime);
+        //         setTimeout(() => {
+        //             navigate(buildUrl(parentSegment));
+        //         }, awaitTime);
+        //     }
+        //     ).catch((err) => {
+        //         console.log(err);
+        //     });
     };
 
     const handleSelectChange = (event: any) => {
@@ -144,8 +155,9 @@ export default function VehicleDetails() {
         if (!isCreateMode) {
             getVehicle({ variables: { id: params.id } }).then(({ data }) => {
                 vehicle = data?.vehicles_by_pk;
+
+                setId(vehicle?.id);
                 if (vehicle) {
-                    console.log(vehicle);
                     setFormData(
                         {
                             year: vehicle.year,
@@ -154,20 +166,48 @@ export default function VehicleDetails() {
                             plate_number: vehicle.plate_number,
                             vin: vehicle.vin,
                             fuel: vehicle.fuel_type?.code ?? ''
-                            // status: vehicle.vehicle_status?.code ?? '',
                         }
                     );
                 }
-            }
-            );
-            // vehicle = useGetVehicleByIdQuery({ variables: { id: params.id } }).data?.vehicles_by_pk;
+            });
         }
     }, []);
 
+    useEffect(() => {
+        /**
+         * Sets the allowed controls based on the user's role.
+         */
+
+        if (location.state?.action === 'preview' || isNullOrUndefined(location.state?.action)) {
+            // DISABLE FORM 
+        }
+        switch (userSettings?.user?.user_role.code) {
+            case 'customer':
+                // setAllowedActions(['edit', 'preview', 'delete']);
+                break;
+            case 'serviceSpecialist':
+
+                break;
+            case 'autoMechanic':
+
+                if (location.state?.action === 'preview' || isNullOrUndefined(location.state?.action)) {
+                    // setIsFormDisabled(true);
+                    // setIsLogsDisabled(true); 
+                    // setIsAddLogEnabled(false);
+
+                }
+                break;
+            default:
+                // setIsFormDisabled(true);
+                break;
+        }
+
+    }, [userSettings]);
+
     return (
         <>
-            {JSON.stringify(userSettings?.user)}
-            <DetailsHeader isCreateMode={isCreateMode} />
+            <DetailsHeader isCreateMode={isCreateMode} parentSegment={parentSegment} />
+
             {!formData && <DatasourceEmptyResult />}
             {formData &&
                 <Paper elevation={1} sx={{ p: 4, borderRadius: 1, marginTop: 1 }}>
@@ -178,7 +218,7 @@ export default function VehicleDetails() {
                         columns={{ xs: 3, md: 6, lg: 9 }}
                         columnSpacing={2}
                         rowGap={1}
-                        onSubmit={handleSubmit} >
+                        onSubmit={handleSubmit}>
 
                         <Grid size={3}>
                             <FormControl sx={{ margin: '8px 0', width: '100%' }} variant="outlined">
@@ -225,7 +265,7 @@ export default function VehicleDetails() {
                         <Grid size={3}>
                             <TextInput
                                 key='plate_number'
-                                value={formData['plate_number']?? ''}
+                                value={formData['plate_number'] ?? ''}
                                 propName={'plate_number'}
                                 changeCallback={handleChange}
                                 disabled={isFormDisabled}
@@ -296,8 +336,7 @@ export default function VehicleDetails() {
                                     fullWidth
                                     variant="contained"
                                     size="large"
-                                    sx={{ mt: 2, borderRadius: 2 }}
-                                >
+                                    sx={{ mt: 2, borderRadius: 2 }}>
                                     Запази
                                 </Button>
                                 }
@@ -307,8 +346,7 @@ export default function VehicleDetails() {
                                     variant="contained"
                                     size="large"
                                     sx={{ mt: 2, borderRadius: 2 }}
-                                    onClick={() => history.back()}
-                                >
+                                    onClick={() => navigate(buildUrl(parentSegment))}>
                                     Назад
                                 </Button>
                                 }

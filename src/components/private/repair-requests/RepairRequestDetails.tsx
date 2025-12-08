@@ -10,6 +10,8 @@ import { Box, FormControl, Grid, IconButton, InputLabel, OutlinedInput, Paper, T
 import type { FormControlError } from '../common/interfaces';
 import AddCommentIcon from '@mui/icons-material/AddComment';
 import type { FetchResult } from '@apollo/client';
+import { PathSegments } from '../../../routes/enums';
+import { useSnackbar } from '../providers/ShackbarContext';
 
 //#region Form Types 
 const omitRepairRequestProperties = ['id', 'created_at', 'updated_at', 'logsCount', 'vehicle', 'vehicle_status'] as const;
@@ -23,7 +25,9 @@ const MyInputLabel = styled(InputLabel)(() => ({
 }));
 
 export default function RepairRequestDetails() {
+    const { showSnackbar } = useSnackbar();
     let { id } = useParams<{ id: string; }>();
+    const isCreateMode = isNullOrUndefined(id);
     const location = useLocation();
     const { userSettings } = useContext(UserContext);
     // GraphQL hooks
@@ -33,43 +37,61 @@ export default function RepairRequestDetails() {
     // State variables
     const [repairRequest, setRepairRequests] = useState<Repair_Request_With_LogsFragment | undefined>();
 
-    console.log('RepairRequestDetails id=', id);
-    const params = useParams();
-    const isCreateMode = isNullOrUndefined(params?.id);
-
+    const [isFormDisabled, setIsFormDisabled] = useState<boolean>(false);
+    const [isLogsDisabled, setIsLogsDisabled] = useState<boolean>(false);
     const [isAddLogEnabled, setIsAddLogEnabled] = useState<boolean>(false);
     const [isButtonAddLogVisible, setIsButtonAddLogVisible] = useState<boolean>(true);
-    // let repairRequest: Repair_Request_With_LogsFragment | undefined | null;
+
+    const [refresh, setRefresh] = useState(true);
 
     useEffect(() => {
         if (!isCreateMode) {
-            if (!isCreateMode) {
-                // todo FIX THIS 
-
-                getRepairRequest({ variables: { id: params.id } })
-                    .then((result) => {
-                        const repairRequestWithLogs: Repair_Request_With_LogsFragment = result.data?.repair_requests_by_pk as Repair_Request_With_LogsFragment;
-                        if (repairRequestWithLogs) {
-                            setRepairRequests(repairRequestWithLogs);
-                            setFormData({
-                                title: repairRequestWithLogs.title,
-                                description: repairRequestWithLogs.description,
-                                status: repairRequestWithLogs.vehicle_status.code,
-                                logsCount: repairRequestWithLogs.logsCount.aggregate?.count ?? 0,
-                                scheduled_for: repairRequestWithLogs.scheduled_for
-                            });
-                            console.log(repairRequestWithLogs);
-                        }
-                    })
-                    .catch((err) => {
-                        console.log(err);
+            getRepairRequest({ variables: { id } })
+                .then((result) => {
+                    const repairRequestWithLogs: Repair_Request_With_LogsFragment = result.data?.repair_requests_by_pk as Repair_Request_With_LogsFragment;
+                    if (repairRequestWithLogs) {
+                        setRepairRequests(repairRequestWithLogs);
+                        setFormData({
+                            title: repairRequestWithLogs.title,
+                            description: repairRequestWithLogs.description,
+                            status: repairRequestWithLogs.vehicle_status.code,
+                            logsCount: repairRequestWithLogs.logsCount.aggregate?.count ?? 0,
+                            scheduled_for: repairRequestWithLogs.scheduled_for
+                        });
                     }
-                    );
-            }
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
         }
-    }, []);
+    }, [refresh]);
 
-    const isFormDisabled = location.state?.action === 'preview' || isNullOrUndefined(location.state?.action);
+    useEffect(() => {
+        /**
+         * Sets the allowed controls based on the user's role.
+         */
+        switch (userSettings?.user?.user_role.code) {
+            case 'customer':
+                setIsFormDisabled(location.state?.action === 'preview' || isNullOrUndefined(location.state?.action));
+                break;
+            case 'serviceSpecialist':
+                setIsFormDisabled(location.state?.action === 'preview' || isNullOrUndefined(location.state?.action));
+                break;
+            case 'autoMechanic':
+                setIsFormDisabled(true);
+                setIsButtonAddLogVisible(true);
+
+                if (location.state?.action === 'preview' || isNullOrUndefined(location.state?.action)) {
+                    setIsButtonAddLogVisible(false);
+                    setIsLogsDisabled(true);
+                }
+                break;
+            default:
+                setIsFormDisabled(true);
+                break;
+        }
+
+    }, [userSettings]);
 
     const [errors/*, setErrors*/] = useState<FormControlError[]>([]);
     const [formData, setFormData] = useState<FormRepairRequestProps>({
@@ -81,8 +103,6 @@ export default function RepairRequestDetails() {
     });
 
     const handleChange = (e: { target: { name: any; value: any; }; }) => {
-        console.log([e.target.name], e.target.value);
-
         const fieldName = e.target.name;
         let fieldValue = e.target.value;
         setFormData({
@@ -91,72 +111,74 @@ export default function RepairRequestDetails() {
         });
     };
 
-    const handleAddLog = () => {
-        console.log('Add log clicked');
-        setIsAddLogEnabled(true);
-
+    const toggleAddLogStates = () => {
         setIsButtonAddLogVisible(false);
-
-        // hide button here
-    }
+        setIsAddLogEnabled(true);
+    };
 
     const handleLogInteraction = (action: COMMENT_ACTIONS, entity: Requests_Logs) => {
-
-        console.log(entity);
+        let hasError: boolean = false;
         if (action === 'update') {
-            // Here you would typically call an API or update state to persist the changes
-            console.log(`Updated log message to: ${entity as any}.message`);
+            // Here you would typically call an API or update state to persist the changes 
             const input: Requests_Logs_Insert_Input = {
                 id: entity.id,
                 message: entity.message,
                 request_id: id,
                 author_id: userSettings?.user?.id as string,
                 author_role_id: userSettings?.user?.user_role.id as string
-            }
-            upsertLog({ variables: { object: input } }).then(res => {
-                console.log(res);
+            };
+            upsertLog({ variables: { object: input } }).then(_res => {
+                setRefresh(e => !e);
+                showSnackbar('Промяната е успешна', 'success', 2000);
             }).catch(err => {
                 console.log(err);
+                hasError = true;
             });
 
         } else if (action === 'delete') {
-            // Handle delete action
-            console.log(`Deleted log with id: ${entity as any} `);
+            // Handle delete action 
 
-            deleteLog({ variables: { id: entity.id } }).then((res: FetchResult<DeleteRepairRequestLogMutation>) => {
-                console.log(res);
+            deleteLog({ variables: { id: entity.id } }).then((_res: FetchResult<DeleteRepairRequestLogMutation>) => {
+                setRefresh(e => !e);
+                showSnackbar('Изтриването е успешно', 'success', 2000);
             }).catch((err: any) => {
                 console.log(err);
+                hasError = true;
             });
 
 
         } else if (action === 'create') {
-            // Handle create action
-            console.log(`Created log with message: ${entity as any}.message`);
+            // Handle create action 
             setIsAddLogEnabled(false);
             setIsButtonAddLogVisible(true);
+            setRefresh(e => !e);
 
             const input: Requests_Logs_Insert_Input = {
                 message: entity.message,
                 request_id: id,
                 author_id: userSettings?.user?.id as string,
                 author_role_id: userSettings?.user?.user_role.id as string
-            }
-            upsertLog({ variables: { object: input } }).then(res => {
-                console.log(res);
+            };
+            upsertLog({ variables: { object: input } }).then(_res => {
+                setRefresh(e => !e);
+                showSnackbar('Добавянето е успешно', 'success', 2000);
             }).catch(err => {
                 console.log(err);
+                hasError = true;
             });
 
 
         } else if (action === 'none') {
             // Handle none action - used to close the create log form without action
-            console.log(`Create log cancelled`);
+
             setIsAddLogEnabled(false);
             setIsButtonAddLogVisible(true);
 
         }
-    }
+        if (hasError) {
+            showSnackbar('Операцията не беше успешна', 'error', 3000);
+        }
+    };
 
     const handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
@@ -165,7 +187,7 @@ export default function RepairRequestDetails() {
 
     return (
         <>
-            <DetailsHeader isCreateMode={isCreateMode} />
+            <DetailsHeader isCreateMode={isCreateMode} parentSegment={PathSegments.REPAIR_REQUESTS} />
 
             {!repairRequest && <DatasourceEmptyResult />}
 
@@ -209,7 +231,6 @@ export default function RepairRequestDetails() {
 
                             <Grid size={9}>
                                 <FormControl sx={{ margin: '8px 0', width: '100%' }} variant="outlined">
-                                    {/* <InputLabel htmlFor="titleId" error={errors.some(e => e.controlName === 'description')} >Описание</InputLabel> */}
 
                                     <TextField
                                         id="description"
@@ -236,7 +257,7 @@ export default function RepairRequestDetails() {
                                 key={'new-log'}
                                 log={{} as any}
                                 isFromCurrentUser={true}
-                                isParentDisabled={false}
+                                isPreview={false}
                                 isCreateMode={true}
                                 callBack={handleLogInteraction}
                             />
@@ -246,9 +267,9 @@ export default function RepairRequestDetails() {
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, marginBottom: '8px' }}      >
                         <Typography variant='h6' sx={{ fontWeight: 700 }}>Логове на заявката за ремонт</Typography>
 
-                        {!isFormDisabled && isButtonAddLogVisible && <IconButton
+                        {isButtonAddLogVisible && <IconButton
                             size="small"
-                            onClick={handleAddLog}  >
+                            onClick={toggleAddLogStates}  >
                             <AddCommentIcon color='primary' />
                         </IconButton>}
                     </Box>
@@ -260,7 +281,7 @@ export default function RepairRequestDetails() {
                                 key={l.id}
                                 log={l as any}
                                 isFromCurrentUser={l.user.id === userSettings?.user?.id}
-                                isParentDisabled={isFormDisabled}
+                                isPreview={isLogsDisabled}
                                 callBack={handleLogInteraction}
                             />
                         )}

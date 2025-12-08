@@ -13,6 +13,7 @@ import type { FormControlError } from "../private/common/interfaces";
 import { isFullString } from "is-what";
 import UserContext from "../private/providers/UserContext";
 import { buildUrl } from "../../routes/routes-util";
+import { useSnackbar } from "../private/providers/ShackbarContext";
 
 //#region Form Types 
 const omitUserProperties = ['id', 'created_at', 'updated_at', 'gender', 'user_role'] as const;
@@ -20,7 +21,7 @@ type FilteredUserProperties = Pick<Edit_UserFragment, typeof omitUserProperties[
 type FormUserProps = Omit<Edit_UserFragment, keyof FilteredUserProperties> & { /*role: string, */genderCode: string; };
 //#endregion Form Types
 export default function RegisterForm() {
-
+    const { showSnackbar } = useSnackbar();
     const phoneRegexp: RegExp = /\+359[1-9]{3}\d{6}$/; // simple validation for the BG gsm numbers
     const navigate = useNavigate();
     const { genders, userRoles } = useEnums();
@@ -42,18 +43,14 @@ export default function RegisterForm() {
     });
 
     const handleChange = (e: { target: { name: any; value: any; }; }) => {
-        console.log([e.target.name], e.target.value);
 
         setTouchedFields(s => s.add(e.target.name));
         if (!isFullString(e.target.value)) {
             setTouchedFields(s => { s.delete(e.target.name); return s; });
         }
-        //    touchedFields.add(e.target.name)
-        if (e.target.name === 'phone' && !phoneRegexp.test(e.target.value)) {
-            //             console.log( phoneRegexp.test(e.target.value))
-            // console.log('INVALID NUMBER : ' + e.target.value)
-            if (!errors.some(c => c.controlName === e.target.name)) {
 
+        if (e.target.name === 'phone' && !phoneRegexp.test(e.target.value)) {
+            if (!errors.some(c => c.controlName === e.target.name)) {
                 errors.push({ controlName: e.target.name });
             }
         } else {
@@ -62,16 +59,14 @@ export default function RegisterForm() {
                 console.log(index);
                 console.log(errors.splice(index, 1)); // 2nd parameter means remove one item only
                 console.log(errors);
-                setErrors(old => [...old.filter(c => c.controlName === e.target.name)]);
+                setErrors(old => old.filter(c => c.controlName === e.target.name));
             }
         }
-        // console.log(formData); 
 
         setFormData({
             ...formData,// clone form data and replace property with event origin
             [e.target.name]: e.target.value,
         });
-        // console.log(formData);
     };
 
     const handleSelectChange = (event: any) => {
@@ -129,12 +124,12 @@ export default function RegisterForm() {
                     console.log('User wasn\'t created');
                     return;
                 }
-                console.log(data?.insert_users_one);
-                console.log('Регистрацията премина успешно.');
+                const awaitTime = 2000;
+                showSnackbar('Регистрацията премина успешно.', 'success', awaitTime);
                 onLogin(user);
                 setTimeout(() => {
                     navigate(buildUrl(userSettings?.userMenu[0].path ?? ''));
-                }, 1000);
+                }, awaitTime);
             }
         });
     };
