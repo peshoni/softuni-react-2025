@@ -58,7 +58,6 @@ export default function VehiclesList() {
         ? {}
         : { owner_id: { _eq: userSettings.user.id } };
 
-
     const [allowedActions, setAllowedActions] = useState<ROW_ACTIONS[]>([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
@@ -70,8 +69,8 @@ export default function VehiclesList() {
         vehicleStatusesFilters = vehicleStatuses?.map(vs => ({ id: vs.id, name: vs.name, code: vs.code })) ?? [];
     }
 
+    // GraphQL hooks
     const [detachVehicleMutation] = useDetachVehicleMutation();
-
     const { data, loading, error } = useGetVehiclesQuery({
         variables: {
             limit: rowsPerPage,
@@ -107,7 +106,7 @@ export default function VehiclesList() {
          */
         switch (userSettings?.user?.user_role.code) {
             case 'customer':
-                setAllowedActions(['edit', 'preview', 'delete','repair']);
+                setAllowedActions(['edit', 'preview', 'delete', 'repair']);
                 break;
             case 'serviceSpecialist':
                 setAllowedActions(['edit', 'preview']);
@@ -121,9 +120,7 @@ export default function VehiclesList() {
         }
     }, [userSettings]);
 
-    //Todo: error handling
-
-    const handleChangePage = (_event: unknown, newPage: number) => { 
+    const handleChangePage = (_event: unknown, newPage: number) => {
         setPage(newPage);
     };
 
@@ -145,7 +142,7 @@ export default function VehiclesList() {
         setPage(0);
     };
 
-    const addClickedHandler = () => { 
+    const addClickedHandler = () => {
         navigate(buildUrl(PathSegments.VEHICLES, PathSegments.DETAILS));
     };
 
@@ -159,7 +156,7 @@ export default function VehiclesList() {
 
             const options: ConfirmationDialogOptions = {
                 title: 'Изтриване на данни за автомобил',
-                message: `При потвърждение, ще бъдат изтрити данните за автомобил ${vehicle?.plate_number} от вашите данни. Сигурни ли сте?`
+                message: `При потвърждение, ще бъдат изтрити данните за автомобил ${vehicle?.plate_number}. Сигурни ли сте?`
             };
 
             const result = await confirm(options);
@@ -173,18 +170,14 @@ export default function VehiclesList() {
                     }
                 );
             }
-
-        } else if(action === 'repair'){
-            // alert('add')
-            console.log('vehicle: '+id)
-             navigate(buildUrl(PathSegments.REPAIR_REQUESTS, PathSegments.DETAILS ), { state: { action , vehicleId: id} });
-        }else{
+        } else if (action === 'repair') {
+            navigate(buildUrl(PathSegments.REPAIR_REQUESTS, PathSegments.CREATE, id));
+        } else {
             navigate(buildUrl(PathSegments.VEHICLES, PathSegments.DETAILS, id), { state: { action } });
         }
     };
 
     const isTableVisible: boolean = (Boolean(data?.vehicles_aggregate.aggregate?.count)) && (!error || !loading);
-
     const navBarProps: TableNavbarProps = {
         label: 'Списък с автомобили',
         user: userSettings?.user,
@@ -194,6 +187,7 @@ export default function VehiclesList() {
         addClickedHandler,
         filterSelectedHandler,
     };
+
     return (
         <Paper sx={{ width: '100%', overflow: 'hidden' }}>
             <TableNavbar {...navBarProps}></TableNavbar>

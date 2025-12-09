@@ -1,17 +1,23 @@
-import { useLocation, useParams } from 'react-router';
-import { useGetRepairRequestByIdLazyQuery, type Repair_Request_With_LogsFragment, type Repair_RequestFragment, type Requests_Logs, useUpsertRepairRequestLogMutation, type Requests_Logs_Insert_Input, useDeleteRepairRequestLogMutation, type DeleteRepairRequestLogMutation } from '../../../../graphql/generated';
+import { useLocation, useNavigate, useParams } from 'react-router';
+import { useGetRepairRequestByIdLazyQuery, type Repair_Request_With_LogsFragment, type Repair_RequestFragment, type Requests_Logs, useUpsertRepairRequestLogMutation, type Requests_Logs_Insert_Input, useDeleteRepairRequestLogMutation, type DeleteRepairRequestLogMutation, useGetVehicleByIdQuery, useGetVehicleByIdLazyQuery, useCreateRepairRequestMutation, useUpdateRepairRequestMutation, type Repair_Requests_Insert_Input, type Repair_Requests_Set_Input, useGetAutoMechanicsLazyQuery, useGetAutoMechanicsQuery, type UserFragment, type Users, type GetAutoMechanicsQuery } from '../../../../graphql/generated';
 import Log, { type COMMENT_ACTIONS } from './Log';
 import { isNullOrUndefined } from 'is-what';
 import DetailsHeader from '../common/forms/DetailsHeader';
 import DatasourceEmptyResult from '../common/tables/DataSourceEmptyResult';
 import UserContext from '../providers/UserContext';
 import { useContext, useEffect, useState } from 'react';
-import { Box, FormControl, Grid, IconButton, InputLabel, OutlinedInput, Paper, TextField, Typography, styled } from '@mui/material';
+import { Box, Button, FormControl, Grid, IconButton, InputLabel, MenuItem, OutlinedInput, Paper, Select, TextField, Typography, styled } from '@mui/material';
 import type { FormControlError } from '../common/interfaces';
 import AddCommentIcon from '@mui/icons-material/AddComment';
 import type { FetchResult } from '@apollo/client';
 import { PathSegments } from '../../../routes/enums';
-import { useSnackbar } from '../providers/ShackbarContext';
+import { useSnackbar } from '../providers/SnackbarContext';
+import { buildUrl } from '../../../routes/routes-util';
+import useEnums from '../hooks/useEnums';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs, { Dayjs } from 'dayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 //#region Form Types 
 const omitRepairRequestProperties = ['id', 'created_at', 'updated_at', 'logsCount', 'vehicle', 'vehicle_status'] as const;
@@ -25,32 +31,64 @@ const MyInputLabel = styled(InputLabel)(() => ({
 }));
 
 export default function RepairRequestDetails() {
-    const { showSnackbar } = useSnackbar();
+    const navigate = useNavigate();
     let { id } = useParams<{ id: string; }>();
-    const isCreateMode = isNullOrUndefined(id);
-    const location = useLocation();
+    let { vehicleId } = useParams<{ vehicleId: string; }>();
+
+    // utils and variables
     const { userSettings } = useContext(UserContext);
+    const { showSnackbar } = useSnackbar();
+    const { vehicleStatuses } = useEnums();
+    const isCreateMode = isNullOrUndefined(id) || !isNullOrUndefined(vehicleId);  // update request OR create one for a vehicle 
+    const location = useLocation();
+
     // GraphQL hooks
+    const [getVehicleById, { data: vehicleData }] = useGetVehicleByIdLazyQuery();
     const [getRepairRequest] = useGetRepairRequestByIdLazyQuery();
+    const [createRepairRequest] = useCreateRepairRequestMutation();
+    const [updateRepairRequest] = useUpdateRepairRequestMutation();
     const [upsertLog] = useUpsertRepairRequestLogMutation();
     const [deleteLog] = useDeleteRepairRequestLogMutation();
-    // State variables
-    const [repairRequest, setRepairRequests] = useState<Repair_Request_With_LogsFragment | undefined>();
+    const [getAutoMechanics] = useGetAutoMechanicsLazyQuery();
 
+    // State variables
+    const [repairRequest, setRepairRequest] = useState<Repair_Request_With_LogsFragment>();
     const [isFormDisabled, setIsFormDisabled] = useState<boolean>(false);
     const [isLogsDisabled, setIsLogsDisabled] = useState<boolean>(false);
     const [isAddLogEnabled, setIsAddLogEnabled] = useState<boolean>(false);
+    const [isLogsVisible, setIsLogsVisible] = useState<boolean>(true);
     const [isButtonAddLogVisible, setIsButtonAddLogVisible] = useState<boolean>(true);
-
     const [refresh, setRefresh] = useState(true);
+    const [errors/*, setErrors*/] = useState<FormControlError[]>([]);
+
+    const [value, setValue] = useState<Dayjs | null>(dayjs()
+    );
+
+    const [mechanics, setMechanics] = useState<UserFragment[]>([]);
+    const [formData, setFormData] = useState<FormRepairRequestProps>({
+        title: '',
+        description: '',
+        scheduled_for: '',
+        logsCount: 0,
+        status: ''
+    });
 
     useEffect(() => {
-        if (!isCreateMode) {
+        // getAutoMechanics().then(
+        //     (result) => {
+        //         const mechanics = result.data?.users;
+        //         console.log(mechanics)
+        //     }
+        // )
+    }, []);
+
+    useEffect(() => {
+        if (!isCreateMode && !vehicleId) {
             getRepairRequest({ variables: { id } })
                 .then((result) => {
                     const repairRequestWithLogs: Repair_Request_With_LogsFragment = result.data?.repair_requests_by_pk as Repair_Request_With_LogsFragment;
                     if (repairRequestWithLogs) {
-                        setRepairRequests(repairRequestWithLogs);
+                        setRepairRequest(repairRequestWithLogs);
                         setFormData({
                             title: repairRequestWithLogs.title,
                             description: repairRequestWithLogs.description,
@@ -63,6 +101,19 @@ export default function RepairRequestDetails() {
                 .catch((err) => {
                     console.log(err);
                 });
+        } else {
+            getVehicleById({ variables: { id: vehicleId } }).then(
+                ({ data, error }) => {
+                    if (error) {
+                        // TODO notify and return : No vehicle found..
+                    } else {
+                        console.log(data?.vehicles_by_pk);
+                        setIsLogsVisible(false); // Hide logs
+                        setIsFormDisabled(false); // enable the form
+                    }
+                }
+            );
+
         }
     }, [refresh]);
 
@@ -73,9 +124,24 @@ export default function RepairRequestDetails() {
         switch (userSettings?.user?.user_role.code) {
             case 'customer':
                 setIsFormDisabled(location.state?.action === 'preview' || isNullOrUndefined(location.state?.action));
+                // if (location.state?.action === 'repair' && location.state.vehicle) {
+                //     const vehicle = location.state.vehicle;
+                //     console.log('Enable add repair request form!!!!!!!!');
+                //     console.log(vehicle);
+                // }
                 break;
             case 'serviceSpecialist':
                 setIsFormDisabled(location.state?.action === 'preview' || isNullOrUndefined(location.state?.action));
+
+                getAutoMechanics().then(
+                    (result) => {
+                        if (result.data) {
+                            const mechanics: UserFragment[] = result.data?.users;
+                            console.log(mechanics)
+                            setMechanics(mechanics);
+                        }
+                    }
+                )
                 break;
             case 'autoMechanic':
                 setIsFormDisabled(true);
@@ -92,15 +158,6 @@ export default function RepairRequestDetails() {
         }
 
     }, [userSettings]);
-
-    const [errors/*, setErrors*/] = useState<FormControlError[]>([]);
-    const [formData, setFormData] = useState<FormRepairRequestProps>({
-        title: '',
-        description: '',
-        scheduled_for: '',
-        logsCount: 0,
-        status: ''
-    });
 
     const handleChange = (e: { target: { name: any; value: any; }; }) => {
         const fieldName = e.target.name;
@@ -180,19 +237,78 @@ export default function RepairRequestDetails() {
         }
     };
 
+    const handleSelectChange = (event: any) => {
+        const selectedMechanicID = event.target.value;
+        console.log(selectedMechanicID)
+
+        // const selectedFilter: FilterFields | undefined = innerOptions.find(o => o.code === selectedOptionCode);
+        // if (selectedFilter) {
+        //     setSelected(selectedFilter.code);
+        //     filterSelectedHandler(selectedFilter);
+        // }
+    };
+
     const handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         console.log(formData);
+
+        if (repairRequest) { // update RR here
+            // const update
+            const setInput: Repair_Requests_Set_Input = {
+                title: formData.title,
+                description: formData.description,
+
+            };
+
+            updateRepairRequest({ variables: { id, input: setInput } }).then((res) => {
+                console.log(res);
+                const timeout = 2000;
+                showSnackbar('Промяната е успешна', 'success', timeout);
+                setTimeout(() => {
+                    navigate(buildUrl(PathSegments.REPAIR_REQUESTS));
+                }, timeout);
+            }).catch((err) => {
+                showSnackbar('Възникна грешка', 'error', 2000);
+            });
+
+
+        } else { // create new one 
+            const insertInput: Repair_Requests_Insert_Input = {
+                title: formData.title,
+                description: formData.description,
+                requested_at: new Date(),
+                customer_id: userSettings?.user?.id,
+                vehicle_id: vehicleData?.vehicles_by_pk?.id,
+                status_id: vehicleStatuses.find(s => s.code === 'repair-request')?.id
+
+            };
+            console.log(insertInput);
+            createRepairRequest({ variables: { input: insertInput } }).then((res) => {
+                console.log(res);
+                const timeout = 2000;
+                showSnackbar('Добавянето е успешно', 'success', timeout);
+                setTimeout(() => {
+                    navigate(buildUrl(PathSegments.REPAIR_REQUESTS));
+                }, timeout);
+
+            }).catch((err) => {
+                showSnackbar('Възникна грешка', 'error', 2000);
+            });
+
+
+        }
+
+
     };
 
     return (
         <>
             <DetailsHeader isCreateMode={isCreateMode} parentSegment={PathSegments.REPAIR_REQUESTS} />
 
-            {!repairRequest && <DatasourceEmptyResult />}
+            {(!repairRequest && !vehicleData?.vehicles_by_pk) && <DatasourceEmptyResult />}
 
-            {repairRequest &&
-                <div>
+            {(repairRequest || vehicleData?.vehicles_by_pk) &&
+                <>
                     <Paper elevation={1} sx={{ p: 4, borderRadius: 1, marginTop: 1 }}>
                         <Grid
                             component="form"
@@ -204,7 +320,6 @@ export default function RepairRequestDetails() {
                             onSubmit={handleSubmit} >
 
                             <Grid size={3}>
-
                                 <FormControl sx={{ margin: '8px 0', width: '100%' }} variant="outlined">
                                     <MyInputLabel
                                         htmlFor="titleId"
@@ -223,9 +338,44 @@ export default function RepairRequestDetails() {
                                         error={errors.some(e => e.controlName === 'title')}
                                     />
                                 </FormControl>
-
                             </Grid>
 
+                            <Grid size={3}>
+                                <FormControl sx={{ margin: '8px 0', width: '100%' }} variant="outlined">
+                                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='bg'>
+                                        <DatePicker
+                                            minDate={dayjs()}
+                                            label="Приемна дата"
+                                            value={value}
+                                            onChange={(newValue) => setValue(newValue)}
+                                        />
+                                    </LocalizationProvider>
+                                </FormControl>
+                            </Grid>
+
+                            {mechanics.length > 0 &&
+                                <Grid size={3}>
+
+
+                                    <FormControl sx={{ m: 1, width: '100%' }}>
+                                        <InputLabel id="mechanicId">Механик</InputLabel>
+                                        <Select
+                                            labelId="mechanicId"
+                                            id="mechanicSelectId"
+                                            value={mechanics[0].id}
+                                            label="Механик"
+                                            onChange={handleSelectChange}
+                                            sx={{ textAlign: 'start' }}
+                                        >
+                                            {mechanics.map(element => <MenuItem
+                                                value={element.id} key={element.id}> {element.first_name} {element.last_name}
+                                            </MenuItem>)
+                                            }
+                                        </Select>
+                                        {/* <FormHelperText>избери механик</FormHelperText> */}
+                                    </FormControl>
+                                </Grid>
+                            }
                             {/* <Grid size={3}></Grid>
                             <Grid size={3}></Grid> */}
 
@@ -245,48 +395,87 @@ export default function RepairRequestDetails() {
                                     />
                                 </FormControl>
                             </Grid>
+
+
+                            <Grid size={{ xs: 3, md: 6, lg: 9 }} container justifyContent="flex-end" >
+                                <Grid size={{ xs: 3, md: 3, lg: 2 }}>
+
+                                    {vehicleData?.vehicles_by_pk && <Button
+                                        type="submit"
+                                        fullWidth
+                                        variant="contained"
+                                        size="large"
+                                        sx={{ mt: 2, borderRadius: 2 }}>
+                                        Добави
+                                    </Button>
+                                    }
+                                    {!vehicleData?.vehicles_by_pk && <Button
+                                        type="submit"
+                                        fullWidth
+                                        variant="contained"
+                                        size="large"
+                                        sx={{ mt: 2, borderRadius: 2 }}
+                                    // onClick={() =>
+                                    //     // Adding is allowed only from the Vehicles list
+                                    //    //  navigate(buildUrl(PathSegments.VEHICLES))
+                                    // }
+                                    >
+                                        Промени
+                                    </Button>
+                                    }
+                                </Grid>
+                            </Grid>
+
+
+
                         </Grid>
                     </Paper>
 
-                    <Box sx={{ height: '24px' }}></Box> {/* Spacer */}
-                    {/* A log component used for create new RepairRequest log */}
-                    {isAddLogEnabled &&
+
+                    {isLogsVisible &&
                         <>
-                            <Typography variant='h6' sx={{ fontWeight: 700 }}>Добавяне на коментар</Typography>
-                            <Log
-                                key={'new-log'}
-                                log={{} as any}
-                                isFromCurrentUser={true}
-                                isPreview={false}
-                                isCreateMode={true}
-                                callBack={handleLogInteraction}
-                            />
+                            <Box sx={{ height: '24px' }}></Box> {/* Spacer */}
+                            {/* A log component used for create new RepairRequest log */}
+                            {isAddLogEnabled &&
+                                <>
+                                    <Typography variant='h6' sx={{ fontWeight: 700 }}>Добавяне на коментар</Typography>
+                                    <Log
+                                        key={'new-log'}
+                                        log={{} as any}
+                                        isFromCurrentUser={true}
+                                        isPreview={false}
+                                        isCreateMode={true}
+                                        callBack={handleLogInteraction}
+                                    />
+                                </>
+                            }
+
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, marginBottom: '8px' }}      >
+                                <Typography variant='h6' sx={{ fontWeight: 700 }}>Логове на заявката за ремонт</Typography>
+
+                                {isButtonAddLogVisible && <IconButton
+                                    size="small"
+                                    onClick={toggleAddLogStates}  >
+                                    <AddCommentIcon color='primary' />
+                                </IconButton>}
+                            </Box>
+
+
+                            <Box sx={{ width: '100%', bgcolor: 'background.paper', border: '1px solid #bdbdbd' }}>
+                                {repairRequest?.requests_logs.map(l =>
+                                    <Log
+                                        key={l.id}
+                                        log={l as any}
+                                        isFromCurrentUser={l.user.id === userSettings?.user?.id}
+                                        isPreview={isLogsDisabled}
+                                        callBack={handleLogInteraction}
+                                    />
+                                )}
+                            </Box>
                         </>
                     }
 
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, marginBottom: '8px' }}      >
-                        <Typography variant='h6' sx={{ fontWeight: 700 }}>Логове на заявката за ремонт</Typography>
-
-                        {isButtonAddLogVisible && <IconButton
-                            size="small"
-                            onClick={toggleAddLogStates}  >
-                            <AddCommentIcon color='primary' />
-                        </IconButton>}
-                    </Box>
-
-
-                    <Box sx={{ width: '100%', bgcolor: 'background.paper', border: '1px solid #bdbdbd' }}>
-                        {repairRequest?.requests_logs.map(l =>
-                            <Log
-                                key={l.id}
-                                log={l as any}
-                                isFromCurrentUser={l.user.id === userSettings?.user?.id}
-                                isPreview={isLogsDisabled}
-                                callBack={handleLogInteraction}
-                            />
-                        )}
-                    </Box>
-                </div>
+                </>
             }
         </>
     );

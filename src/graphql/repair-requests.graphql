@@ -8,14 +8,28 @@ query GetRepairRequests($limit: Int, $offset: Int, $condition: repair_requests_b
       count
     }
   }
+} 
+# Repair requests
+mutation CreateRepairRequest($input: repair_requests_insert_input!) {
+  insert_repair_requests_one(object: $input) {
+    ...repair_request
+  }
+}
+
+mutation UpdateRepairRequest($id: uuid!, $input: repair_requests_set_input!) {
+  update_repair_requests_by_pk(pk_columns: {id: $id}, _set: $input) {
+    ...repair_request
+  }
 }
 
 query GetRepairRequestById ($id:uuid!) {
   repair_requests_by_pk(id:$id){
     ...repair_request_with_logs
   }
-}
+} 
+# end Repair requests
 
+# Request Logs
 mutation UpsertRepairRequestLog($object: requests_logs_insert_input!) {
   insert_requests_logs_one(object: $object, on_conflict: {constraint: requests_logs_pkey, update_columns: [message]}) {
     ...request_log
@@ -26,9 +40,8 @@ mutation DeleteRepairRequestLog($id: uuid!) {
   delete_requests_logs_by_pk(id: $id) {
     ...request_log
   }
-}
-
-
+} 
+# end Request Logs
 # Fragments
 fragment repair_request on repair_requests {
   id

@@ -29,17 +29,15 @@ export const SnackbarProvider = ({ children }: { children: ReactNode; }) => {
         []
     );
 
-    const handleCloseToastMessage = (_event?: React.SyntheticEvent | Event, reason?: SnackbarCloseReason,) => { 
+    const handleCloseToastMessage = (_event?: React.SyntheticEvent | Event, reason?: SnackbarCloseReason,) => {
         if (reason === 'clickaway') {
             return;
         }
-        // setToastState({ open: false, alertType: undefined, message: '', duration });
     };
 
     const contextValue = useMemo(() => ({ showSnackbar }), [showSnackbar]);
 
     return (
-
         <SnackbarContext.Provider value={contextValue}>
 
             {children}

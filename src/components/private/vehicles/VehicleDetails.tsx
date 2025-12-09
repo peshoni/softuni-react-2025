@@ -10,7 +10,7 @@ import TextInput from "../common/forms/TextInput";
 import useEnums from "../hooks/useEnums";
 import type { FilterFields } from "../common/tables/table-interfaces";
 import UserContext from "../providers/UserContext";
-import { useSnackbar } from "../providers/ShackbarContext";
+import { useSnackbar } from "../providers/SnackbarContext";
 import { buildUrl } from "../../../routes/routes-util";
 import { PathSegments } from "../../../routes/enums";
 
@@ -24,9 +24,19 @@ export default function VehicleDetails() {
     const parentSegment = PathSegments.VEHICLES;
     const location = useLocation();
     const navigate = useNavigate();
+    const params = useParams();
+
     const { fuelTypes /*, vehicleStatuses*/ } = useEnums();
     const { showSnackbar } = useSnackbar();
     const [id, setId] = useState(undefined);
+    const [formData, setFormData] = useState<FormVehicleProps>({
+        make: '',
+        model: '',
+        plate_number: '',
+        vin: '',
+        year: 1980,
+        fuel: ''
+    });
     /**
      * Retrieves the current user from the UserContext.
      */
@@ -36,20 +46,11 @@ export default function VehicleDetails() {
     // const vehicleStatusesFilters: FilterFields[] = vehicleStatuses?.map(vs => ({ id: vs.id, name: vs.name, code: vs.code })) ?? []; 
 
     const [errors, setErrors] = useState<FormControlError[]>([]);
+
+    // GraphQL hooks
     const [getVehicle] = useGetVehicleByIdLazyQuery();
     const [insertVehicleMutation] = useInsertVehicleMutation();
-    const [updateVehicleMutation] = useUpdateVehicleMutation();
-
-    const params = useParams();
-
-    const [formData, setFormData] = useState<FormVehicleProps>({
-        make: '',
-        model: '',
-        plate_number: '',
-        vin: '',
-        year: 1980,
-        fuel: ''
-    });
+    const [updateVehicleMutation] = useUpdateVehicleMutation();  
 
     const isFormDisabled = location.state?.action === 'preview';
     const isCreateMode = isNullOrUndefined(params) || isNullOrUndefined(params?.id);
@@ -119,20 +120,6 @@ export default function VehicleDetails() {
                     console.log(err);
                 });
         }
-        // console.log(response)
-
-        // insertVehicleMutation({ variables: { vehicle: input } })
-        //     .then((result) => {
-        //         console.log(result);
-        //         const awaitTime: number = 2000;
-        //         showSnackbar('Промяната на данни беше успешна', 'success', awaitTime);
-        //         setTimeout(() => {
-        //             navigate(buildUrl(parentSegment));
-        //         }, awaitTime);
-        //     }
-        //     ).catch((err) => {
-        //         console.log(err);
-        //     });
     };
 
     const handleSelectChange = (event: any) => {
@@ -176,32 +163,26 @@ export default function VehicleDetails() {
     useEffect(() => {
         /**
          * Sets the allowed controls based on the user's role.
-         */
-
+         */ 
         if (location.state?.action === 'preview' || isNullOrUndefined(location.state?.action)) {
             // DISABLE FORM 
         }
         switch (userSettings?.user?.user_role.code) {
             case 'customer':
-                // setAllowedActions(['edit', 'preview', 'delete']);
                 break;
             case 'serviceSpecialist':
-
                 break;
             case 'autoMechanic':
-
                 if (location.state?.action === 'preview' || isNullOrUndefined(location.state?.action)) {
                     // setIsFormDisabled(true);
                     // setIsLogsDisabled(true); 
-                    // setIsAddLogEnabled(false);
-
+                    // setIsAddLogEnabled(false); 
                 }
                 break;
             default:
                 // setIsFormDisabled(true);
                 break;
-        }
-
+        } 
     }, [userSettings]);
 
     return (
@@ -304,28 +285,6 @@ export default function VehicleDetails() {
                                 <FormHelperText>Select option</FormHelperText>
                             </FormControl>
                         </Grid>
-
-                        {/* 
-                        {!isCreateMode && <Grid size={3}>
-                            <FormControl sx={{ margin: '8px 0', width: '100%' }} variant="outlined">
-                                <InputLabel id="tableFilterOne">Статус</InputLabel>
-                                <Select
-                                    labelId="roleSelect"
-                                    label="status"
-                                    name="status"
-                                    disabled={isFormDisabled}
-                                    value={formData.status}
-                                    onChange={handleSelectChange}
-                                    sx={{ textAlign: 'start' }}
-                                >
-                                    {vehicleStatusesFilters.map(element => <MenuItem
-                                        value={element.code} key={element.id}>{element.name}
-                                    </MenuItem>)}
-                                </Select>
-                                <FormHelperText>Select option</FormHelperText>
-                            </FormControl>
-                        </Grid>
-                        } */}
 
                         {/* Actions */}
                         <Grid size={{ xs: 3, md: 6, lg: 9 }} container justifyContent="flex-end" >

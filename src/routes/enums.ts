@@ -4,7 +4,10 @@ export enum PathSegments {
     REGISTER = 'register',
     CUSTOMERS = 'customers',
     VEHICLES = 'vehicles',
+
     DETAILS = 'details',
     REPAIR_REQUESTS = 'repair-requests',
-    ID = ':id'
+    ID = ':id',
+    CREATE = 'create',
+    VEHICLE_ID = ':vehicleId'
 } 

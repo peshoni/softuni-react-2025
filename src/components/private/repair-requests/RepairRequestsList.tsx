@@ -27,7 +27,7 @@ const columns: ColumnSettings<Repair_RequestFragment>[] = [
     { property: "title", label: "описание" },
     { property: "vehicle_status", label: "статус" },
     { property: "logsCount", label: "бележки" },
-    { property: "actions", label: "actions", width: "60px", align: "right" },
+    { property: "actions", label: "още", width: "60px", align: "right" },
 ];
 
 export default function RepairRequestsList() {
@@ -70,7 +70,7 @@ export default function RepairRequestsList() {
             limit: rowsPerPage,
             offset: offset,
             condition: condition,
-            orderBy: { created_at: Order_By.asc }
+            orderBy: { created_at: Order_By.desc }
         },
         context: {
             fetchOptions: {
@@ -109,9 +109,6 @@ export default function RepairRequestsList() {
 
     }, [userSettings]);
 
-
-    //TODo: error handling
-
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
     };
@@ -122,16 +119,12 @@ export default function RepairRequestsList() {
     };
 
     const filterSelectedHandler = (selectedFilter: FilterFields) => {
-
         const criteria: string | null = selectedFilter.id;
-
         const filterCondition: Repair_Requests_Bool_Exp = criteria ? { status_id: { _eq: criteria } } : {};
         if (userCondition) {
             filterCondition._and = filterCondition._and ? [...(filterCondition._and), userCondition] : [userCondition];
         }
-        //else {
         setCondition(filterCondition);
-        // }
         setPage(0);
     };
 

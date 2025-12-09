@@ -31,6 +31,12 @@ query GetUsers(
 	}
 }
 
+query GetAutoMechanics {
+  users(where: {user_role: {code: {_eq: "autoMechanic"}}}, order_by: {created_at: desc}) {
+    ...user
+  }
+}
+
 query GetUserById($id: uuid!) {
 	users_by_pk(id: $id) {
 		...edit_user

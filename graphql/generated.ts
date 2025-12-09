@@ -3550,6 +3550,21 @@ export type GetRepairRequestsQueryVariables = Exact<{
 
 export type GetRepairRequestsQuery = { repair_requests: Array<{ id: any, created_at: any, updated_at?: any | null, scheduled_for?: any | null, description?: string | null, title: string, vehicle_status: { id: any, code: string, color: string, name: string, weight: number }, logsCount: { aggregate?: { count: number } | null }, vehicle: { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number?: string | null, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, code: string, color: string, name: string, weight: number } | null } }>, repair_requests_aggregate: { aggregate?: { count: number } | null } };
 
+export type CreateRepairRequestMutationVariables = Exact<{
+  input: Repair_Requests_Insert_Input;
+}>;
+
+
+export type CreateRepairRequestMutation = { insert_repair_requests_one?: { id: any, created_at: any, updated_at?: any | null, scheduled_for?: any | null, description?: string | null, title: string, vehicle_status: { id: any, code: string, color: string, name: string, weight: number }, logsCount: { aggregate?: { count: number } | null }, vehicle: { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number?: string | null, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, code: string, color: string, name: string, weight: number } | null } } | null };
+
+export type UpdateRepairRequestMutationVariables = Exact<{
+  id: Scalars['uuid']['input'];
+  input: Repair_Requests_Set_Input;
+}>;
+
+
+export type UpdateRepairRequestMutation = { update_repair_requests_by_pk?: { id: any, created_at: any, updated_at?: any | null, scheduled_for?: any | null, description?: string | null, title: string, vehicle_status: { id: any, code: string, color: string, name: string, weight: number }, logsCount: { aggregate?: { count: number } | null }, vehicle: { id: any, created_at: any, updated_at?: any | null, vin: string, plate_number?: string | null, model: string, year?: number | null, make: string, fuel_type?: { id: any, name: string, code: string } | null, vehicle_status?: { id: any, code: string, color: string, name: string, weight: number } | null } } | null };
+
 export type GetRepairRequestByIdQueryVariables = Exact<{
   id: Scalars['uuid']['input'];
 }>;
@@ -3601,6 +3616,11 @@ export type GetUsersQueryVariables = Exact<{
 
 
 export type GetUsersQuery = { users: Array<{ id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, code: string, name: string } }>, users_aggregate: { aggregate?: { count: number } | null } };
+
+export type GetAutoMechanicsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAutoMechanicsQuery = { users: Array<{ id: any, created_at: any, updated_at?: any | null, email: string, first_name: string, last_name: string, phone?: string | null, gender: { id: any, code: string, name: string }, user_role: { id: any, code: string, name: string } }> };
 
 export type GetUserByIdQueryVariables = Exact<{
   id: Scalars['uuid']['input'];
@@ -3904,6 +3924,73 @@ export type GetRepairRequestsQueryHookResult = ReturnType<typeof useGetRepairReq
 export type GetRepairRequestsLazyQueryHookResult = ReturnType<typeof useGetRepairRequestsLazyQuery>;
 export type GetRepairRequestsSuspenseQueryHookResult = ReturnType<typeof useGetRepairRequestsSuspenseQuery>;
 export type GetRepairRequestsQueryResult = ApolloReactCommon.QueryResult<GetRepairRequestsQuery, GetRepairRequestsQueryVariables>;
+export const CreateRepairRequestDocument = gql`
+    mutation CreateRepairRequest($input: repair_requests_insert_input!) {
+  insert_repair_requests_one(object: $input) {
+    ...repair_request
+  }
+}
+    ${Repair_RequestFragmentDoc}`;
+export type CreateRepairRequestMutationFn = ApolloReactCommon.MutationFunction<CreateRepairRequestMutation, CreateRepairRequestMutationVariables>;
+
+/**
+ * __useCreateRepairRequestMutation__
+ *
+ * To run a mutation, you first call `useCreateRepairRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateRepairRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createRepairRequestMutation, { data, loading, error }] = useCreateRepairRequestMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateRepairRequestMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateRepairRequestMutation, CreateRepairRequestMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<CreateRepairRequestMutation, CreateRepairRequestMutationVariables>(CreateRepairRequestDocument, options);
+      }
+export type CreateRepairRequestMutationHookResult = ReturnType<typeof useCreateRepairRequestMutation>;
+export type CreateRepairRequestMutationResult = ApolloReactCommon.MutationResult<CreateRepairRequestMutation>;
+export type CreateRepairRequestMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateRepairRequestMutation, CreateRepairRequestMutationVariables>;
+export const UpdateRepairRequestDocument = gql`
+    mutation UpdateRepairRequest($id: uuid!, $input: repair_requests_set_input!) {
+  update_repair_requests_by_pk(pk_columns: {id: $id}, _set: $input) {
+    ...repair_request
+  }
+}
+    ${Repair_RequestFragmentDoc}`;
+export type UpdateRepairRequestMutationFn = ApolloReactCommon.MutationFunction<UpdateRepairRequestMutation, UpdateRepairRequestMutationVariables>;
+
+/**
+ * __useUpdateRepairRequestMutation__
+ *
+ * To run a mutation, you first call `useUpdateRepairRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateRepairRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateRepairRequestMutation, { data, loading, error }] = useUpdateRepairRequestMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateRepairRequestMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<UpdateRepairRequestMutation, UpdateRepairRequestMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<UpdateRepairRequestMutation, UpdateRepairRequestMutationVariables>(UpdateRepairRequestDocument, options);
+      }
+export type UpdateRepairRequestMutationHookResult = ReturnType<typeof useUpdateRepairRequestMutation>;
+export type UpdateRepairRequestMutationResult = ApolloReactCommon.MutationResult<UpdateRepairRequestMutation>;
+export type UpdateRepairRequestMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateRepairRequestMutation, UpdateRepairRequestMutationVariables>;
 export const GetRepairRequestByIdDocument = gql`
     query GetRepairRequestById($id: uuid!) {
   repair_requests_by_pk(id: $id) {
@@ -4135,6 +4222,48 @@ export type GetUsersQueryHookResult = ReturnType<typeof useGetUsersQuery>;
 export type GetUsersLazyQueryHookResult = ReturnType<typeof useGetUsersLazyQuery>;
 export type GetUsersSuspenseQueryHookResult = ReturnType<typeof useGetUsersSuspenseQuery>;
 export type GetUsersQueryResult = ApolloReactCommon.QueryResult<GetUsersQuery, GetUsersQueryVariables>;
+export const GetAutoMechanicsDocument = gql`
+    query GetAutoMechanics {
+  users(
+    where: {user_role: {code: {_eq: "autoMechanic"}}}
+    order_by: {created_at: desc}
+  ) {
+    ...user
+  }
+}
+    ${UserFragmentDoc}`;
+
+/**
+ * __useGetAutoMechanicsQuery__
+ *
+ * To run a query within a React component, call `useGetAutoMechanicsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAutoMechanicsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAutoMechanicsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAutoMechanicsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetAutoMechanicsQuery, GetAutoMechanicsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<GetAutoMechanicsQuery, GetAutoMechanicsQueryVariables>(GetAutoMechanicsDocument, options);
+      }
+export function useGetAutoMechanicsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetAutoMechanicsQuery, GetAutoMechanicsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<GetAutoMechanicsQuery, GetAutoMechanicsQueryVariables>(GetAutoMechanicsDocument, options);
+        }
+export function useGetAutoMechanicsSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<GetAutoMechanicsQuery, GetAutoMechanicsQueryVariables>) {
+          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useSuspenseQuery<GetAutoMechanicsQuery, GetAutoMechanicsQueryVariables>(GetAutoMechanicsDocument, options);
+        }
+export type GetAutoMechanicsQueryHookResult = ReturnType<typeof useGetAutoMechanicsQuery>;
+export type GetAutoMechanicsLazyQueryHookResult = ReturnType<typeof useGetAutoMechanicsLazyQuery>;
+export type GetAutoMechanicsSuspenseQueryHookResult = ReturnType<typeof useGetAutoMechanicsSuspenseQuery>;
+export type GetAutoMechanicsQueryResult = ApolloReactCommon.QueryResult<GetAutoMechanicsQuery, GetAutoMechanicsQueryVariables>;
 export const GetUserByIdDocument = gql`
     query GetUserById($id: uuid!) {
   users_by_pk(id: $id) {

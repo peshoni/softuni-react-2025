@@ -4,22 +4,24 @@ import Grid from '@mui/material/Grid';
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router";
 import { PathSegments } from "../../routes/enums";
-import { useLoginLazyQuery, type UserFragment } from "../../../graphql/generated";
+import { useLoginLazyQuery, type LoginQueryVariables, type UserFragment } from "../../../graphql/generated";
 import PasswordInput from "../private/common/forms/PasswordInput";
 import UserContext from "../private/providers/UserContext";
 import type { FormControlError } from "../private/common/interfaces";
-import { useSnackbar } from "../private/providers/ShackbarContext";
+import { useSnackbar } from "../private/providers/SnackbarContext";
 import { buildUrl } from "../../routes/routes-util";
 
 export default function LoginForm( /*{ setUser }: { readonly setUser: (event: SetStateAction<UserFragment | undefined>) => void; } */) {
-    const { showSnackbar } = useSnackbar();
     const navigate = useNavigate();
-    const [performLogin /* { called, loading, data }*/] = useLoginLazyQuery();
+    const { showSnackbar } = useSnackbar();
 
     const [submitted, setSubmitted] = useState(false);
     const [errors, setErrors] = useState<FormControlError[]>([]);
-
+    const [touchedFields, setTouchedFields] = useState<Set<keyof LoginQueryVariables>>(new Set<keyof LoginQueryVariables>());
     const { onLogin } = useContext(UserContext);
+
+    const passRegex: RegExp = /(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[\#\$\%\=\@\!\{\}\,\`\~\&\*\(\)\<\>\?\.\:\;\_\|\^\/\+\t\[\]\"\-])[\da-zA-Z\#\$\%\=\@\!\{\}\,\`\~\&\*\(\)\<\>\?\.\:\;\_\|\^\/\+\t\[\]\"\-]{6,128}/g;
+    const [login /* { called, loading, data }*/] = useLoginLazyQuery();
 
     // ivanteodorov@service.bg / Service123!  
     // mariyastoyanina@service.bg / UserPass!   id: "ca50b248-d2fb-4eaa-8919-143330afddd1"
@@ -32,11 +34,19 @@ export default function LoginForm( /*{ setUser }: { readonly setUser: (event: Se
     const handleChange = (e: { target: { name: any; value: any; }; }) => {
         const controlName = e.target.name;
         const value = e.target.value;
+        setTouchedFields(s => s.add(controlName));
         console.log(controlName, value);
-        if (errors.some(er => er.controlName === controlName)) {
-            setErrors(errors.filter(er => er.controlName !== controlName));
+        if (e.target.name === 'password') {
+            if (!passRegex.test(value)) {
+                if (!errors.some(c => c.controlName === controlName)) { // add
+                    errors.push({ controlName });
+                }
+            } else {
+                if (errors.some(er => er.controlName === controlName)) {
+                    setErrors(errors.filter(er => er.controlName !== controlName));
+                }
+            }
         }
-        console.log(errors);
         setFormData({
             ...formData,
             [e.target.name]: e.target.value,
@@ -46,9 +56,10 @@ export default function LoginForm( /*{ setUser }: { readonly setUser: (event: Se
     const handleSubmit = (e: { preventDefault: () => void; }) => {
         setErrors([]);
         e.preventDefault();
+        console.log(errors)
         setSubmitted(true);
 
-        performLogin({ variables: { email: formData.email, password: formData.password } }).then((result) => {
+        login({ variables: { email: formData.email, password: formData.password } }).then((result) => {
             let user: UserFragment | undefined = result.data?.users[0];
 
             if (user) {
@@ -63,6 +74,7 @@ export default function LoginForm( /*{ setUser }: { readonly setUser: (event: Se
                     }
                 }, awaitTime);
             } else {
+
                 onLogin(undefined);
                 showSnackbar('User wasn\'t found', 'error', 4000);
                 setErrors([{ controlName: 'email' }, { controlName: 'password' }]);
@@ -110,13 +122,13 @@ export default function LoginForm( /*{ setUser }: { readonly setUser: (event: Se
                         {/* Submit button */}
                         <Button
                             type="submit"
-                            disabled={submitted}
+                            disabled={submitted || touchedFields.size === 0 || errors.length > 0}
                             fullWidth
                             variant="contained"
                             size="large"
                             sx={{ mt: 2, borderRadius: 2 }}
                         >
-                            Submit
+                            Въведи
                         </Button>
                     </Box>
 

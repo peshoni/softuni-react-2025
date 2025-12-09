@@ -6,7 +6,7 @@ import { ApolloProvider } from '@apollo/client/react';
 import client from "./apolloClient.tsx";
 import { StyledEngineProvider } from '@mui/material/styles';
 import { BrowserRouter } from 'react-router';
-import { SnackbarProvider } from './components/private/providers/ShackbarContext.tsx';
+import { SnackbarProvider } from './components/private/providers/SnackbarContext.tsx';
 import { UserProvider } from './components/private/providers/UserProvider.tsx';
 
 createRoot(document.getElementById('root')!).render(
