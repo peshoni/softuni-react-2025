@@ -39,13 +39,14 @@ query GetAutoMechanics {
 
 query GetUserById($id: uuid!) {
 	users_by_pk(id: $id) {
-		...edit_user
+		...user
 	}
 }
 
-fragment edit_user on users {
-	password
-	...user
+mutation UpdateUser($id: uuid!, $input: users_set_input!) {
+  update_users_by_pk(pk_columns: {id: $id}, _set: $input) {
+    ...user
+  }
 }
 
 fragment user on users {

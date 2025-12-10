@@ -19,44 +19,46 @@ export default function LoginForm( /*{ setUser }: { readonly setUser: (event: Se
     const [errors, setErrors] = useState<FormControlError[]>([]);
     const [touchedFields, setTouchedFields] = useState<Set<keyof LoginQueryVariables>>(new Set<keyof LoginQueryVariables>());
     const { onLogin } = useContext(UserContext);
-
-    const passRegex: RegExp = /(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[\#\$\%\=\@\!\{\}\,\`\~\&\*\(\)\<\>\?\.\:\;\_\|\^\/\+\t\[\]\"\-])[\da-zA-Z\#\$\%\=\@\!\{\}\,\`\~\&\*\(\)\<\>\?\.\:\;\_\|\^\/\+\t\[\]\"\-]{6,128}/g;
+    //(?=.*[0-9])
+    const passRegex: RegExp = /(?=.*[A-Z])(?=.*[a-z])(?=.*[\#\$\%\=\@\!\{\}\,\`\~\&\*\(\)\<\>\?\.\:\;\_\|\^\/\+\t\[\]\"\-])[\da-zA-Z\#\$\%\=\@\!\{\}\,\`\~\&\*\(\)\<\>\?\.\:\;\_\|\^\/\+\t\[\]\"\-]{6,128}/g;
     const [login /* { called, loading, data }*/] = useLoginLazyQuery();
 
-    // ivanteodorov@service.bg / Service123!  
-    // mariyastoyanina@service.bg / UserPass!   id: "ca50b248-d2fb-4eaa-8919-143330afddd1"
-    // elenapavelova@service.bg / Mechanic!  
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     });
 
     const handleChange = (e: { target: { name: any; value: any; }; }) => {
-        const controlName = e.target.name;
-        const value = e.target.value;
+        const controlName: keyof LoginQueryVariables = e.target.name;
+        const value: string = e.target.value.trim();
         setTouchedFields(s => s.add(controlName));
-        console.log(controlName, value);
-        if (e.target.name === 'password') {
-            if (!passRegex.test(value)) {
-                if (!errors.some(c => c.controlName === controlName)) { // add
+        if (controlName === 'password') {
+            if (!passRegex.test(value) || value.length < 1) {
+                if (!errors.some(c => c.controlName === controlName)) {
                     errors.push({ controlName });
                 }
-            } else {
-                if (errors.some(er => er.controlName === controlName)) {
-                    setErrors(errors.filter(er => er.controlName !== controlName));
+            } else if (errors.some(er => er.controlName === controlName)) {
+                setErrors(errors.filter(er => er.controlName !== controlName));
+            }
+        }
+        if (controlName === 'email') {
+            if (value.length < 1) {
+                if (!errors.some(c => c.controlName === controlName)) {
+                    errors.push({ controlName });
                 }
+            } else if (errors.some(er => er.controlName === controlName)) {
+                setErrors(errors.filter(er => er.controlName !== controlName));
             }
         }
         setFormData({
             ...formData,
-            [e.target.name]: e.target.value,
+            [controlName]: e.target.value,
         });
     };
 
     const handleSubmit = (e: { preventDefault: () => void; }) => {
         setErrors([]);
         e.preventDefault();
-        console.log(errors)
         setSubmitted(true);
 
         login({ variables: { email: formData.email, password: formData.password } }).then((result) => {
@@ -76,7 +78,7 @@ export default function LoginForm( /*{ setUser }: { readonly setUser: (event: Se
             } else {
 
                 onLogin(undefined);
-                showSnackbar('User wasn\'t found', 'error', 4000);
+                showSnackbar('Потребителят не беше намерен.', 'error', 4000);
                 setErrors([{ controlName: 'email' }, { controlName: 'password' }]);
                 setSubmitted(false);
             }
@@ -122,7 +124,7 @@ export default function LoginForm( /*{ setUser }: { readonly setUser: (event: Se
                         {/* Submit button */}
                         <Button
                             type="submit"
-                            disabled={submitted || touchedFields.size === 0 || errors.length > 0}
+                            disabled={submitted || touchedFields.size !== Object.keys(formData).length || errors.length > 0}
                             fullWidth
                             variant="contained"
                             size="large"

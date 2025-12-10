@@ -47,7 +47,11 @@ fragment repair_request on repair_requests {
   id
   created_at
   updated_at
-  scheduled_for 
+  scheduled_for
+  automechanic_id
+  mechanic{
+    ...user
+  }
   vehicle_status {
     ...vehicle_status
   }
@@ -64,26 +68,27 @@ fragment repair_request on repair_requests {
 }
 
 fragment repair_request_with_logs on repair_requests {
-  id
-  created_at
-  updated_at
-  scheduled_for 
-  vehicle_status {
-    ...vehicle_status
-  }
-  description
-  title
+  # id
+  # created_at
+  # updated_at
+  # scheduled_for 
+  # vehicle_status {
+  #   ...vehicle_status
+  # }
+  # description
+  # title
+  ...repair_request
   requests_logs(order_by: {created_at: desc}) {
     ...request_log
   }
-  logsCount: requests_logs_aggregate {
-    aggregate {
-      count
-    }
-  }
-  vehicle {
-    ...vehicle
-  }
+  # logsCount: requests_logs_aggregate {
+  #   aggregate {
+  #     count
+  #   }
+  # }
+  # vehicle {
+  #   ...vehicle
+  # }
 }
 
 fragment request_log on requests_logs {

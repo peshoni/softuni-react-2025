@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router";
 import { PathSegments } from "../../routes/enums";
 import PasswordInput from "../private/common/forms/PasswordInput";
-import { useRegisterMutation, type Edit_UserFragment, type Users_Insert_Input } from "../../../graphql/generated";
+import { useRegisterMutation, type UserFragment, type Users_Insert_Input } from "../../../graphql/generated";
 import type { FilterFields } from "../private/common/tables/table-interfaces";
 import useEnums from "../private/hooks/useEnums";
 import TextInput from "../private/common/forms/TextInput";
@@ -17,8 +17,8 @@ import { useSnackbar } from "../private/providers/SnackbarContext";
 
 //#region Form Types 
 const omitUserProperties = ['id', 'created_at', 'updated_at', 'gender', 'user_role'] as const;
-type FilteredUserProperties = Pick<Edit_UserFragment, typeof omitUserProperties[number]>;
-type FormUserProps = Omit<Edit_UserFragment, keyof FilteredUserProperties> & { /*role: string, */genderCode: string; };
+type FilteredUserProperties = Pick<UserFragment, typeof omitUserProperties[number]>;
+type FormUserProps = Omit<UserFragment, keyof FilteredUserProperties> & { /*role: string, */genderCode: string; password: string; };
 //#endregion Form Types
 export default function RegisterForm() {
     const { showSnackbar } = useSnackbar();
@@ -28,8 +28,8 @@ export default function RegisterForm() {
     let gendersOptions: FilterFields[] = Object.values(genders.map(e => ({ id: e.id, code: e.code, name: e.name })));
 
     const [errors, setErrors] = useState<FormControlError[]>([]);
-    const [touchedFields, setTouchedFields] = useState<Set<keyof FormUserProps>>(new Set<keyof FormUserProps>());
-    console.log(touchedFields);
+    const [_touchedFields, setTouchedFields] = useState<Set<keyof FormUserProps>>(new Set<keyof FormUserProps>());
+
     const [registerUser] = useRegisterMutation();
     const { userSettings, onLogin } = useContext(UserContext);
 
@@ -43,23 +43,21 @@ export default function RegisterForm() {
     });
 
     const handleChange = (e: { target: { name: any; value: any; }; }) => {
+        const controlName: keyof FormUserProps = e.target.name;
+        const value: string = e.target.value.trim();
 
         setTouchedFields(s => s.add(e.target.name));
         if (!isFullString(e.target.value)) {
             setTouchedFields(s => { s.delete(e.target.name); return s; });
         }
 
-        if (e.target.name === 'phone' && !phoneRegexp.test(e.target.value)) {
-            if (!errors.some(c => c.controlName === e.target.name)) {
-                errors.push({ controlName: e.target.name });
-            }
-        } else {
-            const index = errors.findIndex(c => c.controlName === e.target.name);
-            if (index > -1) { // only splice array when item is found
-                console.log(index);
-                console.log(errors.splice(index, 1)); // 2nd parameter means remove one item only
-                console.log(errors);
-                setErrors(old => old.filter(c => c.controlName === e.target.name));
+        if (e.target.name === 'phone') {
+            if (!phoneRegexp.test(value) || value.length < 1) {
+                if (!errors.some(c => c.controlName === controlName)) {
+                    errors.push({ controlName });
+                }
+            } else if (errors.some(er => er.controlName === controlName)) {
+                setErrors(errors.filter(er => er.controlName !== controlName));
             }
         }
 
@@ -70,8 +68,6 @@ export default function RegisterForm() {
     };
 
     const handleSelectChange = (event: any) => {
-        const selectedOptionCode = event.target.value;
-        console.log(event.target.name, selectedOptionCode);
         setTouchedFields(s => s.add(event.target.name));
 
         if (!isFullString(event.target.value)) {
@@ -81,12 +77,6 @@ export default function RegisterForm() {
             ...formData,// clone form data and replace property with event origin
             [event.target.name]: event.target.value,
         });
-        // const selectedOptionCode: string = innerOptions.find(e=>e.code === code);
-        // const selectedFilter: FilterFields | undefined = innerOptions.find(o => o.code === selectedOptionCode);
-        // if (selectedFilter) {
-        //     setSelected(selectedFilter.code);
-        //     filterSelectedHandler(selectedFilter);
-        // }
     };
 
     const handleSubmit = (e: { preventDefault: () => void; }) => {
@@ -115,13 +105,12 @@ export default function RegisterForm() {
                     });
 
                 } else {
-                    console.log(errors);
-                    console.log('Show error toast');
+                    showSnackbar('Възникна грешка', 'error', 2000);
                 }
             } else {
                 const user = data?.insert_users_one;
                 if (!user) {
-                    console.log('User wasn\'t created');
+                    showSnackbar('Възникна грешка', 'error', 2000);
                     return;
                 }
                 const awaitTime = 2000;
@@ -148,7 +137,6 @@ export default function RegisterForm() {
                         Регистрация
                     </Typography>
 
-                    {/* <CustomerDetails mode="register" /> */}
                     <Grid
                         component="form"
                         container

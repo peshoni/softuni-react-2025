@@ -5,9 +5,10 @@ import EditIcon from '@mui/icons-material/Edit';
 import PreviewIcon from '@mui/icons-material/Preview';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CarRepairIcon from '@mui/icons-material/CarRepair';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 const menuHeight = 40;
-export type ROW_ACTIONS = 'edit' | 'delete' | 'preview' | 'repair';
+export type ROW_ACTIONS = 'edit' | 'delete' | 'preview' | 'repair' | 'cancel';
 export type RowContextFunctionType = (event: ROW_ACTIONS, id: string) => void;
 
 interface TableRowContext {
@@ -23,7 +24,8 @@ export default function TableRowContextMenu({ id, allowedActions = ['preview'], 
       ['edit', { label: 'редакция', icon: <EditIcon /> }],
       ['preview', { label: 'преглед', icon: <PreviewIcon /> }],
       ['delete', { label: 'изтриване', icon: < DeleteIcon /> }],
-      ['repair', { label: 'заяви ремонт', icon: < CarRepairIcon /> }]
+      ['repair', { label: 'заяви ремонт', icon: < CarRepairIcon /> }],
+      ['cancel', { label: 'отмени', icon: < CancelIcon /> }]
     ]);
 
   const openContextMenu = (event: React.MouseEvent<HTMLElement>) => {

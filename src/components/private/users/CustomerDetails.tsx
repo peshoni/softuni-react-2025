@@ -1,29 +1,36 @@
-import { useParams } from "react-router";
-import { useGetUserByIdLazyQuery, type Edit_UserFragment } from "../../../../graphql/generated";
+import { useLocation, useNavigate, useParams } from "react-router";
+import { useGetUserByIdLazyQuery, useUpdateUserMutation, type UserFragment, type Users_Set_Input } from "../../../../graphql/generated";
 import DatasourceEmptyResult from "../common/tables/DataSourceEmptyResult";
-import { isNullOrUndefined } from "is-what";
 import DetailsHeader from "../common/forms/DetailsHeader";
 import { useEffect, useState } from "react";
 import { Box, Paper, TextField, Button, FormControl, OutlinedInput, InputLabel, Grid, Select, MenuItem, FormHelperText } from "@mui/material";
 import { motion } from "framer-motion";
-import PasswordInput from "../common/forms/PasswordInput";
 import type { FilterFields } from "../common/tables/table-interfaces";
 import useEnums from "../hooks/useEnums";
 import type { FormControlError } from "../common/interfaces";
 import { PathSegments } from "../../../routes/enums";
+import { useSnackbar } from "../providers/SnackbarContext";
+import { buildUrl } from "../../../routes/routes-util";
 
 //#region Form Types 
 const omitUserProperties = ['id', 'created_at', 'updated_at', 'gender', 'user_role'] as const;
-type FilteredUserProperties = Pick<Edit_UserFragment, typeof omitUserProperties[number]>;
-type FormUserProps = Omit<Edit_UserFragment, keyof FilteredUserProperties> & { role: string, genderCode: string; };
+type FilteredUserProperties = Pick<UserFragment, typeof omitUserProperties[number]>;
+type FormUserProps = Omit<UserFragment, keyof FilteredUserProperties> & { role: string, genderCode: string; };
 //#endregion Form Types
-export default function CustomerDetails({ mode }: { readonly mode?: string; }) {
-    console.log(mode)
+export default function CustomerDetails() {
+    const { state } = useLocation();
+    const navigate = useNavigate();
+    const { id: userId } = useParams();
+    const action = state?.action;
+    const [isPreview] = useState(action === 'preview');
     const { genders, userRoles, } = useEnums();
     const [errors, setErrors] = useState<FormControlError[]>([]);
-    const params = useParams();
-    const isCreateMode = isNullOrUndefined(params?.id);
-    let user: Edit_UserFragment | undefined | null;
+    const { showSnackbar } = useSnackbar();
+
+    //Graphql hooks
+    const [updateUser] = useUpdateUserMutation();
+
+    let user: UserFragment | undefined | null;
     const phoneRegexp: RegExp = /\+359[1-9]{3}\d{6}$/; // simple validation for the BG gsm numbers
 
     let gendersOptions: FilterFields[] = Object.values(genders.map(e => ({ id: e.id, code: e.code, name: e.name })));
@@ -33,28 +40,19 @@ export default function CustomerDetails({ mode }: { readonly mode?: string; }) {
         first_name: '',
         last_name: '',
         email: '',
-        password: '',
         phone: '', // \+359[1-9]{3}\d{6}
         role: '',
         genderCode: ''
     });
 
     const handleChange = (e: { target: { name: any; value: any; }; }) => {
-        console.log([e.target.name], e.target.value);
         if (e.target.name === 'phone' && !phoneRegexp.test(e.target.value)) {
-            //             console.log( phoneRegexp.test(e.target.value))
-            // console.log('INVALID NUMBER : ' + e.target.value)
             if (!errors.some(c => c.controlName === e.target.name)) {
-
                 errors.push({ controlName: e.target.name });
             }
         } else {
             const index = errors.findIndex(c => c.controlName === e.target.name);
-            console.log(index);
-            if (index > -1) { // only splice array when item is found
-
-                console.log(errors.splice(index, 1)); // 2nd parameter means remove one item only
-                console.log(errors);
+            if (index > -1) {
                 setErrors(old => old.filter(c => c.controlName === e.target.name));
             }
         }
@@ -67,42 +65,37 @@ export default function CustomerDetails({ mode }: { readonly mode?: string; }) {
 
     const handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
-        console.log(formData);
-        // if (!isLogin && formData.password !== formData.confirmPassword) {
-        //   setErrors([{ controlName: 'confirmPassword', message: 'Passwords do not match' }]);
-        //   return;
-        // }
-        // Simulate login/register action
-        alert('Submit');
-    };
 
-    const handleSelectChange = (event: any) => {
-        const selectedOptionCode = event.target.value;
-        console.log(event.target.name, selectedOptionCode);
+        const input: Users_Set_Input = {
+            first_name: formData.first_name,
+            last_name: formData.last_name,
+            phone: formData.phone
+        };
 
-        setFormData({
-            ...formData,// clone form data and replace property with event origin
-            [event.target.name]: event.target.value,
-        });
-        // const selectedOptionCode: string = innerOptions.find(e=>e.code === code);
-        // const selectedFilter: FilterFields | undefined = innerOptions.find(o => o.code === selectedOptionCode);
-        // if (selectedFilter) {
-        //     setSelected(selectedFilter.code);
-        //     filterSelectedHandler(selectedFilter);
-        // }
+        updateUser({ variables: { id: userId, input } })
+            .then(({ errors }) => {
+                if (!errors) {
+                    const timeout = 2000;
+                    showSnackbar('Добавянето е успешно', 'success', timeout);
+                    setTimeout(() => {
+                        navigate(buildUrl(PathSegments.CUSTOMERS));
+                    }, timeout);
+                }
+            }).catch(() => {
+                showSnackbar('Възникна грешка', 'error', 2000);
+            });
     };
 
     const [performGetUser /*,{data,loading }*/] = useGetUserByIdLazyQuery();
 
     useEffect(() => {
-        if (!isCreateMode) {
-            performGetUser({ variables: { id: params.id } }).then(({ data }) => {
+        if (userId) {
+            performGetUser({ variables: { id: userId } }).then(({ data }) => {
                 user = data?.users_by_pk;
                 if (user) {
                     setFormData({
                         first_name: user.first_name,
                         last_name: user.last_name,
-                        password: user.password,
                         role: user.user_role.code,
                         genderCode: user.gender.code,
                         email: user.email,
@@ -112,14 +105,13 @@ export default function CustomerDetails({ mode }: { readonly mode?: string; }) {
             });
         }
 
-        return () => {
-            console.log('UNLOAD');
+        return () => { //on destroy
         };
     }, []);
 
     return (
         <>
-            <DetailsHeader isCreateMode={isCreateMode} parentSegment={PathSegments.CUSTOMERS} />
+            <DetailsHeader mode={action} parentSegment={PathSegments.CUSTOMERS} />
 
             {!formData && <DatasourceEmptyResult />}
 
@@ -149,6 +141,7 @@ export default function CustomerDetails({ mode }: { readonly mode?: string; }) {
                                     id="email"
                                     name='email'
                                     type='email'
+                                    disabled={true}
                                     value={formData.email}
                                     onChange={handleChange}
                                     required
@@ -159,21 +152,13 @@ export default function CustomerDetails({ mode }: { readonly mode?: string; }) {
                         </Grid>
 
                         <Grid size={3}>
-                            <PasswordInput
-                                key={'password'}
-                                value={formData.password}
-                                errors={errors}
-                                changeCallback={handleChange}
-                            />
-                        </Grid>
-
-                        <Grid size={3}>
                             <TextField
                                 fullWidth
-                                label="First name"
+                                label="Име"
                                 name="first_name"
                                 type="text"
                                 margin="normal"
+                                disabled={isPreview}
                                 value={formData.first_name}
                                 onChange={handleChange}
                                 required
@@ -184,10 +169,11 @@ export default function CustomerDetails({ mode }: { readonly mode?: string; }) {
                         <Grid size={3}>
                             <TextField
                                 fullWidth
-                                label="Last name"
+                                label="фамилия"
                                 name="last_name"
                                 type="text"
                                 margin="normal"
+                                disabled={isPreview}
                                 value={formData.last_name}
                                 onChange={handleChange}
                                 required
@@ -198,10 +184,11 @@ export default function CustomerDetails({ mode }: { readonly mode?: string; }) {
                         <Grid size={3}>
                             <TextField
                                 fullWidth
-                                label="Phone"
+                                label="Телефон"
                                 name="phone"
                                 type="text"
                                 margin="normal"
+                                disabled={isPreview}
                                 value={formData.phone}
                                 onChange={handleChange}
                                 error={errors.some(e => e.controlName === 'phone')}
@@ -211,54 +198,55 @@ export default function CustomerDetails({ mode }: { readonly mode?: string; }) {
                         </Grid>
                         <Grid size={3}>
                             <FormControl sx={{ margin: '8px 0', width: '100%' }} variant="outlined">
-                                <InputLabel id="tableFilterOne">Gender</InputLabel>
+                                <InputLabel id="tableFilterOne">Пол</InputLabel>
                                 <Select
                                     labelId="tableFilterOne"
-                                    label="Gender"
+                                    label="Пол"
                                     name="genderCode"
+                                    disabled={true}
                                     value={formData.genderCode}
-                                    onChange={handleSelectChange}
                                     sx={{ textAlign: 'start' }}
                                 >
                                     {gendersOptions.map(element => <MenuItem
                                         value={element.code} key={element.id}>{element.name}
                                     </MenuItem>)}
                                 </Select>
-                                <FormHelperText>Select option</FormHelperText>
+                                {!isPreview && <FormHelperText> {userId ? 'Избери пол' : ''}</FormHelperText>}
                             </FormControl>
                         </Grid>
 
                         <Grid size={3}>
                             <FormControl sx={{ margin: '8px 0', width: '100%' }} variant="outlined">
-                                <InputLabel id="tableFilterOne">Role</InputLabel>
+                                <InputLabel id="tableFilterOne">Роля</InputLabel>
                                 <Select
                                     labelId="roleSelect"
-                                    label="Role"
+                                    label="Роля"
                                     name="role"
+                                    disabled={true}
                                     value={formData.role}
-                                    onChange={handleSelectChange}
                                     sx={{ textAlign: 'start' }}
                                 >
                                     {rolesOptions.map(element => <MenuItem
                                         value={element.code} key={element.id}>{element.name}
                                     </MenuItem>)}
                                 </Select>
-                                <FormHelperText>Select option</FormHelperText>
+                                {!isPreview && <FormHelperText> {userId ? 'Избери роля' : ''}</FormHelperText>}
                             </FormControl>
                         </Grid>
 
 
                         <Grid size={{ xs: 3, md: 6, lg: 9 }} container justifyContent="flex-end" >
                             <Grid size={{ xs: 3, md: 3, lg: 2 }}   >
-                                <Button
+                                {!isPreview && userId && <Button
                                     type="submit"
                                     fullWidth
                                     variant="contained"
                                     size="large"
                                     sx={{ mt: 2, borderRadius: 2 }}
                                 >
-                                    Запази
+                                    Промени
                                 </Button>
+                                }
                             </Grid>
                         </Grid>
                     </Grid>

@@ -76,6 +76,6 @@ npm run codegen
 ```
 
 
-#### Note! The application was built for educational purposes - a demonstration of what was learned from the SoftUni course ReactJS-october-2025,  and has basic functionality to demonstrate working with roles, tables, and CRUD operations, covering the exam assignment. It also has conceptual issues and lacks security.
+#### Note! The application was built for educational purposes - a demonstration of what was learned from the SoftUni course ReactJS-october-2025, and has basic functionality to demonstrate working with roles, tables, and CRUD operations, covering the exam assignment.
 
 ### Thanks for your attention.

@@ -21,12 +21,14 @@ import { rowsPerPageOptions } from '../common/constants';
 import UserContext from '../providers/UserContext';
 
 const columns: ColumnSettings<UserFragment>[] = [
-    { property: 'created_at', label: 'Създаден', width: '80px', formatDate: (value) => fromIsoDate(value) },
-    { property: 'updated_at', label: 'Промемен', width: '80px', formatDate: (value) => fromIsoDate(value) },
-    { property: 'user_role', label: 'Роля' },
-    { property: 'first_name', label: 'Име' },
-    { property: 'last_name', label: 'Фамилия' },
-    { property: 'actions', label: 'actions', width: '60px', align: 'right' }
+    { property: 'created_at', label: 'създаден', width: '80px', formatDate: (value) => fromIsoDate(value) },
+    { property: 'updated_at', label: 'промемен', width: '80px', formatDate: (value) => fromIsoDate(value) },
+    { property: 'user_role', label: 'роля' },
+    { property: 'first_name', label: 'име' },
+    { property: 'last_name', label: 'фамилия' },
+    { property: 'phone', label: 'телефон' },
+    { property: 'email', label: 'ел.поща' },
+    { property: 'actions', label: 'опции', width: '60px' }
 ];
 
 export default function CustomersList() {
@@ -41,11 +43,12 @@ export default function CustomersList() {
 
     let allRoles: FilterFields[] = Object.values(userRoles.map(e => ({ id: e.id, code: e.code, name: e.name })));
 
+    // Table states
     const [allowedActions, setAllowedActions] = useState<ROW_ACTIONS[]>([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
-    const [condition, setCondition] = useState({});
     const offset: number = page * rowsPerPage;
+    const [condition, setCondition] = useState({});
 
     const { data, loading, error } = useGetUsersQuery({
         variables: {
@@ -70,8 +73,7 @@ export default function CustomersList() {
         };
     }, []);
 
-    useEffect(() => { // Listens for the data changes 
-        console.log('data changed');
+    useEffect(() => { // Listens for the data changes  
         if (error) {
             allRoles = [];
         }
@@ -98,8 +100,7 @@ export default function CustomersList() {
 
     }, [userSettings]);
 
-    const handleChangePage = (event: unknown, newPage: number) => {
-        console.log(event, newPage);
+    const handleChangePage = (_event: unknown, newPage: number) => {
         setPage(newPage);
     };
 
@@ -109,7 +110,6 @@ export default function CustomersList() {
     };
 
     const filterSelectedHandler = (selectedFilter: FilterFields) => {
-        console.log(selectedFilter);
         const criteria: string | null = selectedFilter.id;
         const condition: Users_Bool_Exp = criteria ? { role_id: { _eq: criteria } } : {};
         setCondition(condition);
@@ -117,9 +117,6 @@ export default function CustomersList() {
     };
 
     const addClickedHandler = () => {
-        console.log('child -> parent: add click');
-        console.log('Open add user details');
-        //setChildEvent(event);
     };
 
     const rowContextMenuCallback: RowContextFunctionType = (action: ROW_ACTIONS, id: string) => {
@@ -197,8 +194,7 @@ function processColumn(column: ColumnSettings<UserFragment>, entity: UserFragmen
         }
     };
 
-    return <TableCell key={column.property} align={column.align}  >
+    return <TableCell key={column.property} align='center' sx={{ fontFamily: 'inherit', fontSize: '16px' }} >
         {cellValue()}
     </TableCell>;
 }
-

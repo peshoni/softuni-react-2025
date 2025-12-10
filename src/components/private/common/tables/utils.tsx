@@ -31,17 +31,16 @@ export function getFallbackTemplate(error: ApolloError | undefined, loading: boo
  */
 
 // type union ColumnType = Repair_RequestFragment | UserFragment | VehicleFragment;
-type allowed = Pick<ColumnSettings<Repair_RequestFragment & UserFragment & VehicleFragment>, 'property' | 'label' | 'width' | 'align'>;
+type allowed = Pick<ColumnSettings<Repair_RequestFragment & UserFragment & VehicleFragment>, 'property' | 'label' | 'width'  >;
 export function buildHeaderRow(columns: allowed[]): JSX.Element {
     return (
         <TableRow>
             {columns.map((column) => (
                 <TableCell
                     key={column.property}
-                    align={column.align}
+                    align='center'
                     width={column.width}
-                    style={{ backgroundColor: '#f0f6ffff', fontSize: '16px' }}
-                >
+                    style={{ backgroundColor: '#f0f6ffff', fontSize: '16px', fontWeight: 600, fontFamily: 'inherit' }}    >
                     {column.label}
                 </TableCell>
             ))}

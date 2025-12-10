@@ -116,8 +116,7 @@ export function useConfirmationDialog(): ConfirmationDialogContextValue {
 // export function SomeComponent() {
 //   const { confirm } = useConfirmationDialog();
 //   const handleDelete = async () => {
-//     const result = await confirm({ message: "Delete this item?" });
-//     console.log(result);
+//     const result = await confirm({ message: "Delete this item?" }); 
 //   };
 //   return <Button onClick={handleDelete}>Delete</Button>;
 // }

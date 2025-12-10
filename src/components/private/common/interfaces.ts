@@ -4,9 +4,7 @@ export interface UserAuthorizationProps {
       user: UserFragment | undefined;
 }
 
-
 export interface FormControlError {
       controlName: string;
 }
 
- 

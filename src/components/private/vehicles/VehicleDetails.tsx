@@ -50,7 +50,7 @@ export default function VehicleDetails() {
     // GraphQL hooks
     const [getVehicle] = useGetVehicleByIdLazyQuery();
     const [insertVehicleMutation] = useInsertVehicleMutation();
-    const [updateVehicleMutation] = useUpdateVehicleMutation();  
+    const [updateVehicleMutation] = useUpdateVehicleMutation();
 
     const isFormDisabled = location.state?.action === 'preview';
     const isCreateMode = isNullOrUndefined(params) || isNullOrUndefined(params?.id);
@@ -70,9 +70,7 @@ export default function VehicleDetails() {
         } else {
             const index = errors.findIndex(c => c.controlName === fieldName);
 
-            if (index > -1) { // only splice array when item is found 
-                console.log(errors.splice(index, 1)); // 2nd parameter means remove one item only
-                console.log(errors);
+            if (index > -1) { // only splice array when item is found  
                 setErrors(old => old.filter(c => c.controlName === fieldName));
             }
         }
@@ -105,8 +103,8 @@ export default function VehicleDetails() {
                         navigate(buildUrl(parentSegment));
                     }, awaitTime);
                 }
-                ).catch((err) => {
-                    console.log(err);
+                ).catch(() => {
+                    showSnackbar('Възникна грешка', 'error', 2000);
                 });
         } else {
             insertVehicleMutation({ variables: { vehicle: input } })
@@ -116,26 +114,17 @@ export default function VehicleDetails() {
                         navigate(buildUrl(parentSegment));
                     }, awaitTime);
                 }
-                ).catch((err) => {
-                    console.log(err);
+                ).catch(() => {
+                    showSnackbar('Възникна грешка', 'error', 2000);
                 });
         }
     };
 
     const handleSelectChange = (event: any) => {
-        const selectedOptionCode = event.target.value;
-        console.log(event.target.name, selectedOptionCode);
-
         setFormData({
             ...formData,// clone form data and replace property with event origin
             [event.target.name]: event.target.value,
         });
-        // const selectedOptionCode: string = innerOptions.find(e=>e.code === code);
-        // const selectedFilter: FilterFields | undefined = innerOptions.find(o => o.code === selectedOptionCode);
-        // if (selectedFilter) {
-        //     setSelected(selectedFilter.code);
-        //     filterSelectedHandler(selectedFilter);
-        // }
     };
 
     useEffect(() => {
@@ -160,34 +149,9 @@ export default function VehicleDetails() {
         }
     }, []);
 
-    useEffect(() => {
-        /**
-         * Sets the allowed controls based on the user's role.
-         */ 
-        if (location.state?.action === 'preview' || isNullOrUndefined(location.state?.action)) {
-            // DISABLE FORM 
-        }
-        switch (userSettings?.user?.user_role.code) {
-            case 'customer':
-                break;
-            case 'serviceSpecialist':
-                break;
-            case 'autoMechanic':
-                if (location.state?.action === 'preview' || isNullOrUndefined(location.state?.action)) {
-                    // setIsFormDisabled(true);
-                    // setIsLogsDisabled(true); 
-                    // setIsAddLogEnabled(false); 
-                }
-                break;
-            default:
-                // setIsFormDisabled(true);
-                break;
-        } 
-    }, [userSettings]);
-
     return (
         <>
-            <DetailsHeader isCreateMode={isCreateMode} parentSegment={parentSegment} />
+            <DetailsHeader mode={isCreateMode ? 'create' : 'preview'} parentSegment={parentSegment} />
 
             {!formData && <DatasourceEmptyResult />}
             {formData &&

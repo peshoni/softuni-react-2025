@@ -30,7 +30,6 @@ services:
     volumes: # mounted in this directory, see below
       - ./graphql/db_data:/var/lib/postgresql/data
     environment:
-      # TZ: Europe/Sofia
       POSTGRES_PASSWORD: postgrespassword
   ###
   graphql-engine:

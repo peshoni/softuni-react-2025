@@ -1,7 +1,7 @@
-export interface FilterFields{
-    id:string | null;
-    code:string;
-    name:string;
+export interface FilterFields {
+    id: string | null;
+    code: string;
+    name: string;
 }
 
 export interface ColumnSettings<T> {
@@ -11,7 +11,6 @@ export interface ColumnSettings<T> {
      * readable CSS value for width (e.g. '100px', '10%', '5rem')
      */
     width?: string;
-    align?: 'left' | 'right' | 'center';
     format?: (value: number) => string;
     formatDate?: (value: string) => string;
 }

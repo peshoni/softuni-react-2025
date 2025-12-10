@@ -21,7 +21,7 @@ import useEnums from '../hooks/useEnums';
 import { rowsPerPageOptions } from '../common/constants';
 import UserContext from '../providers/UserContext';
 import { useConfirmationDialog, type ConfirmationDialogOptions } from '../providers/ConfirmationDialog';
-import { arrayReducer } from '../../../examples/ArrayReducer';
+import { arrayReducer } from '../common/ArrayReducer';
 
 /**
  * Defines the columns for the vehicles table.
@@ -34,7 +34,7 @@ const columns: ColumnSettings<VehicleFragment>[] = [
     { property: 'make', label: 'производител' },
     { property: 'model', label: 'модел' },
     { property: 'plate_number', label: 'рег.номер' },
-    { property: 'actions', label: 'още', width: '60x', align: 'right' }
+    { property: 'actions', label: 'опции', width: '60x' }
 ];
 
 export default function VehiclesList() {
@@ -146,13 +146,9 @@ export default function VehiclesList() {
         navigate(buildUrl(PathSegments.VEHICLES, PathSegments.DETAILS));
     };
 
-    const rowContextMenuCallback: RowContextFunctionType = async (action: ROW_ACTIONS, id: string) => {
-
-        console.log(action);
-        // user-id ca50b248-d2fb-4eaa-8919-143330afddd1
+    const rowContextMenuCallback: RowContextFunctionType = async (action: ROW_ACTIONS, id: string) => { 
         if (action === 'delete') {
-            const vehicle = data?.vehicles.find(v => v.id === id);
-            console.log(vehicle);
+            const vehicle = data?.vehicles.find(v => v.id === id); 
 
             const options: ConfirmationDialogOptions = {
                 title: 'Изтриване на данни за автомобил',
@@ -247,7 +243,7 @@ function processColumn(column: ColumnSettings<VehicleFragment>, entity: VehicleF
         }
     };
 
-    return <TableCell key={column.property} align={column.align}>
+    return <TableCell key={column.property} align='center' sx={{ fontFamily: 'inherit', fontSize: '16px' }}>
         {cellValue()}
     </TableCell>;
 }

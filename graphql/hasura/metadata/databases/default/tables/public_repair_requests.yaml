@@ -2,7 +2,7 @@ table:
   name: repair_requests
   schema: public
 object_relationships:
-  - name: user
+  - name: mechanic
     using:
       foreign_key_constraint_on: automechanic_id
   - name: userByCustomerId

@@ -7,15 +7,15 @@ const client = new Apollo.ApolloClient({
   cache: new Apollo.InMemoryCache(),
   defaultOptions: {
     mutate: {
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'no-cache',
       errorPolicy: 'all'
     },
     query: {
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'no-cache',
       errorPolicy: 'all', 
     },
     watchQuery: {
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'no-cache',
       errorPolicy: 'all',
       pollInterval: 60000
     }

@@ -1,3 +1,4 @@
+
 import { useContext, useEffect, useRef, useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -7,7 +8,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TableNavbar, { type TableNavbarProps } from "../common/tables/TableNavbar";
-import { Order_By, useGetRepairRequestsQuery, type Repair_RequestFragment, type Repair_Requests_Bool_Exp, type Vehicle_StatusFragment, type VehicleFragment, } from "../../../../graphql/generated";
+import { Order_By, useGetRepairRequestsQuery, useUpdateRepairRequestMutation, type Repair_RequestFragment, type Repair_Requests_Bool_Exp, type UserFragment, type Vehicle_StatusFragment, type VehicleFragment, } from "../../../../graphql/generated";
 import TableRowContextMenu, { type ROW_ACTIONS, type RowContextFunctionType } from "../common/tables/RowContextMenu";
 import { fromIsoDate } from "../../../utils/dateUtils";
 import type { ColumnSettings, FilterFields } from "../common/tables/table-interfaces";
@@ -19,21 +20,24 @@ import { Box, TableHead } from "@mui/material";
 import useEnums from "../hooks/useEnums";
 import { rowsPerPageOptions } from "../common/constants";
 import UserContext from "../providers/UserContext";
+import { useSnackbar } from "../providers/SnackbarContext";
 
 const columns: ColumnSettings<Repair_RequestFragment>[] = [
     { property: "created_at", label: "създаден", width: "80px", formatDate: (value) => fromIsoDate(value), },
     { property: "updated_at", label: "променен", width: "100px", formatDate: (value) => fromIsoDate(value), },
+    { property: "scheduled_for", label: "планиран за", width: "130px", formatDate: (value) => fromIsoDate(value) },
     { property: "vehicle", label: "автомобил" },
     { property: "title", label: "описание" },
     { property: "vehicle_status", label: "статус" },
+    { property: "mechanic", label: "механик" },
     { property: "logsCount", label: "бележки" },
-    { property: "actions", label: "още", width: "60px", align: "right" },
+    { property: "actions", label: "опции", width: "60px" },
 ];
 
 export default function RepairRequestsList() {
     const navigate = useNavigate();
+    const { showSnackbar } = useSnackbar();
     const { vehicleStatuses } = useEnums();
-
     let vehicleStatusesFilters: FilterFields[] = vehicleStatuses?.map(e => ({ id: e.id, name: e.name, code: e.code })) ?? [];
 
     /**
@@ -58,6 +62,8 @@ export default function RepairRequestsList() {
             };
         }
     }
+
+    const [updateRepairRequest] = useUpdateRepairRequestMutation();
 
     const [allowedActions, setAllowedActions] = useState<ROW_ACTIONS[]>([]);
     const [page, setPage] = useState(0);
@@ -94,7 +100,7 @@ export default function RepairRequestsList() {
          */
         switch (userSettings?.user?.user_role.code) {
             case 'customer':
-                setAllowedActions(['edit', 'preview', 'delete']);
+                setAllowedActions(['edit', 'preview', 'cancel']);
                 break;
             case 'serviceSpecialist':
                 setAllowedActions(['edit', 'preview']);
@@ -109,7 +115,7 @@ export default function RepairRequestsList() {
 
     }, [userSettings]);
 
-    const handleChangePage = (event: unknown, newPage: number) => {
+    const handleChangePage = (_event: unknown, newPage: number) => {
         setPage(newPage);
     };
 
@@ -132,7 +138,26 @@ export default function RepairRequestsList() {
     };
 
     const rowContextMenuCallback: RowContextFunctionType = (action: ROW_ACTIONS, id: string) => {
-        navigate(buildUrl(PathSegments.REPAIR_REQUESTS, PathSegments.DETAILS, id), { state: { action } });
+        if (action === 'cancel') {
+            if (data?.repair_requests.find(e => e.id === id)?.vehicle_status.code !== 'repair-request') {
+                // request is moved to next status and can't be canceled.
+                showSnackbar('Заявката не може да бъде отменена', 'warning', 4000);
+                return;
+            } else {
+                //cancel it
+                const statusId = vehicleStatuses.find(e => e.code === 'canceled-request')?.id;
+                if (statusId) {
+                    updateRepairRequest({ variables: { id, input: { status_id: statusId } } }).then(
+                        () => {
+                            showSnackbar('Заявката беше отменена.', 'info', 3000);
+                        }
+                    );
+                }
+            }
+        } else {
+            navigate(buildUrl(PathSegments.REPAIR_REQUESTS, PathSegments.DETAILS, id), { state: { action } });
+        }
+
     };
 
     const isTableVisible: boolean = Boolean(data?.repair_requests_aggregate.aggregate?.count) && (!error || !loading);
@@ -194,6 +219,7 @@ function processColumn(column: ColumnSettings<Repair_RequestFragment>, entity: R
         switch (column.property) {
             case "created_at":
             case "updated_at":
+            case "scheduled_for":
                 return column.formatDate?.(value);
             case 'vehicle':
                 return (
@@ -206,6 +232,12 @@ function processColumn(column: ColumnSettings<Repair_RequestFragment>, entity: R
                 return (value as { aggregate?: { count: number; }; }).aggregate?.count;
             case "vehicle_status":
                 return (value as Vehicle_StatusFragment).name;
+            case 'mechanic':
+                return value ?
+                    (<Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                        <span>{(value as UserFragment).first_name}</span>
+                        <span> {(value as UserFragment).last_name}</span>
+                    </Box>) : '-';
             case "actions":
                 return <TableRowContextMenu key={entity.id} id={entity.id} allowedActions={allowedActions} callback={contextCallback} />;
             default:
@@ -214,7 +246,7 @@ function processColumn(column: ColumnSettings<Repair_RequestFragment>, entity: R
     };
 
     return (
-        <TableCell key={column.property} align={column.align} width={column.width}>
+        <TableCell key={column.property} align='center' width={column.width} sx={{ fontFamily: 'inherit', fontSize: '16px' }}>
             {cellValue()}
         </TableCell>
     );
