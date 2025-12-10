@@ -1,10 +1,10 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Container, Box, TextField, Button, Typography, Paper, Link, FormControl, FormHelperText, InputLabel, MenuItem, OutlinedInput, Select } from "@mui/material";
 import Grid from '@mui/material/Grid';
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router";
 import { PathSegments } from "../../routes/enums";
-import PasswordInput from "../private/common/forms/PasswordInput";
+import PasswordInput, { passRegex } from "../private/common/forms/PasswordInput";
 import { useRegisterMutation, type UserFragment, type Users_Insert_Input } from "../../../graphql/generated";
 import type { FilterFields } from "../private/common/tables/table-interfaces";
 import useEnums from "../private/hooks/useEnums";
@@ -61,6 +61,16 @@ export default function RegisterForm() {
             }
         }
 
+        if (controlName === 'password') {
+            if (!passRegex.test(value) || value.length < 1) {
+                if (!errors.some(c => c.controlName === controlName)) {
+                    errors.push({ controlName });
+                }
+            } else if (errors.some(er => er.controlName === controlName)) {
+                setErrors(errors.filter(er => er.controlName !== controlName));
+            }
+        }
+
         setFormData({
             ...formData,// clone form data and replace property with event origin
             [e.target.name]: e.target.value,
@@ -98,7 +108,8 @@ export default function RegisterForm() {
             }
         }).then(({ data, errors }) => {
             if (errors) {
-                if (errors[0].message.includes('duplicate key')) {
+                if (errors[0].message.includes('users_email_key')) {
+                    showSnackbar('Потребител с този email вече съществува.', 'error', 2000);
                     setErrors(old => {
                         old.push({ controlName: 'email' });
                         return [...old];
@@ -115,13 +126,17 @@ export default function RegisterForm() {
                 }
                 const awaitTime = 2000;
                 showSnackbar('Регистрацията премина успешно.', 'success', awaitTime);
-                onLogin(user);
-                setTimeout(() => {
-                    navigate(buildUrl(userSettings?.userMenu[0].path ?? ''));
-                }, awaitTime);
+                onLogin(user);            
             }
         });
     };
+
+    useEffect(() => { 
+        if (userSettings) { 
+            navigate(buildUrl(userSettings.userMenu[0].path));
+        }
+
+    }, [userSettings]);
 
     return (
         <Container maxWidth="md">

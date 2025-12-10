@@ -50,7 +50,7 @@ export default function RepairRequestsList() {
 
     if (userSettings?.user) {
         if (userSettings.user.user_role.code === 'autoMechanic') {
-            userCondition = { _and: [{ vehicle_status: { code: { _eq: 'under-repair' } } }, { automechanic_id: { _eq: userSettings.user.id } }] };
+            userCondition = { _and: [/*{ vehicle_status: { code: { _eq: 'under-repair' } } },*/ { automechanic_id: { _eq: userSettings.user.id } }] };
             vehicleStatusesFilters = [];
         }
 

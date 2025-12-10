@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode, } from "react";
-import Snackbar, { type SnackbarCloseReason } from '@mui/material/Snackbar';
+import Snackbar, { type SnackbarCloseReason, type SnackbarOrigin } from '@mui/material/Snackbar';
 import { Alert } from "@mui/material";
 
 // Toast type definition
@@ -9,21 +9,26 @@ export interface ToastData {
     message: string;
     type: ToastType;
     duration?: number;
+    anchor: SnackbarOrigin
 }
 
 interface SnackbarContextType {
-    showSnackbar: (message: string, type?: ToastType, duration?: number) => void;
+    showSnackbar: (message: string, type?: ToastType, duration?: number, anchor?: SnackbarOrigin) => void;
 }
-
+//, anchorOrigin: SnackbarOrigin =  { vertical: 'bottom', horizontal: 'center' }
 const SnackbarContext = createContext<SnackbarContextType | null>(null);
 
 export const SnackbarProvider = ({ children }: { children: ReactNode; }) => {
 
-    const [toast, setToast] = useState<ToastData | null>(null);
+    const defaultPosition: SnackbarOrigin = { vertical: 'bottom', horizontal: 'center' };
 
+    const [toast, setToast] = useState<ToastData | null>(null);
+    /**
+     * 
+     */
     const showSnackbar = useCallback(
-        (message: string, type: ToastType = "info", duration: number = 3000) => {
-            setToast({ message, type });
+        (message: string, type: ToastType = "info", duration: number = 3000, anchor: SnackbarOrigin = defaultPosition) => {
+            setToast({ message, type, anchor });
             setTimeout(() => setToast(null), duration);
         },
         []
@@ -44,7 +49,7 @@ export const SnackbarProvider = ({ children }: { children: ReactNode; }) => {
 
             {toast && <Snackbar
                 open={true}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                anchorOrigin={toast.anchor}
                 autoHideDuration={toast.duration || 3000}
                 onClose={handleCloseToastMessage}
                 sx={{ minWidth: '300px' }}

@@ -10,6 +10,7 @@ import AuthGuard from './routes/guards/AuthGuard';
 import { buildUrl } from './routes/routes-util';
 import { useUserContext } from './components/private/providers/UserContext';
 import { ConfirmationDialogProvider } from './components/private/providers/ConfirmationDialog';
+import { useSnackbar } from './components/private/providers/SnackbarContext';
 
 export interface LoggedUserMenu {
   label: string;
@@ -18,6 +19,7 @@ export interface LoggedUserMenu {
 }
 
 function App() {
+  const { showSnackbar } = useSnackbar();
   const location = useLocation();
   const navigate = useNavigate();
   const { userSettings, onLogin } = useUserContext();
@@ -37,18 +39,18 @@ function App() {
 
   useEffect(() => {
     if (userSettings?.user) {
-      const desiredPath = location.pathname.replace('/', ''); // remove first slash
-      const deepLink = userSettings.userMenu.find(m => m.path.startsWith(desiredPath)); // on page refresh or URL manually adding
+      const currentPath = location.pathname.replace('/', ''); // remove first slash 
+      const deepLink = userSettings.userMenu.find(m => m.path.startsWith(currentPath)); // on page refresh or URL manually adding
 
-      if (desiredPath.length === 0) {
-        setTimeout(() => {
-          navigate(buildUrl(userSettings.userMenu[0].path));
-        }, 1);
+      if (currentPath.length === 0) {
+        navigate(buildUrl(userSettings.userMenu[0].path));
       } else if (deepLink) {
         navigate(buildUrl(deepLink.path));
-      } else {
-        navigate(buildUrl(desiredPath));
+      } else if (![PathSegments.LOGIN, PathSegments.REGISTER].includes(currentPath as PathSegments)) {
+          showSnackbar(`Не сте оторизирани да посетите: "${currentPath}" `, 'error', 5000, { horizontal: 'center', vertical: 'top' });
+          navigate(buildUrl(userSettings.userMenu[0].path)); 
       }
+
     } else {
       navigate(buildUrl());
     }

@@ -20,6 +20,7 @@ export function UserProvider({ children }: Readonly<{ children: ReactNode; }>) {
     const [userSettings, setUserSettings] = useState<UserSettings | undefined>();
 
     const loginHandler = (user: UserFragment | undefined): UserSettings | undefined => {
+
         let settings: UserSettings | undefined;
         if (user) {
             const role: RoleFragment = user.user_role;
@@ -32,6 +33,7 @@ export function UserProvider({ children }: Readonly<{ children: ReactNode; }>) {
             setUserSettings(settings);
             localStorage.setItem('customer', JSON.stringify(user));
         }
+
         return settings;
     };
 

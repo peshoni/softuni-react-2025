@@ -2,7 +2,8 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput } from "@mui/material";
 import { useState } from "react"; 
 import type { FormControlError } from "../interfaces";
-
+    //(?=.*[0-9])
+export const passRegex: RegExp = /(?=.*[A-Z])(?=.*[a-z])(?=.*[\#\$\%\=\@\!\{\}\,\`\~\&\*\(\)\<\>\?\.\:\;\_\|\^\/\+\t\[\]\"\-])[\da-zA-Z\#\$\%\=\@\!\{\}\,\`\~\&\*\(\)\<\>\?\.\:\;\_\|\^\/\+\t\[\]\"\-]{6,128}/g;
 export default function PasswordInput({ value, errors, changeCallback }: {
     readonly value: string,
     readonly errors: FormControlError[],
@@ -23,7 +24,7 @@ export default function PasswordInput({ value, errors, changeCallback }: {
 
     return (
         <FormControl sx={{ margin: '8px 0', width: '100%' }} variant="outlined">
-            <InputLabel htmlFor="password-field-id" error={errors.some(e => e.controlName === 'email')}>Password</InputLabel>
+            <InputLabel htmlFor="password-field-id" error={errors.some(e => e.controlName === 'password')}>Password</InputLabel>
             <OutlinedInput
                 id="password-field-id"
                 name='password'

@@ -11,7 +11,7 @@ const MyPaper = styled(Paper)(({ theme }) => ({
 export default function DatasourceEmptyResult() {
     return (
         <MyPaper>
-            No records were found
+            Не беше намерена информация
         </MyPaper>
     );
 }

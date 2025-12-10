@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router";
 import { PathSegments } from "../../routes/enums";
 import { useLoginLazyQuery, type LoginQueryVariables, type UserFragment } from "../../../graphql/generated";
-import PasswordInput from "../private/common/forms/PasswordInput";
+import PasswordInput, { passRegex } from "../private/common/forms/PasswordInput";
 import UserContext from "../private/providers/UserContext";
 import type { FormControlError } from "../private/common/interfaces";
 import { useSnackbar } from "../private/providers/SnackbarContext";
@@ -19,8 +19,6 @@ export default function LoginForm( /*{ setUser }: { readonly setUser: (event: Se
     const [errors, setErrors] = useState<FormControlError[]>([]);
     const [touchedFields, setTouchedFields] = useState<Set<keyof LoginQueryVariables>>(new Set<keyof LoginQueryVariables>());
     const { onLogin } = useContext(UserContext);
-    //(?=.*[0-9])
-    const passRegex: RegExp = /(?=.*[A-Z])(?=.*[a-z])(?=.*[\#\$\%\=\@\!\{\}\,\`\~\&\*\(\)\<\>\?\.\:\;\_\|\^\/\+\t\[\]\"\-])[\da-zA-Z\#\$\%\=\@\!\{\}\,\`\~\&\*\(\)\<\>\?\.\:\;\_\|\^\/\+\t\[\]\"\-]{6,128}/g;
     const [login /* { called, loading, data }*/] = useLoginLazyQuery();
 
     const [formData, setFormData] = useState({
@@ -65,10 +63,10 @@ export default function LoginForm( /*{ setUser }: { readonly setUser: (event: Se
             let user: UserFragment | undefined = result.data?.users[0];
 
             if (user) {
-                const awaitTime: number = 2000;
+                const awaitTime: number = 3000;
                 const settings = onLogin(user);
 
-                showSnackbar('Login was successfully', 'success', awaitTime);
+                showSnackbar('Успешно удостоверяване', 'success', awaitTime);
                 setTimeout(() => {
                     setSubmitted(false);
                     if (settings) {

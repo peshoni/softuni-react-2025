@@ -140,6 +140,7 @@ export default function RepairRequestDetails() {
             case 'customer':
                 break;
             case 'serviceSpecialist':
+                setIsDateAndTechVisible(true);
                 break;
             case 'autoMechanic':
                 setIsFormDisabled(true);
